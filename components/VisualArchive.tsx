@@ -44,7 +44,7 @@ const VisualArchive: React.FC<VisualArchiveProps> = ({ items, onAddItem, onDelet
           <div className="w-8 h-8 bg-slate-900 text-white flex items-center justify-center rounded-xl shadow-lg">
             <Camera size={16} />
           </div>
-          <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Visual Archive</h3>
+          <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Gallery</h3>
         </div>
         <button 
           onClick={onAddItem}

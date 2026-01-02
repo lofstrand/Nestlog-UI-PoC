@@ -502,7 +502,7 @@ const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
                  )}
               </div>
 
-              {/* Visual Archive */}
+              {/* Gallery */}
               <div className="bg-white border border-slate-200 rounded-[2.5rem] p-10 space-y-10 shadow-sm">
                  <VisualArchive 
                    items={entity.gallery || []} 

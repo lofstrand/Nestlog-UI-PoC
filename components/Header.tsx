@@ -1,11 +1,17 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Search, Sun, Bell, ChevronDown, Check, Clock, AlertTriangle, Info, Wrench, ShieldAlert } from 'lucide-react';
-import { View } from '../types';
+import { Household, Property, View } from '../types';
 
 interface HeaderProps {
   sidebarOpen: boolean;
   setCurrentView: (view: View) => void;
+  households: Household[];
+  properties: Property[];
+  activeHouseholdId: string | null;
+  activePropertyId: string | null;
+  onSelectHousehold: (id: string | null) => void;
+  onSelectProperty: (id: string | null) => void;
 }
 
 interface Notification {
@@ -23,17 +29,33 @@ const MOCK_NOTIFICATIONS: Notification[] = [
   { id: '4', title: 'System Update', desc: 'Nestlog Pro v2.4.1 is now active.', time: '1d ago', type: 'system', isUnread: false },
 ];
 
-const Header: React.FC<HeaderProps> = ({ sidebarOpen, setCurrentView }) => {
+const Header: React.FC<HeaderProps> = ({
+  sidebarOpen,
+  setCurrentView,
+  households,
+  properties,
+  activeHouseholdId,
+  activePropertyId,
+  onSelectHousehold,
+  onSelectProperty,
+}) => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>(MOCK_NOTIFICATIONS);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [householdOpen, setHouseholdOpen] = useState(false);
+  const [propertyOpen, setPropertyOpen] = useState(false);
+  const headerRef = useRef<HTMLDivElement>(null);
 
   const unreadCount = notifications.filter(n => n.isUnread).length;
 
+  const currentHousehold = (activeHouseholdId ? households.find(h => h.id === activeHouseholdId) : null) || households[0] || null;
+  const currentProperty = (activePropertyId ? properties.find(p => p.id === activePropertyId) : null) || properties[0] || null;
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (headerRef.current && !headerRef.current.contains(event.target as Node)) {
         setNotificationsOpen(false);
+        setHouseholdOpen(false);
+        setPropertyOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -57,7 +79,7 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setCurrentView }) => {
   };
 
   return (
-    <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 sticky top-0 z-30">
+    <header ref={headerRef} className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 sticky top-0 z-30">
       <div className="flex-1 flex items-center max-w-xl">
         <div className="relative w-full group">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-slate-800" />
@@ -77,15 +99,104 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setCurrentView }) => {
         <div className="hidden lg:flex items-center space-x-6 text-xs text-slate-500 border-r border-slate-200 pr-6 mr-2">
           <div className="flex items-center space-x-2">
             <span className="uppercase font-bold tracking-tight text-[10px]">Household</span>
-            <button className="flex items-center px-2 py-1 bg-slate-50 border border-slate-200 rounded font-medium text-slate-900 hover:bg-slate-100 transition-colors">
-              Cabin Household <ChevronDown size={12} className="ml-1 text-slate-400" />
-            </button>
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setHouseholdOpen(v => !v);
+                  setPropertyOpen(false);
+                  setNotificationsOpen(false);
+                }}
+                className="flex items-center px-2 py-1 bg-slate-50 border border-slate-200 rounded font-medium text-slate-900 hover:bg-slate-100 transition-colors"
+              >
+                {currentHousehold?.name || 'No households'} <ChevronDown size={12} className="ml-1 text-slate-400" />
+              </button>
+              {householdOpen && (
+                <div className="absolute left-0 mt-2 w-64 bg-white border border-slate-200 rounded-xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-50">
+                  <div className="px-3 py-2 bg-slate-50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    Select household
+                  </div>
+                  <div className="max-h-72 overflow-y-auto divide-y divide-slate-50">
+                    {households.length > 0 ? (
+                      households.map(h => (
+                        <button
+                          key={h.id}
+                          onClick={() => {
+                            onSelectHousehold(h.id);
+                            setHouseholdOpen(false);
+                          }}
+                          className="w-full px-3 py-2.5 text-left hover:bg-slate-50 transition-colors flex items-center justify-between"
+                        >
+                          <div className="min-w-0">
+                            <div className="text-xs font-bold text-slate-900 truncate">{h.name}</div>
+                            <div className="text-[10px] text-slate-400 font-black uppercase tracking-widest truncate">{h.status}</div>
+                          </div>
+                          {currentHousehold?.id === h.id && <Check size={14} className="text-indigo-600 shrink-0" />}
+                        </button>
+                      ))
+                    ) : (
+                      <div className="px-3 py-4 text-xs text-slate-500">No households available.</div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
           <div className="flex items-center space-x-2">
             <span className="uppercase font-bold tracking-tight text-[10px]">Property</span>
-            <button className="flex items-center px-2 py-1 bg-slate-50 border border-slate-200 rounded font-medium text-slate-900 hover:bg-slate-100 transition-colors">
-              Lakeside Cabin <ChevronDown size={12} className="ml-1 text-slate-400" />
-            </button>
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setPropertyOpen(v => !v);
+                  setHouseholdOpen(false);
+                  setNotificationsOpen(false);
+                }}
+                className="flex items-center px-2 py-1 bg-slate-50 border border-slate-200 rounded font-medium text-slate-900 hover:bg-slate-100 transition-colors"
+              >
+                {currentProperty?.name || 'All properties'} <ChevronDown size={12} className="ml-1 text-slate-400" />
+              </button>
+              {propertyOpen && (
+                <div className="absolute left-0 mt-2 w-72 bg-white border border-slate-200 rounded-xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-50">
+                  <div className="px-3 py-2 bg-slate-50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    Select property
+                  </div>
+                  <div className="max-h-72 overflow-y-auto divide-y divide-slate-50">
+                    <button
+                      onClick={() => {
+                        onSelectProperty(null);
+                        setPropertyOpen(false);
+                      }}
+                      className="w-full px-3 py-2.5 text-left hover:bg-slate-50 transition-colors flex items-center justify-between"
+                    >
+                      <div className="min-w-0">
+                        <div className="text-xs font-bold text-slate-900 truncate">All properties</div>
+                        <div className="text-[10px] text-slate-400 font-black uppercase tracking-widest truncate">Show cross-portfolio</div>
+                      </div>
+                      {!activePropertyId && <Check size={14} className="text-indigo-600 shrink-0" />}
+                    </button>
+                    {properties.length > 0 ? (
+                      properties.map(p => (
+                        <button
+                          key={p.id}
+                          onClick={() => {
+                            onSelectProperty(p.id);
+                            setPropertyOpen(false);
+                          }}
+                          className="w-full px-3 py-2.5 text-left hover:bg-slate-50 transition-colors flex items-center justify-between"
+                        >
+                          <div className="min-w-0">
+                            <div className="text-xs font-bold text-slate-900 truncate">{p.name}</div>
+                            <div className="text-[10px] text-slate-400 font-black uppercase tracking-widest truncate">{p.address.city}</div>
+                          </div>
+                          {activePropertyId === p.id && <Check size={14} className="text-indigo-600 shrink-0" />}
+                        </button>
+                      ))
+                    ) : (
+                      <div className="px-3 py-4 text-xs text-slate-500">No properties available.</div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -94,9 +205,13 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setCurrentView }) => {
         </button>
         
         {/* Notifications Dropdown Container */}
-        <div className="relative" ref={dropdownRef}>
+        <div className="relative">
           <button 
-            onClick={() => setNotificationsOpen(!notificationsOpen)}
+            onClick={() => {
+              setNotificationsOpen(v => !v);
+              setHouseholdOpen(false);
+              setPropertyOpen(false);
+            }}
             className={`p-2 hover:bg-slate-50 rounded-lg transition-colors relative ${notificationsOpen ? 'bg-slate-50 text-slate-900' : 'text-slate-500'}`}
           >
             <Bell size={18} />

@@ -39,7 +39,7 @@ const GalleryModal: React.FC<GalleryModalProps> = ({ isOpen, onClose, onSave }) 
              </div>
              <div>
                 <h2 className="text-xl font-black text-slate-900 tracking-tight leading-none">Register Media</h2>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Append to Visual Archive</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Append to Gallery</p>
              </div>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-400">
@@ -112,7 +112,7 @@ const GalleryModal: React.FC<GalleryModalProps> = ({ isOpen, onClose, onSave }) 
               type="submit"
               className="px-8 py-2.5 bg-slate-900 text-white text-sm font-black uppercase tracking-widest rounded-xl hover:bg-black shadow-xl transition-all active:scale-95"
             >
-              Save to Archive
+              Save to Gallery
             </button>
           </div>
         </form>
