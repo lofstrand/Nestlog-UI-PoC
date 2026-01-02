@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { Search, Plus, Edit2, Trash2, Eye, Box, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Activity } from 'lucide-react';
+import { Search, Plus, Eye, Box, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Activity } from 'lucide-react';
 import { InventoryItem, Space, InventoryCategory, Tag, InventoryItemStatus } from '../types';
 import InventoryModal from './InventoryModal';
 import { Button, Card, PageHeader, Badge } from './UIPrimitives';
@@ -12,13 +12,11 @@ interface InventoryListProps {
   availableTags: Tag[];
   onRefresh: () => void;
   onView: (id: string) => void;
-  onDelete: (id: string) => void;
 }
 
-const InventoryList: React.FC<InventoryListProps> = ({ items, spaces, categories, availableTags, onRefresh, onView, onDelete }) => {
+const InventoryList: React.FC<InventoryListProps> = ({ items, spaces, categories, availableTags, onRefresh, onView }) => {
   const [filter, setFilter] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
   const [sortConfig, setSortConfig] = useState<{ key: keyof InventoryItem; direction: 'asc' | 'desc' }>({ key: 'name', direction: 'asc' });
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
@@ -64,7 +62,7 @@ const InventoryList: React.FC<InventoryListProps> = ({ items, spaces, categories
       <PageHeader 
         title="Inventory" 
         description="Global catalog of household belongings, equipment, and valuables."
-        action={<Button icon={Plus} onClick={() => { setEditingItem(null); setIsModalOpen(true); }}>New item</Button>}
+        action={<Button icon={Plus} onClick={() => setIsModalOpen(true)}>New item</Button>}
       />
 
       <Card noPadding>
@@ -130,9 +128,7 @@ const InventoryList: React.FC<InventoryListProps> = ({ items, spaces, categories
                   </td>
                   <td className="px-8 py-6 text-right">
                     <div className="flex items-center justify-end space-x-1">
-                      <Button variant="ghost" size="sm" icon={Eye} onClick={() => onView(item.id)} />
-                      <Button variant="ghost" size="sm" icon={Edit2} onClick={() => { setEditingItem(item); setIsModalOpen(true); }} />
-                      <Button variant="ghost" size="sm" icon={Trash2} className="hover:text-[#b45c43]" onClick={() => onDelete(item.id)} />
+                      <Button variant="ghost" size="sm" icon={Eye} onClick={() => onView(item.id)}>View</Button>
                     </div>
                   </td>
                 </tr>
@@ -158,7 +154,7 @@ const InventoryList: React.FC<InventoryListProps> = ({ items, spaces, categories
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
         onSave={() => setIsModalOpen(false)} 
-        initialData={editingItem} 
+        initialData={null} 
         availableSpaces={spaces} 
         availableCategories={categories} 
         allInventory={items}

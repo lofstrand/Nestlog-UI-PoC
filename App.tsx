@@ -3955,9 +3955,6 @@ const App: React.FC = () => {
                   setSelectedEntity({ type: "inventory", id });
                   navigateTo("entity_detail");
                 }}
-                onDelete={(id) =>
-                  setInventory((i) => i.filter((x) => x.id !== id))
-                }
               />
             )}
             {currentView === "inventory_categories" && (
@@ -4009,7 +4006,14 @@ const App: React.FC = () => {
                 allProperties={properties}
                 onBack={() => navigateTo(lastView || "overview")}
                 onEdit={() => {}}
-                onDelete={() => {}}
+                onDelete={() => {
+                  if (!selectedEntity) return;
+                  if (selectedEntity.type !== "inventory") return;
+                  setInventory((prev) =>
+                    prev.filter((item) => item.id !== selectedEntity.id)
+                  );
+                  navigateTo(lastView || "inventory");
+                }}
                 onAddNote={(text) => {}}
                 onAddTag={(tag) => {}}
                 onRemoveTag={(tag) => {}}
