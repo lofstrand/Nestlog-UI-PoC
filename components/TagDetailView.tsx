@@ -1,10 +1,11 @@
 
-import React from 'react';
-import { Tags, BarChart2, Info, Layout, Box, FileText, Wrench, FolderOpen, History } from 'lucide-react';
+import React, { useState } from 'react';
+import { Tags, BarChart2, Info, Layout, Box, FileText, Wrench, FolderOpen, History, AlertTriangle } from 'lucide-react';
 import { Tag as TagType, Document } from '../types';
 import DetailLayout from './DetailLayout';
 import NotesSection from './NotesSection';
 import AttachmentsSection from './AttachmentsSection';
+import TagModal from './TagModal';
 import { SectionHeading, Badge } from './UIPrimitives';
 
 interface TagDetailViewProps {
@@ -18,19 +19,40 @@ interface TagDetailViewProps {
   onAddTag: (tagName: string) => void;
   onRemoveTag: (tagName: string) => void;
   onAddAttachment: () => void;
+  onUpdateEntity: (type: string, id: string, data: any) => void;
 }
 
 const TagDetailView: React.FC<TagDetailViewProps> = ({ 
-  entity, onBack, onEdit, onDelete, onAddNote, linkedDocuments, onAddAttachment 
+  entity,
+  onBack,
+  onEdit: _onEdit,
+  onDelete,
+  onAddNote,
+  linkedDocuments,
+  onAddAttachment,
+  onUpdateEntity,
 }) => {
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+
+  const handleSaveEdit = (data: Partial<TagType>) => {
+    onUpdateEntity('tag', entity.id, data);
+    setIsEditModalOpen(false);
+  };
+
+  const confirmDelete = () => {
+    onDelete();
+    setIsDeleteConfirmOpen(false);
+  };
+
   return (
     <DetailLayout
       title={entity.name}
       typeLabel="Global Index Tag"
       description="Cross-platform classification label used for granular data organization."
       onBack={onBack}
-      onEdit={onEdit}
-      onDelete={onDelete}
+      onEdit={() => setIsEditModalOpen(true)}
+      onDelete={() => setIsDeleteConfirmOpen(true)}
     >
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
@@ -119,6 +141,47 @@ const TagDetailView: React.FC<TagDetailViewProps> = ({
           <AttachmentsSection linkedDocuments={linkedDocuments} onAddAttachment={onAddAttachment} />
         </div>
       </div>
+
+      <TagModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSave={handleSaveEdit}
+        initialData={entity}
+      />
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteConfirmOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300" onClick={() => setIsDeleteConfirmOpen(false)} />
+          <div className="relative bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-10 text-center space-y-8">
+              <div className="w-20 h-20 bg-[#fdf3f0] text-[#b45c43] rounded-3xl flex items-center justify-center mx-auto shadow-sm">
+                <AlertTriangle size={40} />
+              </div>
+              <div className="space-y-3">
+                <h2 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">Delete Index Tag?</h2>
+                <p className="text-sm text-slate-500 font-medium leading-relaxed">
+                  Removing <strong>{entity.name}</strong> will permanently delete this tag.
+                </p>
+              </div>
+              <div className="flex flex-col space-y-3 pt-2">
+                <button
+                  onClick={confirmDelete}
+                  className="w-full py-4 bg-[#b45c43] text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-[#9d4b35] transition-all shadow-xl shadow-[#b45c43]/20 active:scale-[0.98]"
+                >
+                  Confirm Delete
+                </button>
+                <button
+                  onClick={() => setIsDeleteConfirmOpen(false)}
+                  className="w-full py-4 bg-slate-50 text-slate-400 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-slate-100 transition-all active:scale-[0.98]"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </DetailLayout>
   );
 };

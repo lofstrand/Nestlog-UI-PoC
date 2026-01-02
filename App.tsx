@@ -3695,6 +3695,9 @@ const App: React.FC = () => {
       case "inventory_category":
         setInventoryCategories(updater);
         break;
+      case "tag":
+        setTags(updater);
+        break;
       case "insurance":
         setInsurance(updater);
         break;
@@ -3965,9 +3968,6 @@ const App: React.FC = () => {
                   setSelectedEntity({ type: "inventory_category", id });
                   navigateTo("entity_detail");
                 }}
-                onDelete={(id) =>
-                  setInventoryCategories((c) => c.filter((x) => x.id !== id))
-                }
               />
             )}
             {currentView === "tags" && (
@@ -3978,7 +3978,6 @@ const App: React.FC = () => {
                   setSelectedEntity({ type: "tag", id });
                   navigateTo("entity_detail");
                 }}
-                onDelete={(id) => setTags((t) => t.filter((x) => x.id !== id))}
               />
             )}
 
@@ -4008,11 +4007,28 @@ const App: React.FC = () => {
                 onEdit={() => {}}
                 onDelete={() => {
                   if (!selectedEntity) return;
-                  if (selectedEntity.type !== "inventory") return;
-                  setInventory((prev) =>
-                    prev.filter((item) => item.id !== selectedEntity.id)
-                  );
-                  navigateTo(lastView || "inventory");
+                  switch (selectedEntity.type) {
+                    case "inventory":
+                      setInventory((prev) =>
+                        prev.filter((item) => item.id !== selectedEntity.id)
+                      );
+                      navigateTo(lastView || "inventory");
+                      break;
+                    case "inventory_category":
+                      setInventoryCategories((prev) =>
+                        prev.filter((item) => item.id !== selectedEntity.id)
+                      );
+                      navigateTo(lastView || "inventory_categories");
+                      break;
+                    case "tag":
+                      setTags((prev) =>
+                        prev.filter((item) => item.id !== selectedEntity.id)
+                      );
+                      navigateTo(lastView || "tags");
+                      break;
+                    default:
+                      return;
+                  }
                 }}
                 onAddNote={(text) => {}}
                 onAddTag={(tag) => {}}

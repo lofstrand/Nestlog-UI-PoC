@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { Search, Plus, Edit2, Trash2, Eye, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, BarChart2 } from 'lucide-react';
+import { Search, Plus, Eye, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, BarChart2 } from 'lucide-react';
 import { Tag } from '../types';
 import TagModal from './TagModal';
 import { Button, Card, PageHeader, Badge, DynamicIcon } from './UIPrimitives';
@@ -9,13 +9,11 @@ interface TagsListProps {
   tags: Tag[];
   onRefresh: () => void;
   onView: (id: string) => void;
-  onDelete: (id: string) => void;
 }
 
-const TagsList: React.FC<TagsListProps> = ({ tags, onRefresh, onView, onDelete }) => {
+const TagsList: React.FC<TagsListProps> = ({ tags, onRefresh, onView }) => {
   const [filter, setFilter] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingTag, setEditingTag] = useState<Tag | null>(null);
   const [sortConfig, setSortConfig] = useState<{ key: keyof Tag; direction: 'asc' | 'desc' }>({ key: 'name', direction: 'asc' });
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -52,7 +50,7 @@ const TagsList: React.FC<TagsListProps> = ({ tags, onRefresh, onView, onDelete }
       <PageHeader 
         title="Index Tags" 
         description="Global cross-referencing system for unified data classification."
-        action={<Button icon={Plus} onClick={() => { setEditingTag(null); setIsModalOpen(true); }}>New index tag</Button>}
+        action={<Button icon={Plus} onClick={() => setIsModalOpen(true)}>New index tag</Button>}
       />
 
       <Card noPadding>
@@ -115,9 +113,7 @@ const TagsList: React.FC<TagsListProps> = ({ tags, onRefresh, onView, onDelete }
                   </td>
                   <td className="px-8 py-6 text-right">
                     <div className="flex items-center justify-end space-x-1">
-                      <Button variant="ghost" size="sm" icon={Eye} onClick={() => onView(t.id)} />
-                      <Button variant="ghost" size="sm" icon={Edit2} onClick={() => { setEditingTag(t); setIsModalOpen(true); }} />
-                      <Button variant="ghost" size="sm" icon={Trash2} className="hover:text-[#b45c43]" onClick={() => onDelete(t.id)} />
+                      <Button variant="ghost" size="sm" icon={Eye} onClick={() => onView(t.id)}>View</Button>
                     </div>
                   </td>
                 </tr>
@@ -138,7 +134,7 @@ const TagsList: React.FC<TagsListProps> = ({ tags, onRefresh, onView, onDelete }
           </div>
         )}
       </Card>
-      <TagModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSave={() => setIsModalOpen(false)} initialData={editingTag} />
+      <TagModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSave={() => setIsModalOpen(false)} initialData={null} />
     </div>
   );
 };

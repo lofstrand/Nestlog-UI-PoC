@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { Search, Plus, Edit2, Trash2, Eye, LayoutGrid, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, ShieldAlert, Layers } from 'lucide-react';
+import { Search, Plus, Eye, LayoutGrid, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, ShieldAlert, Layers } from 'lucide-react';
 import { InventoryCategory } from '../types';
 import InventoryCategoryModal from './InventoryCategoryModal';
 import { Button, Card, PageHeader, Badge } from './UIPrimitives';
@@ -9,13 +9,11 @@ interface InventoryCategoriesListProps {
   categories: InventoryCategory[];
   onRefresh: () => void;
   onView: (id: string) => void;
-  onDelete: (id: string) => void;
 }
 
-const InventoryCategoriesList: React.FC<InventoryCategoriesListProps> = ({ categories, onRefresh, onView, onDelete }) => {
+const InventoryCategoriesList: React.FC<InventoryCategoriesListProps> = ({ categories, onRefresh, onView }) => {
   const [filter, setFilter] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<InventoryCategory | null>(null);
   const [sortConfig, setSortConfig] = useState<{ key: keyof InventoryCategory; direction: 'asc' | 'desc' }>({ key: 'name', direction: 'asc' });
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -52,7 +50,7 @@ const InventoryCategoriesList: React.FC<InventoryCategoriesListProps> = ({ categ
       <PageHeader 
         title="Classifications" 
         description="Global taxonomy rules for inventory assets and belongings."
-        action={<Button icon={Plus} onClick={() => { setEditingCategory(null); setIsModalOpen(true); }}>New classification</Button>}
+        action={<Button icon={Plus} onClick={() => setIsModalOpen(true)}>New classification</Button>}
       />
 
       <Card noPadding>
@@ -126,9 +124,7 @@ const InventoryCategoriesList: React.FC<InventoryCategoriesListProps> = ({ categ
                   </td>
                   <td className="px-8 py-6 text-right">
                     <div className="flex items-center justify-end space-x-1">
-                      <Button variant="ghost" size="sm" icon={Eye} onClick={() => onView(c.id)} />
-                      <Button variant="ghost" size="sm" icon={Edit2} onClick={() => { setEditingCategory(c); setIsModalOpen(true); }} />
-                      <Button variant="ghost" size="sm" icon={Trash2} className="hover:text-[#b45c43]" onClick={() => onDelete(c.id)} />
+                      <Button variant="ghost" size="sm" icon={Eye} onClick={() => onView(c.id)}>View</Button>
                     </div>
                   </td>
                 </tr>
@@ -153,7 +149,7 @@ const InventoryCategoriesList: React.FC<InventoryCategoriesListProps> = ({ categ
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
         onSave={() => setIsModalOpen(false)} 
-        initialData={editingCategory} 
+        initialData={null} 
         availableCategories={categories}
       />
     </div>
