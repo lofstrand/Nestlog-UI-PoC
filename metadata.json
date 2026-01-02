@@ -1,0 +1,8 @@
+{
+  "name": "Nestlog Pro - Home Management",
+  "description": "A sophisticated home management platform featuring AI-driven layout suggestions, household tracking, and maintenance planning.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
