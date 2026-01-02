@@ -1,43 +1,86 @@
-
-import React, { useState } from 'react';
-import { Tags, BarChart2, Info, Layout, Box, FileText, Wrench, FolderOpen, AlertTriangle } from 'lucide-react';
-import { Tag as TagType, Document } from '../types';
-import DetailLayout from './DetailLayout';
-import NotesSection from './NotesSection';
-import AttachmentsSection from './AttachmentsSection';
-import TagModal from './TagModal';
-import SystemMetadataCard from './SystemMetadataCard';
-import { SectionHeading, Badge } from './UIPrimitives';
+import React, { useState } from "react";
+import {
+  Tags,
+  BarChart2,
+  Info,
+  FileText,
+  Box,
+  Wrench,
+  FolderOpen,
+  Layers,
+  Users,
+  ShieldCheck,
+  Zap,
+  AlertTriangle,
+} from "lucide-react";
+import {
+  Tag as TagType,
+  Document,
+  InventoryItem,
+  InventoryCategory,
+  Household,
+  InsurancePolicy,
+  UtilityAccount,
+  MaintenanceTask,
+  Project,
+  Space,
+  Contact,
+  Property,
+} from "../types";
+import DetailLayout from "./DetailLayout";
+import TagModal from "./TagModal";
+import SystemMetadataCard from "./SystemMetadataCard";
+import { SectionHeading, Badge } from "./UIPrimitives";
 
 interface TagDetailViewProps {
   entity: TagType;
   availableTags: TagType[];
   linkedDocuments: Document[];
+  allDocuments?: Document[];
+  allInventory?: InventoryItem[];
+  allCategories?: InventoryCategory[];
+  allHouseholds?: Household[];
+  allInsurance?: InsurancePolicy[];
+  allUtilities?: UtilityAccount[];
+  availableTasks?: MaintenanceTask[];
+  availableProjects?: Project[];
+  availableSpaces?: Space[];
+  availableContacts?: Contact[];
+  allProperties?: Property[];
   onBack: () => void;
   onEdit: () => void;
   onDelete: () => void;
   onAddNote: (text: string) => void;
   onAddTag: (tagName: string) => void;
   onRemoveTag: (tagName: string) => void;
-  onAddAttachment: () => void;
   onUpdateEntity: (type: string, id: string, data: any) => void;
 }
 
-const TagDetailView: React.FC<TagDetailViewProps> = ({ 
+const TagDetailView: React.FC<TagDetailViewProps> = ({
   entity,
   onBack,
   onEdit: _onEdit,
   onDelete,
   onAddNote,
   linkedDocuments,
-  onAddAttachment,
   onUpdateEntity,
+  allDocuments,
+  allInventory,
+  allCategories,
+  allHouseholds,
+  allInsurance,
+  allUtilities,
+  availableTasks,
+  availableProjects,
+  availableSpaces,
+  availableContacts,
+  allProperties,
 }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
   const handleSaveEdit = (data: Partial<TagType>) => {
-    onUpdateEntity('tag', entity.id, data);
+    onUpdateEntity("tag", entity.id, data);
     setIsEditModalOpen(false);
   };
 
@@ -47,11 +90,74 @@ const TagDetailView: React.FC<TagDetailViewProps> = ({
   };
 
   const metadataRows = [
-    { label: 'Record ID', value: entity.id, valueClassName: 'font-mono text-xs' },
-    { label: 'Property', value: entity.propertyId, valueClassName: 'font-mono text-xs' },
-    { label: 'Index Domain', value: 'Cross-Property (Global)' },
-    { label: 'Audit Policy', value: 'Manual Application' },
+    {
+      label: "Record ID",
+      value: entity.id,
+      valueClassName: "font-mono text-xs",
+    },
+    {
+      label: "Created",
+      value: entity.createdAtUtc
+        ? new Date(entity.createdAtUtc).toLocaleDateString()
+        : "—",
+    },
+    {
+      label: "Last Updated",
+      value: entity.updatedAtUtc
+        ? new Date(entity.updatedAtUtc).toLocaleDateString()
+        : "—",
+    },
   ];
+
+  const normalizedTagName = entity.name;
+  const computedDocuments = (allDocuments || []).filter((d) =>
+    (d.tags || []).includes(normalizedTagName)
+  );
+  const computedInventory = (allInventory || []).filter((i) =>
+    (i.tags || []).includes(normalizedTagName)
+  );
+  const computedInventoryCategories = (allCategories || []).filter((c) =>
+    (c.tags || []).includes(normalizedTagName)
+  );
+  const computedHouseholds = (allHouseholds || []).filter((h) =>
+    (h.tags || []).includes(normalizedTagName)
+  );
+  const computedInsurance = (allInsurance || []).filter((p) =>
+    (p.tags || []).includes(normalizedTagName)
+  );
+  const computedUtilities = (allUtilities || []).filter((u) =>
+    (u.tags || []).includes(normalizedTagName)
+  );
+  const computedTasks = (availableTasks || []).filter((t) =>
+    (t.tags || []).includes(normalizedTagName)
+  );
+  const computedProjects = (availableProjects || []).filter((p) =>
+    (p.tags || []).includes(normalizedTagName)
+  );
+  const computedSpaces = (availableSpaces || []).filter((s) =>
+    (s.tags || []).includes(normalizedTagName)
+  );
+  const computedContacts = (availableContacts || []).filter((c) =>
+    (c.tags || []).includes(normalizedTagName)
+  );
+  const computedProperties = (allProperties || []).filter((p) =>
+    (p.tags || []).includes(normalizedTagName)
+  );
+
+  const effectiveDocumentCount =
+    computedDocuments.length || linkedDocuments.length;
+  const totalLinkedEntities =
+    computedInventory.length +
+    computedInventoryCategories.length +
+    computedHouseholds.length +
+    computedInsurance.length +
+    computedUtilities.length +
+    effectiveDocumentCount +
+    computedTasks.length +
+    computedProjects.length +
+    computedSpaces.length +
+    computedContacts.length +
+    computedProperties.length;
 
   return (
     <DetailLayout
@@ -64,76 +170,150 @@ const TagDetailView: React.FC<TagDetailViewProps> = ({
     >
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
-          {/* Visual Identity Hero */}
-          <div className="bg-white border border-slate-200 rounded-[2.5rem] p-12 space-y-10 shadow-sm relative overflow-hidden">
-             <div className="absolute top-0 left-0 w-2 h-full" style={{ backgroundColor: entity.colorHex || '#1e293b' }} />
-             
-             <div className="flex items-center space-x-10">
-                <div className="w-32 h-32 rounded-[2.5rem] flex items-center justify-center text-white shadow-2xl transition-transform hover:scale-105 active:scale-95 cursor-default" style={{ backgroundColor: entity.colorHex || '#1e293b' }}>
-                   <Tags size={64} strokeWidth={1.5} />
-                </div>
-                <div className="space-y-4 flex-1">
-                   <div>
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Defined Identifier</p>
-                      <h2 className="text-4xl font-black text-slate-900 tracking-tighter">{entity.name}</h2>
-                   </div>
-                   <div className="flex items-center space-x-3">
-                      <Badge color="text-slate-400" bgColor="bg-slate-50"># {entity.colorHex?.toUpperCase() || 'DEFAULT'}</Badge>
-                      <Badge color="text-[#5a6b5d]" bgColor="bg-[#f2f4f2]">Status: Active Index</Badge>
-                   </div>
-                </div>
-             </div>
+          <div className="bg-white border border-slate-200 rounded-[2.5rem] p-10 space-y-10 shadow-sm relative overflow-hidden">
+            <SectionHeading label="Tag Overview" icon={Tags} />
+            <div className="absolute top-0 right-0 p-10 opacity-[0.03] rotate-12">
+              <Tags size={200} />
+            </div>
 
-             <div className="pt-10 border-t border-slate-100 space-y-4">
-                <SectionHeading label="Label Intent & Guidelines" icon={Info} />
-                <p className="text-lg text-slate-600 leading-relaxed font-medium">
-                   {entity.description || "No formal usage guidelines have been defined for this index tag. Define constraints to ensure consistent household classification."}
-                </p>
-             </div>
+            <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-10 relative z-10">
+              <div className="space-y-4">
+                <div className="rounded-[2rem] border border-slate-200 bg-slate-50 p-6 shadow-inner space-y-4">
+                  <div
+                    className="w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg"
+                    style={{ backgroundColor: entity.colorHex || "#1e293b" }}
+                  >
+                    <Tags size={26} strokeWidth={1.5} />
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                      Color
+                    </p>
+                    <Badge
+                      color="text-slate-500"
+                      bgColor="bg-white"
+                      borderColor="border-slate-200"
+                      className="font-mono tracking-tighter w-fit"
+                    >
+                      {entity.colorHex?.toUpperCase() || "DEFAULT"}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-8">
+                <div className="space-y-3">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    Defined Identifier
+                  </p>
+                  <h2 className="text-4xl font-black text-slate-900 tracking-tighter">
+                    {entity.name}
+                  </h2>
+                </div>
+
+                <div className="pt-6 border-t border-slate-100 space-y-4">
+                  <SectionHeading
+                    label="Label Intent & Guidelines"
+                    icon={Info}
+                  />
+                  <p className="text-slate-700 leading-relaxed text-lg font-medium">
+                    {entity.description ||
+                      "No formal usage guidelines have been defined for this index tag. Define constraints to ensure consistent household classification."}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Usage Intensity Analytics */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-             <div className="bg-slate-900 rounded-[2rem] p-8 space-y-6 shadow-2xl shadow-slate-200">
-                <SectionHeading label="Distribution Intensity" icon={BarChart2} color="text-slate-500" />
-                <div className="space-y-6">
-                   <div className="flex items-center justify-between">
-                      <span className="text-5xl font-black text-white tracking-tighter">{entity.usageCount || 0}</span>
-                      <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest text-right leading-tight">Applied Entities<br/>Across System</p>
-                   </div>
-                   <div className="pt-4 border-t border-slate-800">
-                      <p className="text-xs text-slate-400 font-medium leading-relaxed italic">"Frequent usage indicates a high-priority classification pillar for your household."</p>
-                   </div>
-                </div>
-             </div>
+          <div className="bg-white border border-slate-200 rounded-[2.5rem] p-10 space-y-8 shadow-sm">
+            <div className="flex items-center justify-between">
+              <SectionHeading label="Linked Entities" icon={FolderOpen} />
+              <Badge
+                color="text-slate-400"
+                bgColor="bg-slate-50"
+                borderColor="border-slate-100"
+              >
+                {totalLinkedEntities} Total Links
+              </Badge>
+            </div>
 
-             <div className="bg-white border border-slate-200 rounded-[2rem] p-8 space-y-6 shadow-sm">
-                <SectionHeading label="Structural Scope" icon={Layout} />
-                <div className="space-y-3">
-                   {[
-                      { label: 'Inventory Assets', icon: Box, count: '-' },
-                      { label: 'Documents', icon: FileText, count: entity.documentIds?.length || 0 },
-                      { label: 'Service Tasks', icon: Wrench, count: '-' },
-                      { label: 'Active Projects', icon: FolderOpen, count: '-' }
-                   ].map(cat => (
-                      <div key={cat.label} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100 group hover:bg-white hover:border-slate-300 transition-all">
-                         <div className="flex items-center space-x-3">
-                            <cat.icon size={14} className="text-slate-400 group-hover:text-slate-900 transition-colors" />
-                            <span className="text-xs font-bold text-slate-600">{cat.label}</span>
-                         </div>
-                         <span className="text-xs font-black text-slate-900">{cat.count}</span>
-                      </div>
-                   ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                {
+                  label: "Inventory Categories",
+                  icon: Layers,
+                  count: computedInventoryCategories.length,
+                },
+                {
+                  label: "Inventory Assets",
+                  icon: Box,
+                  count: computedInventory.length,
+                },
+                {
+                  label: "Documents",
+                  icon: FileText,
+                  count: effectiveDocumentCount,
+                },
+                {
+                  label: "Service Tasks",
+                  icon: Wrench,
+                  count: computedTasks.length,
+                },
+                {
+                  label: "Active Projects",
+                  icon: FolderOpen,
+                  count: computedProjects.length,
+                },
+                { label: "Spaces", icon: Layers, count: computedSpaces.length },
+                {
+                  label: "Contacts",
+                  icon: Users,
+                  count: computedContacts.length,
+                },
+                {
+                  label: "Properties",
+                  icon: Layers,
+                  count: computedProperties.length,
+                },
+                {
+                  label: "Households",
+                  icon: Users,
+                  count: computedHouseholds.length,
+                },
+                {
+                  label: "Insurance",
+                  icon: ShieldCheck,
+                  count: computedInsurance.length,
+                },
+                {
+                  label: "Utilities",
+                  icon: Zap,
+                  count: computedUtilities.length,
+                },
+              ].map((row) => (
+                <div
+                  key={row.label}
+                  className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100"
+                >
+                  <div className="flex items-center space-x-3 min-w-0">
+                    <div className="w-10 h-10 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-slate-400 shrink-0">
+                      <row.icon size={16} />
+                    </div>
+                    <span className="text-xs font-bold text-slate-700 truncate">
+                      {row.label}
+                    </span>
+                  </div>
+                  <span className="text-sm font-black text-slate-900">
+                    {row.count}
+                  </span>
                 </div>
-             </div>
+              ))}
+            </div>
           </div>
         </div>
 
         <div className="lg:col-span-1 space-y-12">
           <SystemMetadataCard rows={metadataRows} />
-
-          <NotesSection notes={entity.notes || []} onAddNote={onAddNote} />
-          <AttachmentsSection linkedDocuments={linkedDocuments} onAddAttachment={onAddAttachment} />
         </div>
       </div>
 
@@ -147,16 +327,22 @@ const TagDetailView: React.FC<TagDetailViewProps> = ({
       {/* Delete Confirmation Modal */}
       {isDeleteConfirmOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300" onClick={() => setIsDeleteConfirmOpen(false)} />
+          <div
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300"
+            onClick={() => setIsDeleteConfirmOpen(false)}
+          />
           <div className="relative bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="p-10 text-center space-y-8">
               <div className="w-20 h-20 bg-[#fdf3f0] text-[#b45c43] rounded-3xl flex items-center justify-center mx-auto shadow-sm">
                 <AlertTriangle size={40} />
               </div>
               <div className="space-y-3">
-                <h2 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">Delete Index Tag?</h2>
+                <h2 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
+                  Delete Index Tag?
+                </h2>
                 <p className="text-sm text-slate-500 font-medium leading-relaxed">
-                  Removing <strong>{entity.name}</strong> will permanently delete this tag.
+                  Removing <strong>{entity.name}</strong> will permanently
+                  delete this tag.
                 </p>
               </div>
               <div className="flex flex-col space-y-3 pt-2">

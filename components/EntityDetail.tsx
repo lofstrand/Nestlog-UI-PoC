@@ -25,6 +25,9 @@ interface EntityDetailProps {
   allTasks: any[];
   allInventory: any[];
   allCategories: any[];
+  allHouseholds?: any[];
+  allInsurance?: any[];
+  allUtilities?: any[];
   allMembers?: any[];
   allInvites?: any[];
   allProperties?: any[];
@@ -44,7 +47,7 @@ interface EntityDetailProps {
 }
 
 const EntityDetail: React.FC<EntityDetailProps> = ({ 
-  type, entity, allTags, allDocuments, allSpaces, allContacts, allProjects, allTasks, allInventory, allCategories, allMembers = [], allInvites = [], allProperties = [], onBack, onEdit, onDelete, 
+  type, entity, allTags, allDocuments, allSpaces, allContacts, allProjects, allTasks, allInventory, allCategories, allHouseholds = [], allInsurance = [], allUtilities = [], allMembers = [], allInvites = [], allProperties = [], onBack, onEdit, onDelete, 
   onAddNote, onAddTag, onRemoveTag, onAddAttachment, onViewItem, onNavigateToEntity, onUpdateEntity, onQuickUploadDoc, onQuickAddContact
 }) => {
   if (!entity) return (
@@ -56,6 +59,9 @@ const EntityDetail: React.FC<EntityDetailProps> = ({
   );
 
   const getLinkedDocs = () => {
+    if (type === 'tag') {
+      return allDocuments.filter(doc => (doc.tags || []).includes(entity.name));
+    }
     return allDocuments.filter(doc => (entity.documentIds || []).includes(doc.id));
   };
 
@@ -66,6 +72,10 @@ const EntityDetail: React.FC<EntityDetailProps> = ({
     linkedDocuments: getLinkedDocs(),
     allDocuments,
     allInventory,
+    allCategories,
+    allHouseholds,
+    allInsurance,
+    allUtilities,
     availableSpaces: allSpaces,
     availableContacts: allContacts,
     availableProjects: allProjects,

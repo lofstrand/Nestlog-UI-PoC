@@ -56,6 +56,8 @@ export interface Household {
   propertyCount: number;
   lastMaintained: string;
   currencyCode?: string;
+  createdAtUtc?: string;
+  updatedAtUtc?: string | null;
   notes: Note[];
   tags: string[];
   documentIds: string[];
@@ -241,6 +243,7 @@ export interface MaintenanceTask {
   status: MaintenanceTaskStatus;
   recurrence?: MaintenanceRecurrence | null;
   createdAtUtc: string;
+  updatedAtUtc?: string | null;
   tags: string[];
   notes: Note[];
   documentIds: string[];
@@ -300,6 +303,8 @@ export interface Tag {
   iconName?: string | null;
   colorHex?: string | null;
   usageCount?: number;
+  createdAtUtc?: string;
+  updatedAtUtc?: string | null;
   notes: Note[];
   documentIds: string[];
 }
@@ -314,6 +319,8 @@ export interface InventoryCategory {
   estimatedDepreciationRate?: number | null;
   isInsuranceCritical: boolean;
   sortOrder: number;
+  createdAtUtc?: string;
+  updatedAtUtc?: string | null;
   notes: Note[];
   tags: string[];
   documentIds: string[];
@@ -377,6 +384,8 @@ export interface Contact {
   specialties: string[];
   certificationId?: string | null;
   businessAddress?: Address | null;
+  createdAtUtc?: string;
+  updatedAtUtc?: string | null;
   notes: Note[];
   tags: string[];
   documentIds: string[];
@@ -463,6 +472,8 @@ export interface InsurancePolicy {
   startDate: string;
   endDate: string;
   renewalDate: string;
+  createdAtUtc?: string;
+  updatedAtUtc?: string | null;
   notes: Note[];
   documentIds: string[];
   tags: string[];
@@ -488,6 +499,8 @@ export interface UtilityAccount {
   useCalculatedAverage: boolean;
   lastPaymentDate?: string | null;
   spaceId?: string | null;
+  createdAtUtc?: string;
+  updatedAtUtc?: string | null;
   notes: Note[];
   tags: string[];
   documentIds: string[];

@@ -3,15 +3,16 @@ import React, { useState, useMemo } from 'react';
 import { Search, Plus, Eye, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, BarChart2 } from 'lucide-react';
 import { Tag } from '../types';
 import TagModal from './TagModal';
-import { Button, Card, PageHeader, Badge, DynamicIcon } from './UIPrimitives';
+import { Button, Card, PageHeader, DynamicIcon } from './UIPrimitives';
 
 interface TagsListProps {
   tags: Tag[];
+  usageByName?: Record<string, number>;
   onRefresh: () => void;
   onView: (id: string) => void;
 }
 
-const TagsList: React.FC<TagsListProps> = ({ tags, onRefresh, onView }) => {
+const TagsList: React.FC<TagsListProps> = ({ tags, usageByName, onRefresh, onView }) => {
   const [filter, setFilter] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sortConfig, setSortConfig] = useState<{ key: keyof Tag; direction: 'asc' | 'desc' }>({ key: 'name', direction: 'asc' });
@@ -29,13 +30,15 @@ const TagsList: React.FC<TagsListProps> = ({ tags, onRefresh, onView }) => {
     let filtered = tags.filter(t => t.name.toLowerCase().includes(filter.toLowerCase()));
 
     return filtered.sort((a, b) => {
-      const aValue = (a[sortConfig.key] || '') as string | number;
-      const bValue = (b[sortConfig.key] || '') as string | number;
+      const aValue =
+        sortConfig.key === 'usageCount' ? (usageByName?.[a.name] ?? 0) : ((a[sortConfig.key] || '') as string | number);
+      const bValue =
+        sortConfig.key === 'usageCount' ? (usageByName?.[b.name] ?? 0) : ((b[sortConfig.key] || '') as string | number);
       if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
       if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
       return 0;
     });
-  }, [tags, filter, sortConfig]);
+  }, [tags, filter, sortConfig, usageByName]);
 
   const totalPages = Math.ceil(processedItems.length / itemsPerPage);
   const paginatedItems = processedItems.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -78,7 +81,6 @@ const TagsList: React.FC<TagsListProps> = ({ tags, onRefresh, onView }) => {
                     Usage Intensity <SortIcon column="usageCount" />
                   </button>
                 </th>
-                <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Protocol Context</th>
                 <th className="px-8 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">Actions</th>
               </tr>
             </thead>
@@ -102,13 +104,7 @@ const TagsList: React.FC<TagsListProps> = ({ tags, onRefresh, onView }) => {
                   <td className="px-8 py-6">
                     <div className="flex items-center space-x-2">
                        <BarChart2 size={14} className="text-slate-300" />
-                       <span className="text-sm font-black text-slate-800">{t.usageCount || 0} Entities</span>
-                    </div>
-                  </td>
-                  <td className="px-8 py-6">
-                    <div className="flex items-center space-x-2">
-                       <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: t.colorHex || '#1e293b' }} />
-                       <Badge color="text-slate-400" bgColor="bg-slate-50">Global Scope</Badge>
+                       <span className="text-sm font-black text-slate-800">{usageByName?.[t.name] ?? 0} Entities</span>
                     </div>
                   </td>
                   <td className="px-8 py-6 text-right">

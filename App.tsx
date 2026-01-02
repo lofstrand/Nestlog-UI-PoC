@@ -3495,7 +3495,16 @@ const MOCK_UTILITIES: UtilityAccount[] = [
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>("overview");
   const [lastView, setLastView] = useState<View | null>(null);
-  const [households, setHouseholds] = useState<Household[]>(MOCK_HOUSEHOLDS);
+  const [households, setHouseholds] = useState<Household[]>(() => {
+    const nowIso = new Date().toISOString();
+    return MOCK_HOUSEHOLDS.map((h, index) => ({
+      ...h,
+      createdAtUtc:
+        h.createdAtUtc ||
+        new Date(Date.now() - (index + 1) * 86400000).toISOString(),
+      updatedAtUtc: h.updatedAtUtc || nowIso,
+    }));
+  });
   const [properties, setProperties] = useState<Property[]>(MOCK_PROPERTIES);
   const [activeHouseholdId, setActiveHouseholdId] = useState<string | null>(
     MOCK_HOUSEHOLDS[0]?.id ?? null
@@ -3504,16 +3513,73 @@ const App: React.FC = () => {
     MOCK_PROPERTIES[0]?.id ?? null
   );
   const [spaces, setSpaces] = useState<Space[]>(MOCK_SPACES);
-  const [tasks, setTasks] = useState<MaintenanceTask[]>(MOCK_TASKS);
+  const [tasks, setTasks] = useState<MaintenanceTask[]>(() => {
+    const nowIso = new Date().toISOString();
+    return MOCK_TASKS.map((t, index) => ({
+      ...t,
+      createdAtUtc:
+        t.createdAtUtc ||
+        new Date(Date.now() - (index + 1) * 86400000).toISOString(),
+      updatedAtUtc: t.updatedAtUtc || nowIso,
+    }));
+  });
   const [projects, setProjects] = useState<Project[]>(MOCK_PROJECTS);
-  const [tags, setTags] = useState<Tag[]>(MOCK_TAGS);
+  const [tags, setTags] = useState<Tag[]>(() => {
+    const nowIso = new Date().toISOString();
+    return MOCK_TAGS.map((tag, index) => {
+      const createdAtUtc =
+        tag.createdAtUtc || new Date(Date.now() - (index + 1) * 86400000).toISOString();
+      return {
+        ...tag,
+        createdAtUtc,
+        updatedAtUtc: tag.updatedAtUtc || nowIso,
+      };
+    });
+  });
   const [inventory, setInventory] = useState<InventoryItem[]>(MOCK_INVENTORY);
-  const [contacts, setContacts] = useState<Contact[]>(MOCK_CONTACTS);
+  const [contacts, setContacts] = useState<Contact[]>(() => {
+    const nowIso = new Date().toISOString();
+    return MOCK_CONTACTS.map((c, index) => ({
+      ...c,
+      createdAtUtc:
+        c.createdAtUtc ||
+        new Date(Date.now() - (index + 1) * 86400000).toISOString(),
+      updatedAtUtc: c.updatedAtUtc || nowIso,
+    }));
+  });
   const [documents, setDocuments] = useState<Document[]>(MOCK_DOCUMENTS);
-  const [inventoryCategories, setInventoryCategories] =
-    useState<InventoryCategory[]>(MOCK_CATEGORIES);
-  const [insurance, setInsurance] = useState<InsurancePolicy[]>(MOCK_POLICIES);
-  const [utilities, setUtilities] = useState<UtilityAccount[]>(MOCK_UTILITIES);
+  const [inventoryCategories, setInventoryCategories] = useState<
+    InventoryCategory[]
+  >(() => {
+    const nowIso = new Date().toISOString();
+    return MOCK_CATEGORIES.map((c, index) => ({
+      ...c,
+      createdAtUtc:
+        c.createdAtUtc ||
+        new Date(Date.now() - (index + 1) * 86400000).toISOString(),
+      updatedAtUtc: c.updatedAtUtc || nowIso,
+    }));
+  });
+  const [insurance, setInsurance] = useState<InsurancePolicy[]>(() => {
+    const nowIso = new Date().toISOString();
+    return MOCK_POLICIES.map((p, index) => ({
+      ...p,
+      createdAtUtc:
+        p.createdAtUtc ||
+        new Date(Date.now() - (index + 1) * 86400000).toISOString(),
+      updatedAtUtc: p.updatedAtUtc || nowIso,
+    }));
+  });
+  const [utilities, setUtilities] = useState<UtilityAccount[]>(() => {
+    const nowIso = new Date().toISOString();
+    return MOCK_UTILITIES.map((u, index) => ({
+      ...u,
+      createdAtUtc:
+        u.createdAtUtc ||
+        new Date(Date.now() - (index + 1) * 86400000).toISOString(),
+      updatedAtUtc: u.updatedAtUtc || nowIso,
+    }));
+  });
   const [activities, setActivities] = useState<ActivityLogEntry[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedEntity, setSelectedEntity] = useState<{
@@ -3594,6 +3660,41 @@ const App: React.FC = () => {
         : utilities,
     [utilities, activePropertyId]
   );
+
+  const tagUsageByName = useMemo(() => {
+    const counts: Record<string, number> = {};
+    const add = (tagNames?: string[]) => {
+      (tagNames || []).forEach((name) => {
+        counts[name] = (counts[name] || 0) + 1;
+      });
+    };
+
+    properties.forEach((p) => add(p.tags));
+    spaces.forEach((s) => add(s.tags));
+    tasks.forEach((t) => add(t.tags));
+    projects.forEach((p) => add(p.tags));
+    inventory.forEach((i) => add(i.tags));
+    inventoryCategories.forEach((c) => add(c.tags));
+    contacts.forEach((c) => add(c.tags));
+    documents.forEach((d) => add(d.tags));
+    households.forEach((h) => add(h.tags));
+    insurance.forEach((p) => add(p.tags));
+    utilities.forEach((u) => add(u.tags));
+
+    return counts;
+  }, [
+    properties,
+    spaces,
+    tasks,
+    projects,
+    inventory,
+    inventoryCategories,
+    contacts,
+    documents,
+    households,
+    insurance,
+    utilities,
+  ]);
 
   // COMPUTED FINANCE DATA
   const financeOverviewData = useMemo(() => {
@@ -3710,6 +3811,7 @@ const App: React.FC = () => {
   const handleQuickAddContact = async (
     data: Partial<Contact>
   ): Promise<string> => {
+    const nowIso = new Date().toISOString();
     const newContact: Contact = {
       id: Math.random().toString(36).substr(2, 9),
       propertyId: "p1",
@@ -3723,6 +3825,8 @@ const App: React.FC = () => {
       notes: [],
       tags: [],
       documentIds: [],
+      createdAtUtc: nowIso,
+      updatedAtUtc: nowIso,
     };
     setContacts((prev) => [newContact, ...prev]);
     return newContact.id;
@@ -3973,6 +4077,7 @@ const App: React.FC = () => {
             {currentView === "tags" && (
               <TagsList
                 tags={tags}
+                usageByName={tagUsageByName}
                 onRefresh={() => {}}
                 onView={(id) => {
                   setSelectedEntity({ type: "tag", id });
@@ -4003,6 +4108,9 @@ const App: React.FC = () => {
                 allInventory={inventory}
                 allCategories={inventoryCategories}
                 allProperties={properties}
+                allHouseholds={households}
+                allInsurance={insurance}
+                allUtilities={utilities}
                 onBack={() => navigateTo(lastView || "overview")}
                 onEdit={() => {}}
                 onDelete={() => {

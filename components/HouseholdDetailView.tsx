@@ -1,17 +1,23 @@
-
-import React, { useState } from 'react';
-import { Info, Users, Shield, Layout, AlertTriangle, X } from 'lucide-react';
-import { Household, Tag, Document, HouseholdMember, HouseholdInvite, Property } from '../types';
-import DetailLayout from './DetailLayout';
-import NotesSection from './NotesSection';
-import TagsSection from './TagsSection';
-import AttachmentsSection from './AttachmentsSection';
-import HouseholdMembersSection from './HouseholdMembersSection';
-import HouseholdArchitectureSection from './HouseholdArchitectureSection';
-import InviteModal from './InviteModal';
-import HouseholdModal from './HouseholdModal';
-import SystemMetadataCard from './SystemMetadataCard';
-import { Badge } from './UIPrimitives';
+import React, { useState } from "react";
+import { Info, Users, Shield, Layout, AlertTriangle, X } from "lucide-react";
+import {
+  Household,
+  Tag,
+  Document,
+  HouseholdMember,
+  HouseholdInvite,
+  Property,
+} from "../types";
+import DetailLayout from "./DetailLayout";
+import NotesSection from "./NotesSection";
+import TagsSection from "./TagsSection";
+import AttachmentsSection from "./AttachmentsSection";
+import HouseholdMembersSection from "./HouseholdMembersSection";
+import HouseholdArchitectureSection from "./HouseholdArchitectureSection";
+import InviteModal from "./InviteModal";
+import HouseholdModal from "./HouseholdModal";
+import SystemMetadataCard from "./SystemMetadataCard";
+import { Badge } from "./UIPrimitives";
 
 interface HouseholdDetailViewProps {
   entity: Household;
@@ -30,20 +36,39 @@ interface HouseholdDetailViewProps {
   onUpdateEntity: (type: string, id: string, data: any) => void;
 }
 
-const HouseholdDetailView: React.FC<HouseholdDetailViewProps> = ({ 
-  entity, availableTags, linkedDocuments, allMembers, allInvites, allProperties, onBack, onEdit, onDelete, onAddNote, onAddTag, onRemoveTag, onAddAttachment, onUpdateEntity 
+const HouseholdDetailView: React.FC<HouseholdDetailViewProps> = ({
+  entity,
+  availableTags,
+  linkedDocuments,
+  allMembers,
+  allInvites,
+  allProperties,
+  onBack,
+  onEdit,
+  onDelete,
+  onAddNote,
+  onAddTag,
+  onRemoveTag,
+  onAddAttachment,
+  onUpdateEntity,
 }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'collaboration'>('overview');
+  const [activeTab, setActiveTab] = useState<"overview" | "collaboration">(
+    "overview"
+  );
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
-  const householdMembers = allMembers.filter(m => m.householdId === entity.id);
-  const householdInvites = allInvites.filter(i => i.householdId === entity.id && i.status === 'Pending');
+  const householdMembers = allMembers.filter(
+    (m) => m.householdId === entity.id
+  );
+  const householdInvites = allInvites.filter(
+    (i) => i.householdId === entity.id && i.status === "Pending"
+  );
   const householdProperties = allProperties;
 
   const handleSaveEdit = (data: Partial<Household>) => {
-    onUpdateEntity('household', entity.id, data);
+    onUpdateEntity("household", entity.id, data);
     setIsEditModalOpen(false);
   };
 
@@ -53,8 +78,23 @@ const HouseholdDetailView: React.FC<HouseholdDetailViewProps> = ({
   };
 
   const metadataRows = [
-    { label: 'Record ID', value: entity.id, valueClassName: 'font-mono text-xs' },
-    { label: 'Status', value: entity.status },
+    {
+      label: "Record ID",
+      value: entity.id,
+      valueClassName: "font-mono text-xs",
+    },
+    {
+      label: "Created",
+      value: entity.createdAtUtc
+        ? new Date(entity.createdAtUtc).toLocaleDateString()
+        : "—",
+    },
+    {
+      label: "Last Updated",
+      value: entity.updatedAtUtc
+        ? new Date(entity.updatedAtUtc).toLocaleDateString()
+        : "—",
+    },
   ];
 
   return (
@@ -68,15 +108,23 @@ const HouseholdDetailView: React.FC<HouseholdDetailViewProps> = ({
     >
       <div className="flex space-x-1 p-1 bg-slate-100/50 rounded-2xl border border-slate-100 w-fit mb-8">
         <button
-          onClick={() => setActiveTab('overview')}
-          className={`flex items-center space-x-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'overview' ? 'bg-white text-slate-900 shadow-md' : 'text-slate-400 hover:text-slate-600'}`}
+          onClick={() => setActiveTab("overview")}
+          className={`flex items-center space-x-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
+            activeTab === "overview"
+              ? "bg-white text-slate-900 shadow-md"
+              : "text-slate-400 hover:text-slate-600"
+          }`}
         >
           <Layout size={16} />
           <span>Overview</span>
         </button>
         <button
-          onClick={() => setActiveTab('collaboration')}
-          className={`flex items-center space-x-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'collaboration' ? 'bg-white text-slate-900 shadow-md' : 'text-slate-400 hover:text-slate-600'}`}
+          onClick={() => setActiveTab("collaboration")}
+          className={`flex items-center space-x-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
+            activeTab === "collaboration"
+              ? "bg-white text-slate-900 shadow-md"
+              : "text-slate-400 hover:text-slate-600"
+          }`}
         >
           <Users size={16} />
           <span>Collaboration</span>
@@ -88,10 +136,13 @@ const HouseholdDetailView: React.FC<HouseholdDetailViewProps> = ({
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
-          {activeTab === 'overview' ? (
-            <HouseholdArchitectureSection entity={entity} memberCount={householdMembers.length} />
+          {activeTab === "overview" ? (
+            <HouseholdArchitectureSection
+              entity={entity}
+              memberCount={householdMembers.length}
+            />
           ) : (
-            <HouseholdMembersSection 
+            <HouseholdMembersSection
               members={householdMembers}
               invites={householdInvites}
               properties={householdProperties}
@@ -102,21 +153,24 @@ const HouseholdDetailView: React.FC<HouseholdDetailViewProps> = ({
             />
           )}
         </div>
-        
+
         <div className="lg:col-span-1 space-y-12">
           <SystemMetadataCard rows={metadataRows} />
-          <TagsSection 
-            entityTags={entity.tags || []} 
-            availableTags={availableTags} 
-            onAddTag={onAddTag} 
-            onRemoveTag={onRemoveTag} 
+          <TagsSection
+            entityTags={entity.tags || []}
+            availableTags={availableTags}
+            onAddTag={onAddTag}
+            onRemoveTag={onRemoveTag}
           />
           <NotesSection notes={entity.notes || []} onAddNote={onAddNote} />
-          <AttachmentsSection linkedDocuments={linkedDocuments} onAddAttachment={onAddAttachment} />
+          <AttachmentsSection
+            linkedDocuments={linkedDocuments}
+            onAddAttachment={onAddAttachment}
+          />
         </div>
       </div>
 
-      <InviteModal 
+      <InviteModal
         isOpen={isInviteModalOpen}
         onClose={() => setIsInviteModalOpen(false)}
         onInvite={(email) => {
@@ -125,7 +179,7 @@ const HouseholdDetailView: React.FC<HouseholdDetailViewProps> = ({
         householdName={entity.name}
       />
 
-      <HouseholdModal 
+      <HouseholdModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         onSave={handleSaveEdit}
@@ -135,26 +189,33 @@ const HouseholdDetailView: React.FC<HouseholdDetailViewProps> = ({
       {/* Delete Confirmation Modal */}
       {isDeleteConfirmOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300" onClick={() => setIsDeleteConfirmOpen(false)} />
+          <div
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300"
+            onClick={() => setIsDeleteConfirmOpen(false)}
+          />
           <div className="relative bg-white w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="p-8 text-center space-y-6">
               <div className="w-16 h-16 bg-[#fdf3f0] text-[#b45c43] rounded-2xl flex items-center justify-center mx-auto shadow-sm">
                 <AlertTriangle size={32} />
               </div>
               <div className="space-y-2">
-                <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-none">Delete Household?</h2>
+                <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-none">
+                  Delete Household?
+                </h2>
                 <p className="text-sm text-slate-500 font-medium leading-relaxed">
-                  You are about to delete <strong>{entity.name}</strong>. This action is final and will unlink all associated property metadata.
+                  You are about to delete <strong>{entity.name}</strong>. This
+                  action is final and will unlink all associated property
+                  metadata.
                 </p>
               </div>
               <div className="flex flex-col space-y-3 pt-2">
-                <button 
+                <button
                   onClick={confirmDelete}
                   className="w-full py-3.5 bg-[#b45c43] text-white rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-[#9d4b35] transition-all shadow-lg shadow-[#b45c43]/20 active:scale-[0.98]"
                 >
                   Confirm Deletion
                 </button>
-                <button 
+                <button
                   onClick={() => setIsDeleteConfirmOpen(false)}
                   className="w-full py-3.5 bg-slate-50 text-slate-500 rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-slate-100 transition-all active:scale-[0.98]"
                 >

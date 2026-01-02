@@ -1,14 +1,32 @@
-
-import React, { useState } from 'react';
-import { Clock, Wrench, AlertTriangle, Repeat, Calendar, Layout, Info, Activity, CheckCircle } from 'lucide-react';
-import { MaintenanceTask, Tag, Document, MaintenanceTaskPriority, MaintenanceRecurrenceFrequency, Space, Contact, InventoryItem } from '../types';
-import DetailLayout from './DetailLayout';
-import NotesSection from './NotesSection';
-import TagsSection from './TagsSection';
-import AttachmentsSection from './AttachmentsSection';
-import MaintenanceTaskModal from './MaintenanceTaskModal';
-import SystemMetadataCard from './SystemMetadataCard';
-import { SectionHeading, Badge } from './UIPrimitives';
+import React, { useState } from "react";
+import {
+  Clock,
+  Wrench,
+  AlertTriangle,
+  Repeat,
+  Calendar,
+  Layout,
+  Info,
+  Activity,
+  CheckCircle,
+} from "lucide-react";
+import {
+  MaintenanceTask,
+  Tag,
+  Document,
+  MaintenanceTaskPriority,
+  MaintenanceRecurrenceFrequency,
+  Space,
+  Contact,
+  InventoryItem,
+} from "../types";
+import DetailLayout from "./DetailLayout";
+import NotesSection from "./NotesSection";
+import TagsSection from "./TagsSection";
+import AttachmentsSection from "./AttachmentsSection";
+import MaintenanceTaskModal from "./MaintenanceTaskModal";
+import SystemMetadataCard from "./SystemMetadataCard";
+import { SectionHeading, Badge } from "./UIPrimitives";
 
 interface TaskDetailViewProps {
   entity: MaintenanceTask;
@@ -27,25 +45,45 @@ interface TaskDetailViewProps {
   onUpdateEntity: (type: string, id: string, data: any) => void;
 }
 
-const TaskDetailView: React.FC<TaskDetailViewProps> = ({ 
-  entity, availableTags, linkedDocuments, availableSpaces, availableContacts, availableInventory, onBack, onEdit, onDelete, onAddNote, onAddTag, onRemoveTag, onAddAttachment, onUpdateEntity 
+const TaskDetailView: React.FC<TaskDetailViewProps> = ({
+  entity,
+  availableTags,
+  linkedDocuments,
+  availableSpaces,
+  availableContacts,
+  availableInventory,
+  onBack,
+  onEdit,
+  onDelete,
+  onAddNote,
+  onAddTag,
+  onRemoveTag,
+  onAddAttachment,
+  onUpdateEntity,
 }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
   const getPriorityStyles = (p: MaintenanceTaskPriority) => {
     switch (p) {
-      case MaintenanceTaskPriority.Urgent: return 'bg-[#fdf3f0] text-[#b45c43] border-[#f9dad3]';
-      case MaintenanceTaskPriority.High: return 'bg-[#f9f4f0] text-[#a47148] border-[#f1e6df]';
-      default: return 'bg-slate-50 text-slate-600 border-slate-200';
+      case MaintenanceTaskPriority.Urgent:
+        return "bg-[#fdf3f0] text-[#b45c43] border-[#f9dad3]";
+      case MaintenanceTaskPriority.High:
+        return "bg-[#f9f4f0] text-[#a47148] border-[#f1e6df]";
+      default:
+        return "bg-slate-50 text-slate-600 border-slate-200";
     }
   };
 
-  const isRecurring = entity.recurrence && entity.recurrence.frequency !== MaintenanceRecurrenceFrequency.None;
-  const linkedSpaces = availableSpaces.filter(s => entity.spaceIds?.includes(s.id));
+  const isRecurring =
+    entity.recurrence &&
+    entity.recurrence.frequency !== MaintenanceRecurrenceFrequency.None;
+  const linkedSpaces = availableSpaces.filter((s) =>
+    entity.spaceIds?.includes(s.id)
+  );
 
   const handleSaveEdit = (data: Partial<MaintenanceTask>) => {
-    onUpdateEntity('task', entity.id, data);
+    onUpdateEntity("task", entity.id, data);
     setIsEditModalOpen(false);
   };
 
@@ -55,9 +93,21 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
   };
 
   const metadataRows = [
-    { label: 'Record ID', value: entity.id, valueClassName: 'font-mono text-xs' },
-    { label: 'Property', value: entity.propertyId, valueClassName: 'font-mono text-xs' },
-    { label: 'Created', value: new Date(entity.createdAtUtc).toLocaleDateString() },
+    {
+      label: "Record ID",
+      value: entity.id,
+      valueClassName: "font-mono text-xs",
+    },
+    {
+      label: "Created",
+      value: new Date(entity.createdAtUtc).toLocaleDateString(),
+    },
+    {
+      label: "Last Updated",
+      value: entity.updatedAtUtc
+        ? new Date(entity.updatedAtUtc).toLocaleDateString()
+        : "—",
+    },
   ];
 
   return (
@@ -74,7 +124,8 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
           <div className="bg-white border border-slate-200 rounded-[2.5rem] p-10 space-y-8 shadow-sm">
             <SectionHeading label="Scope of Work" icon={Wrench} />
             <p className="text-slate-800 leading-relaxed text-xl font-medium">
-              {entity.description || "Historical maintenance log with no specific description provided."}
+              {entity.description ||
+                "Historical maintenance log with no specific description provided."}
             </p>
           </div>
 
@@ -83,46 +134,76 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 pt-2">
               <div className="space-y-6">
                 <div className="space-y-4">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Urgency Rank</p>
-                  <span className={`px-4 py-1.5 rounded-full text-xs font-black border uppercase tracking-widest inline-block ${getPriorityStyles(entity.priority)}`}>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    Urgency Rank
+                  </p>
+                  <span
+                    className={`px-4 py-1.5 rounded-full text-xs font-black border uppercase tracking-widest inline-block ${getPriorityStyles(
+                      entity.priority
+                    )}`}
+                  >
                     {entity.priority}
                   </span>
                 </div>
                 <div className="space-y-4">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Workflow State</p>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    Workflow State
+                  </p>
                   <div className="flex items-center space-x-3">
-                    <div className={`w-3 h-3 rounded-full ${entity.status === 'Completed' ? 'bg-[#5a6b5d]' : 'bg-[#a47148] animate-pulse'}`}></div>
-                    <span className="text-2xl font-black text-slate-900 tracking-tight">{entity.status}</span>
+                    <div
+                      className={`w-3 h-3 rounded-full ${
+                        entity.status === "Completed"
+                          ? "bg-[#5a6b5d]"
+                          : "bg-[#a47148] animate-pulse"
+                      }`}
+                    ></div>
+                    <span className="text-2xl font-black text-slate-900 tracking-tight">
+                      {entity.status}
+                    </span>
                   </div>
                   {entity.completedAtUtc && (
                     <div className="flex items-center text-[#5a6b5d] font-bold text-sm mt-1">
                       <CheckCircle size={14} className="mr-2" />
-                      Finished: {new Date(entity.completedAtUtc).toLocaleDateString()}
+                      Finished:{" "}
+                      {new Date(entity.completedAtUtc).toLocaleDateString()}
                     </div>
                   )}
                 </div>
               </div>
               <div className="space-y-6">
                 <div className="space-y-4">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Target Resolution</p>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    Target Resolution
+                  </p>
                   <div className="flex items-center text-slate-900 font-black text-2xl tracking-tight">
                     <Calendar size={20} className="mr-3 text-[#a47148]" />
-                    {entity.dueDateUtc ? new Date(entity.dueDateUtc).toLocaleDateString() : 'Unscheduled'}
+                    {entity.dueDateUtc
+                      ? new Date(entity.dueDateUtc).toLocaleDateString()
+                      : "Unscheduled"}
                   </div>
                 </div>
                 <div className="space-y-4">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Targeted Locations</p>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    Targeted Locations
+                  </p>
                   {linkedSpaces.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
-                      {linkedSpaces.map(s => (
-                        <div key={s.id} className="flex items-center space-x-2 px-3 py-1.5 bg-slate-50 rounded-xl border border-slate-100">
+                      {linkedSpaces.map((s) => (
+                        <div
+                          key={s.id}
+                          className="flex items-center space-x-2 px-3 py-1.5 bg-slate-50 rounded-xl border border-slate-100"
+                        >
                           <Layout size={14} className="text-slate-400" />
-                          <span className="text-xs font-bold text-slate-700">{s.name}</span>
+                          <span className="text-xs font-bold text-slate-700">
+                            {s.name}
+                          </span>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm font-bold text-slate-500 italic">Entire Property / Global</p>
+                    <p className="text-sm font-bold text-slate-500 italic">
+                      Entire Property / Global
+                    </p>
                   )}
                 </div>
               </div>
@@ -137,15 +218,29 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                 <div className="space-y-1">
-                  <p className="text-3xl font-black text-slate-900 tracking-tight">Every {entity.recurrence?.interval} {entity.recurrence?.frequency.slice(0, -2)}{entity.recurrence?.interval! > 1 ? 's' : ''}</p>
-                  <p className="text-[10px] font-black text-[#a47148] uppercase tracking-widest">Active Automation</p>
+                  <p className="text-3xl font-black text-slate-900 tracking-tight">
+                    Every {entity.recurrence?.interval}{" "}
+                    {entity.recurrence?.frequency.slice(0, -2)}
+                    {entity.recurrence?.interval! > 1 ? "s" : ""}
+                  </p>
+                  <p className="text-[10px] font-black text-[#a47148] uppercase tracking-widest">
+                    Active Automation
+                  </p>
                 </div>
                 <div className="space-y-3">
-                   <div className="flex items-center text-sm font-bold text-slate-700">
-                     <Clock size={16} className="mr-3 text-[#a47148]" />
-                     <span>Next auto-generation: {entity.nextDateUtc?.split('T')[0] || 'Scheduled on completion'}</span>
-                   </div>
-                   <p className="text-xs text-slate-500 font-medium leading-relaxed">This task will automatically regenerate a new pending entry based on the recurrence gap upon completion of the current milestone.</p>
+                  <div className="flex items-center text-sm font-bold text-slate-700">
+                    <Clock size={16} className="mr-3 text-[#a47148]" />
+                    <span>
+                      Next auto-generation:{" "}
+                      {entity.nextDateUtc?.split("T")[0] ||
+                        "Scheduled on completion"}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                    This task will automatically regenerate a new pending entry
+                    based on the recurrence gap upon completion of the current
+                    milestone.
+                  </p>
                 </div>
               </div>
             </div>
@@ -154,18 +249,21 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
 
         <div className="lg:col-span-1 space-y-12">
           <SystemMetadataCard rows={metadataRows} />
-          <TagsSection 
-            entityTags={entity.tags || []} 
-            availableTags={availableTags} 
-            onAddTag={onAddTag} 
-            onRemoveTag={onRemoveTag} 
+          <TagsSection
+            entityTags={entity.tags || []}
+            availableTags={availableTags}
+            onAddTag={onAddTag}
+            onRemoveTag={onRemoveTag}
           />
           <NotesSection notes={entity.notes || []} onAddNote={onAddNote} />
-          <AttachmentsSection linkedDocuments={linkedDocuments} onAddAttachment={onAddAttachment} />
+          <AttachmentsSection
+            linkedDocuments={linkedDocuments}
+            onAddAttachment={onAddAttachment}
+          />
         </div>
       </div>
 
-      <MaintenanceTaskModal 
+      <MaintenanceTaskModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         onSave={handleSaveEdit}
@@ -178,26 +276,33 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
       {/* Delete Confirmation Modal */}
       {isDeleteConfirmOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300" onClick={() => setIsDeleteConfirmOpen(false)} />
+          <div
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300"
+            onClick={() => setIsDeleteConfirmOpen(false)}
+          />
           <div className="relative bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="p-10 text-center space-y-8">
               <div className="w-20 h-20 bg-[#fdf3f0] text-[#b45c43] rounded-3xl flex items-center justify-center mx-auto shadow-sm">
                 <AlertTriangle size={40} />
               </div>
               <div className="space-y-3">
-                <h2 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">Scrub Task?</h2>
+                <h2 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
+                  Scrub Task?
+                </h2>
                 <p className="text-sm text-slate-500 font-medium leading-relaxed">
-                  Removing <strong>{entity.title}</strong> will purge this entry and any historical cost or labor metrics from the property records.
+                  Removing <strong>{entity.title}</strong> will purge this entry
+                  and any historical cost or labor metrics from the property
+                  records.
                 </p>
               </div>
               <div className="flex flex-col space-y-3 pt-2">
-                <button 
+                <button
                   onClick={confirmDelete}
                   className="w-full py-4 bg-[#b45c43] text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-[#9d4b35] transition-all shadow-xl shadow-[#b45c43]/20 active:scale-[0.98]"
                 >
                   Finalize Removal
                 </button>
-                <button 
+                <button
                   onClick={() => setIsDeleteConfirmOpen(false)}
                   className="w-full py-4 bg-slate-50 text-slate-400 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-slate-100 transition-all active:scale-[0.98]"
                 >
