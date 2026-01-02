@@ -20,7 +20,6 @@ import DocumentsList from './components/DocumentsList';
 import InventoryCategoriesList from './components/InventoryCategoriesList';
 import GroupDashboard from './components/GroupDashboard';
 import EntityDetail from './components/EntityDetail';
-import AIAdvisor from './components/AIAdvisor';
 import ProfilePage from './components/ProfilePage';
 import InsuranceList from './components/InsuranceList';
 import UtilityList from './components/UtilityList';
@@ -166,7 +165,6 @@ const App: React.FC = () => {
   const [utilities, setUtilities] = useState<UtilityAccount[]>(MOCK_UTILITIES);
   const [activities, setActivities] = useState<ActivityLogEntry[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [advisorOpen, setAdvisorOpen] = useState(false);
   const [selectedEntity, setSelectedEntity] = useState<{ type: string, id: string } | null>(null);
 
   // COMPUTED FINANCE DATA
@@ -298,7 +296,6 @@ const App: React.FC = () => {
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <Header 
           sidebarOpen={sidebarOpen} 
-          toggleAdvisor={() => setAdvisorOpen(!advisorOpen)} 
           setCurrentView={navigateTo}
         />
         <main className="flex-1 overflow-y-auto p-4 md:p-8">
@@ -367,7 +364,6 @@ const App: React.FC = () => {
           </div>
         </main>
       </div>
-      <AIAdvisor isOpen={advisorOpen} onClose={() => setAdvisorOpen(false)} currentView={currentView} households={households} />
     </div>
   );
 };

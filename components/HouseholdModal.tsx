@@ -1,8 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import { X, Home, AlignLeft, Archive, Sparkles, Loader2, Info } from 'lucide-react';
+import { X, Home, AlignLeft, Archive, Info } from 'lucide-react';
 import { Household } from '../types';
-import { generateSmartDescription } from '../services/geminiService';
 
 interface HouseholdModalProps {
   isOpen: boolean;
@@ -15,7 +14,6 @@ const HouseholdModal: React.FC<HouseholdModalProps> = ({ isOpen, onClose, onSave
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [isArchived, setIsArchived] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -28,14 +26,6 @@ const HouseholdModal: React.FC<HouseholdModalProps> = ({ isOpen, onClose, onSave
       setIsArchived(false);
     }
   }, [initialData, isOpen]);
-
-  const handleMagicGenerate = async () => {
-    if (!name) return;
-    setIsGenerating(true);
-    const suggested = await generateSmartDescription(name);
-    if (suggested) setDescription(suggested.trim());
-    setIsGenerating(false);
-  };
 
   if (!isOpen) return null;
 
@@ -85,15 +75,6 @@ const HouseholdModal: React.FC<HouseholdModalProps> = ({ isOpen, onClose, onSave
                 <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center">
                   <AlignLeft size={12} className="mr-1.5" /> Description
                 </label>
-                <button 
-                  type="button"
-                  onClick={handleMagicGenerate}
-                  disabled={!name || isGenerating}
-                  className="text-[10px] flex items-center space-x-1 font-bold text-indigo-600 hover:text-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed group"
-                >
-                  {isGenerating ? <Loader2 size={10} className="animate-spin" /> : <Sparkles size={10} className="group-hover:animate-pulse" />}
-                  <span>SMART GENERATE</span>
-                </button>
               </div>
               <textarea 
                 value={description}

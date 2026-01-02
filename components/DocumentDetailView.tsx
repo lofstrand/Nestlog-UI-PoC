@@ -286,7 +286,7 @@ const DocumentDetailView: React.FC<DocumentDetailViewProps> = ({
           </div>
         </div>
       )}
-    </div>
+    </DetailLayout>
   );
 };
 

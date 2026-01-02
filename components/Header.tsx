@@ -1,11 +1,10 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, Sun, Bell, Sparkles, ChevronDown, Check, Clock, AlertTriangle, Info, Wrench, ShieldAlert } from 'lucide-react';
+import { Search, Sun, Bell, ChevronDown, Check, Clock, AlertTriangle, Info, Wrench, ShieldAlert } from 'lucide-react';
 import { View } from '../types';
 
 interface HeaderProps {
   sidebarOpen: boolean;
-  toggleAdvisor: () => void;
   setCurrentView: (view: View) => void;
 }
 
@@ -14,18 +13,17 @@ interface Notification {
   title: string;
   desc: string;
   time: string;
-  type: 'maintenance' | 'security' | 'system' | 'advisor';
+  type: 'maintenance' | 'security' | 'system';
   isUnread: boolean;
 }
 
 const MOCK_NOTIFICATIONS: Notification[] = [
   { id: '1', title: 'HVAC Filter Due', desc: 'Lakeside Cabin main unit needs a filter swap.', time: '12m ago', type: 'maintenance', isUnread: true },
   { id: '2', title: 'Warranty Expiring', desc: 'LG Refrigerator warranty ends in 3 days.', time: '2h ago', type: 'security', isUnread: true },
-  { id: '3', title: 'AI Recommendation', desc: 'New layout suggested for your Library view.', time: '5h ago', type: 'advisor', isUnread: false },
   { id: '4', title: 'System Update', desc: 'Nestlog Pro v2.4.1 is now active.', time: '1d ago', type: 'system', isUnread: false },
 ];
 
-const Header: React.FC<HeaderProps> = ({ sidebarOpen, toggleAdvisor, setCurrentView }) => {
+const Header: React.FC<HeaderProps> = ({ sidebarOpen, setCurrentView }) => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>(MOCK_NOTIFICATIONS);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -54,7 +52,6 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, toggleAdvisor, setCurrentV
     switch (type) {
       case 'maintenance': return <Wrench size={14} className="text-[#a47148]" />;
       case 'security': return <ShieldAlert size={14} className="text-[#b45c43]" />;
-      case 'advisor': return <Sparkles size={14} className="text-indigo-500" />;
       default: return <Info size={14} className="text-slate-400" />;
     }
   };
@@ -91,15 +88,6 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, toggleAdvisor, setCurrentV
             </button>
           </div>
         </div>
-
-        <button 
-          onClick={toggleAdvisor}
-          className="p-2 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-lg transition-colors relative group"
-        >
-          <Sparkles size={18} />
-          <span className="absolute -top-1 -right-1 w-2 h-2 bg-slate-800 rounded-full ring-2 ring-white"></span>
-          <span className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2 py-1 bg-slate-900 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">AI Advisor</span>
-        </button>
 
         <button className="p-2 text-slate-500 hover:bg-slate-50 rounded-lg transition-colors">
           <Sun size={18} />

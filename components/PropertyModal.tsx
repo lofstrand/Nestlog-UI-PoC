@@ -1,8 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import { X, Building2, MapPin, Calendar, Star, Info, Sparkles, Loader2, Archive, Maximize } from 'lucide-react';
+import { X, Building2, MapPin, Calendar, Star, Info, Archive, Maximize } from 'lucide-react';
 import { Property, Address } from '../types';
-import { generatePropertyBio } from '../services/geminiService';
 
 interface PropertyModalProps {
   isOpen: boolean;

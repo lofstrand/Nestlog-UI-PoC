@@ -200,7 +200,7 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
           </div>
         </div>
       )}
-    </div>
+    </DetailLayout>
   );
 };
 
