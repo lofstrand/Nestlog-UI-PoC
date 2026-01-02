@@ -10,6 +10,7 @@ import PropertyTeamSection from './PropertyTeamSection';
 import VisualArchive from './VisualArchive';
 import GalleryModal from './GalleryModal';
 import PropertyModal from './PropertyModal';
+import SystemMetadataCard from './SystemMetadataCard';
 import { SectionHeading, Badge } from './UIPrimitives';
 
 interface PropertyDetailViewProps {
@@ -66,6 +67,12 @@ const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
     onDelete();
     setIsDeleteConfirmOpen(false);
   };
+
+  const metadataRows = [
+    { label: 'Record ID', value: entity.id, valueClassName: 'font-mono text-xs' },
+    { label: 'Created', value: new Date(entity.createdAtUtc).toLocaleDateString() },
+    { label: 'Last Updated', value: entity.updatedAtUtc ? new Date(entity.updatedAtUtc).toLocaleDateString() : '—' },
+  ];
 
   const handleViewContact = (id: string) => {
     if (onNavigateToEntity) {
@@ -200,6 +207,8 @@ const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
             allContacts={availableContacts}
             onViewContact={handleViewContact}
           />
+
+          <SystemMetadataCard rows={metadataRows} />
           
           <TagsSection 
             entityTags={entity.tags || []} 

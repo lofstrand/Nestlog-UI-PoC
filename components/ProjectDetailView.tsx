@@ -32,6 +32,7 @@ import AttachmentsSection from './AttachmentsSection';
 import VisualArchive from './VisualArchive';
 import GalleryModal from './GalleryModal';
 import ProjectModal from './ProjectModal';
+import SystemMetadataCard from './SystemMetadataCard';
 import { SectionHeading, Badge, Button as UIButton } from './UIPrimitives';
 
 interface ProjectDetailViewProps {
@@ -103,6 +104,13 @@ const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
     onDelete();
     setIsDeleteConfirmOpen(false);
   };
+
+  const metadataRows = [
+    { label: 'Record ID', value: entity.id, valueClassName: 'font-mono text-xs' },
+    { label: 'Property', value: entity.propertyId, valueClassName: 'font-mono text-xs' },
+    { label: 'Created', value: new Date(entity.createdAtUtc).toLocaleDateString() },
+    { label: 'Last Updated', value: entity.updatedAtUtc ? new Date(entity.updatedAtUtc).toLocaleDateString() : '—' },
+  ];
 
   // --- ROADMAP LOGIC ---
   const handleAddPhase = (e?: React.FormEvent) => {
@@ -663,6 +671,7 @@ const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
         </div>
 
         <div className="lg:col-span-1 space-y-12">
+          <SystemMetadataCard rows={metadataRows} />
           <TagsSection 
             entityTags={entity.tags || []} 
             availableTags={availableTags} 

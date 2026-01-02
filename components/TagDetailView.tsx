@@ -1,11 +1,12 @@
 
 import React, { useState } from 'react';
-import { Tags, BarChart2, Info, Layout, Box, FileText, Wrench, FolderOpen, History, AlertTriangle } from 'lucide-react';
+import { Tags, BarChart2, Info, Layout, Box, FileText, Wrench, FolderOpen, AlertTriangle } from 'lucide-react';
 import { Tag as TagType, Document } from '../types';
 import DetailLayout from './DetailLayout';
 import NotesSection from './NotesSection';
 import AttachmentsSection from './AttachmentsSection';
 import TagModal from './TagModal';
+import SystemMetadataCard from './SystemMetadataCard';
 import { SectionHeading, Badge } from './UIPrimitives';
 
 interface TagDetailViewProps {
@@ -44,6 +45,13 @@ const TagDetailView: React.FC<TagDetailViewProps> = ({
     onDelete();
     setIsDeleteConfirmOpen(false);
   };
+
+  const metadataRows = [
+    { label: 'Record ID', value: entity.id, valueClassName: 'font-mono text-xs' },
+    { label: 'Property', value: entity.propertyId, valueClassName: 'font-mono text-xs' },
+    { label: 'Index Domain', value: 'Cross-Property (Global)' },
+    { label: 'Audit Policy', value: 'Manual Application' },
+  ];
 
   return (
     <DetailLayout
@@ -122,20 +130,7 @@ const TagDetailView: React.FC<TagDetailViewProps> = ({
         </div>
 
         <div className="lg:col-span-1 space-y-12">
-          {/* Metadata Context */}
-          <div className="bg-slate-50 border border-slate-200 rounded-[2rem] p-8 space-y-6 shadow-inner">
-             <SectionHeading label="System Metadata" icon={History} />
-             <div className="space-y-4">
-                <div>
-                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Index Domain</p>
-                   <p className="text-sm font-bold text-slate-900 tracking-tight">Cross-Property (Global)</p>
-                </div>
-                <div>
-                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Audit Policy</p>
-                   <p className="text-sm font-bold text-slate-900 tracking-tight">Manual Application</p>
-                </div>
-             </div>
-          </div>
+          <SystemMetadataCard rows={metadataRows} />
 
           <NotesSection notes={entity.notes || []} onAddNote={onAddNote} />
           <AttachmentsSection linkedDocuments={linkedDocuments} onAddAttachment={onAddAttachment} />

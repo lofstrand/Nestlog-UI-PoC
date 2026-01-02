@@ -7,6 +7,7 @@ import NotesSection from './NotesSection';
 import TagsSection from './TagsSection';
 import AttachmentsSection from './AttachmentsSection';
 import InventoryCategoryModal from './InventoryCategoryModal';
+import SystemMetadataCard from './SystemMetadataCard';
 import { SectionHeading, Badge } from './UIPrimitives';
 
 interface InventoryCategoryDetailViewProps {
@@ -53,6 +54,12 @@ const InventoryCategoryDetailView: React.FC<InventoryCategoryDetailViewProps> = 
     onDelete();
     setIsDeleteConfirmOpen(false);
   };
+
+  const metadataRows = [
+    { label: 'Record ID', value: entity.id, valueClassName: 'font-mono text-xs' },
+    { label: 'Property', value: entity.propertyId, valueClassName: 'font-mono text-xs' },
+    { label: 'Parent', value: parent?.name || 'Root Hierarchy' },
+  ];
 
   return (
     <DetailLayout
@@ -163,6 +170,8 @@ const InventoryCategoryDetailView: React.FC<InventoryCategoryDetailViewProps> = 
                 </div>
              </div>
           </div>
+
+          <SystemMetadataCard rows={metadataRows} />
 
           <TagsSection 
             entityTags={entity.tags || []} 

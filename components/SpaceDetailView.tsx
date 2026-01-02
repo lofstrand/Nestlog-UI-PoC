@@ -10,6 +10,7 @@ import VisualArchive from './VisualArchive';
 import GalleryModal from './GalleryModal';
 import SpaceModal from './SpaceModal';
 import SpaceSurfaceModal from './SpaceSurfaceModal';
+import SystemMetadataCard from './SystemMetadataCard';
 import { Badge, SectionHeading, Button } from './UIPrimitives';
 
 interface SpaceDetailViewProps {
@@ -65,6 +66,13 @@ const SpaceDetailView: React.FC<SpaceDetailViewProps> = ({
     onDelete();
     setIsDeleteConfirmOpen(false);
   };
+
+  const metadataRows = [
+    { label: 'Record ID', value: entity.id, valueClassName: 'font-mono text-xs' },
+    { label: 'Property', value: entity.propertyId, valueClassName: 'font-mono text-xs' },
+    { label: 'Created', value: new Date(entity.createdAtUtc).toLocaleDateString() },
+    { label: 'Last Updated', value: new Date(entity.updatedAtUtc).toLocaleDateString() },
+  ];
 
   const handleAddSurface = () => {
     setEditingSurface(null);
@@ -243,6 +251,7 @@ const SpaceDetailView: React.FC<SpaceDetailViewProps> = ({
         </div>
 
         <div className="lg:col-span-1 space-y-12">
+          <SystemMetadataCard rows={metadataRows} />
           <TagsSection 
             entityTags={entity.tags || []} 
             availableTags={availableTags} 

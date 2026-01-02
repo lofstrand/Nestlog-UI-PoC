@@ -8,6 +8,7 @@ import AttachmentsSection from './AttachmentsSection';
 import { SectionHeading, Badge, Button as UIButton, Input } from './UIPrimitives';
 import InsurancePolicyModal from './InsurancePolicyModal';
 import DocumentPreview from './DocumentPreview';
+import SystemMetadataCard from './SystemMetadataCard';
 
 interface InsuranceDetailViewProps {
   entity: InsurancePolicy;
@@ -246,6 +247,13 @@ const InsuranceDetailView: React.FC<InsuranceDetailViewProps> = ({
     onDelete();
     setIsDeleteConfirmOpen(false);
   };
+
+  const metadataRows = [
+    { label: 'Record ID', value: entity.id, valueClassName: 'font-mono text-xs' },
+    { label: 'Property', value: entity.propertyId, valueClassName: 'font-mono text-xs' },
+    { label: 'Provider ID', value: entity.providerId, valueClassName: 'font-mono text-xs' },
+    { label: 'Policy #', value: entity.policyNumber, valueClassName: 'font-mono text-xs' },
+  ];
 
   const getModeIcon = (mode?: ClaimCommunicationMode) => {
     switch (mode) {
@@ -796,6 +804,7 @@ const InsuranceDetailView: React.FC<InsuranceDetailViewProps> = ({
         </div>
 
         <div className="lg:col-span-1 space-y-12">
+          <SystemMetadataCard rows={metadataRows} />
           <TagsSection 
             entityTags={entity.tags || []} 
             availableTags={availableTags} 

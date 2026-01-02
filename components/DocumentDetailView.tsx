@@ -9,6 +9,7 @@ import AttachmentsSection from './AttachmentsSection';
 import { SectionHeading, Badge } from './UIPrimitives';
 import DocumentPreview from './DocumentPreview';
 import DocumentModal from './DocumentModal';
+import SystemMetadataCard from './SystemMetadataCard';
 
 interface DocumentDetailViewProps {
   entity: Document;
@@ -52,6 +53,13 @@ const DocumentDetailView: React.FC<DocumentDetailViewProps> = ({
     onDelete();
     setIsDeleteConfirmOpen(false);
   };
+
+  const metadataRows = [
+    { label: 'Record ID', value: entity.id, valueClassName: 'font-mono text-xs' },
+    { label: 'Property', value: entity.propertyId, valueClassName: 'font-mono text-xs' },
+    { label: 'Created', value: new Date(entity.createdAtUtc).toLocaleDateString() },
+    { label: 'Last Updated', value: entity.updatedAtUtc ? new Date(entity.updatedAtUtc).toLocaleDateString() : '—' },
+  ];
 
   return (
     <DetailLayout
@@ -230,6 +238,8 @@ const DocumentDetailView: React.FC<DocumentDetailViewProps> = ({
                 </div>
              </div>
           )}
+
+          <SystemMetadataCard rows={metadataRows} />
 
           <TagsSection 
             entityTags={entity.tags || []} 

@@ -7,6 +7,7 @@ import NotesSection from './NotesSection';
 import TagsSection from './TagsSection';
 import AttachmentsSection from './AttachmentsSection';
 import MaintenanceTaskModal from './MaintenanceTaskModal';
+import SystemMetadataCard from './SystemMetadataCard';
 import { SectionHeading, Badge } from './UIPrimitives';
 
 interface TaskDetailViewProps {
@@ -52,6 +53,12 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
     onDelete();
     setIsDeleteConfirmOpen(false);
   };
+
+  const metadataRows = [
+    { label: 'Record ID', value: entity.id, valueClassName: 'font-mono text-xs' },
+    { label: 'Property', value: entity.propertyId, valueClassName: 'font-mono text-xs' },
+    { label: 'Created', value: new Date(entity.createdAtUtc).toLocaleDateString() },
+  ];
 
   return (
     <DetailLayout
@@ -146,6 +153,7 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
         </div>
 
         <div className="lg:col-span-1 space-y-12">
+          <SystemMetadataCard rows={metadataRows} />
           <TagsSection 
             entityTags={entity.tags || []} 
             availableTags={availableTags} 

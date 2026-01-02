@@ -10,6 +10,7 @@ import HouseholdMembersSection from './HouseholdMembersSection';
 import HouseholdArchitectureSection from './HouseholdArchitectureSection';
 import InviteModal from './InviteModal';
 import HouseholdModal from './HouseholdModal';
+import SystemMetadataCard from './SystemMetadataCard';
 import { Badge } from './UIPrimitives';
 
 interface HouseholdDetailViewProps {
@@ -50,6 +51,11 @@ const HouseholdDetailView: React.FC<HouseholdDetailViewProps> = ({
     onDelete();
     setIsDeleteConfirmOpen(false);
   };
+
+  const metadataRows = [
+    { label: 'Record ID', value: entity.id, valueClassName: 'font-mono text-xs' },
+    { label: 'Status', value: entity.status },
+  ];
 
   return (
     <DetailLayout
@@ -98,6 +104,7 @@ const HouseholdDetailView: React.FC<HouseholdDetailViewProps> = ({
         </div>
         
         <div className="lg:col-span-1 space-y-12">
+          <SystemMetadataCard rows={metadataRows} />
           <TagsSection 
             entityTags={entity.tags || []} 
             availableTags={availableTags} 

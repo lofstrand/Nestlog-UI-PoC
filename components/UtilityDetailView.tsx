@@ -14,6 +14,7 @@ import AttachmentsSection from './AttachmentsSection';
 // Fixed: Added missing Input to imports from UIPrimitives to resolve 'Cannot find name' error on line 237
 import { SectionHeading, Badge, Button as UIButton, Input } from './UIPrimitives';
 import UtilityAccountModal from './UtilityAccountModal';
+import SystemMetadataCard from './SystemMetadataCard';
 
 interface UtilityDetailViewProps {
   entity: UtilityAccount;
@@ -65,6 +66,13 @@ const UtilityDetailView: React.FC<UtilityDetailViewProps> = ({
   const displayAverage = entity.useCalculatedAverage ? calculatedAverage : entity.averageMonthlyCost;
   const provider = availableContacts.find(c => c.id === entity.providerId);
   const meterSpace = availableSpaces.find(s => s.id === entity.spaceId);
+
+  const metadataRows = [
+    { label: 'Record ID', value: entity.id, valueClassName: 'font-mono text-xs' },
+    { label: 'Property', value: entity.propertyId, valueClassName: 'font-mono text-xs' },
+    { label: 'Provider ID', value: entity.providerId, valueClassName: 'font-mono text-xs' },
+    { label: 'Account #', value: entity.accountNumber, valueClassName: 'font-mono text-xs' },
+  ];
 
   const getThemeColor = (type: string) => {
     switch (type) {
@@ -333,6 +341,7 @@ const UtilityDetailView: React.FC<UtilityDetailViewProps> = ({
         </div>
 
         <div className="lg:col-span-1 space-y-12">
+          <SystemMetadataCard rows={metadataRows} />
           <TagsSection 
             entityTags={entity.tags || []} 
             availableTags={availableTags} 

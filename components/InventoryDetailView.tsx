@@ -7,6 +7,7 @@ import NotesSection from './NotesSection';
 import TagsSection from './TagsSection';
 import AttachmentsSection from './AttachmentsSection';
 import InventoryModal from './InventoryModal';
+import SystemMetadataCard from './SystemMetadataCard';
 import { SectionHeading, Badge } from './UIPrimitives';
 
 interface InventoryDetailViewProps {
@@ -98,6 +99,13 @@ const InventoryDetailView: React.FC<InventoryDetailViewProps> = ({
     onDelete();
     setIsDeleteConfirmOpen(false);
   };
+
+  const metadataRows = [
+    { label: 'Record ID', value: entity.id, valueClassName: 'font-mono text-xs' },
+    { label: 'Property', value: entity.propertyId, valueClassName: 'font-mono text-xs' },
+    { label: 'Created', value: new Date(entity.createdAtUtc).toLocaleDateString() },
+    { label: 'Last Updated', value: entity.updatedAtUtc ? new Date(entity.updatedAtUtc).toLocaleDateString() : '—' },
+  ];
 
   return (
     <DetailLayout
@@ -317,19 +325,7 @@ const InventoryDetailView: React.FC<InventoryDetailViewProps> = ({
         </div>
 
         <div className="lg:col-span-1 space-y-12">
-          <div className="bg-slate-50 border border-slate-200 rounded-[2rem] p-6 space-y-5 shadow-inner">
-            <SectionHeading label="System Metadata" icon={History} />
-            <div className="divide-y divide-slate-200/70">
-              <div className="flex items-center justify-between py-3">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Created</span>
-                <span className="text-sm font-bold text-slate-900 tracking-tight">{new Date(entity.createdAtUtc).toLocaleDateString()}</span>
-              </div>
-              <div className="flex items-center justify-between py-3">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Last Updated</span>
-                <span className="text-sm font-bold text-slate-900 tracking-tight">{entity.updatedAtUtc ? new Date(entity.updatedAtUtc).toLocaleDateString() : '—'}</span>
-              </div>
-            </div>
-          </div>
+          <SystemMetadataCard rows={metadataRows} />
 
           <TagsSection 
             entityTags={entity.tags || []} 
