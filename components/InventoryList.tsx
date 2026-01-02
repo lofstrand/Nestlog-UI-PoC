@@ -157,7 +157,6 @@ const InventoryList: React.FC<InventoryListProps> = ({ items, spaces, categories
         initialData={null} 
         availableSpaces={spaces} 
         availableCategories={categories} 
-        allInventory={items}
       />
     </div>
   );

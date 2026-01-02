@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { X, Package, Tag, Layout, Calendar, DollarSign, TrendingUp, Hash, Tag as BrandIcon, ShoppingCart, Activity, Ruler, Layers, Zap, QrCode } from 'lucide-react';
+import { X, Box, MapPin, DollarSign, TrendingUp, Hash, ShoppingCart, Activity, Layers, Zap } from 'lucide-react';
 import { InventoryItem, Space, InventoryCategory, InventoryItemStatus } from '../types';
 import { Input, SectionHeading } from './UIPrimitives';
 
@@ -11,21 +11,19 @@ interface InventoryModalProps {
   initialData?: InventoryItem | null;
   availableSpaces: Space[];
   availableCategories: InventoryCategory[];
-  allInventory: InventoryItem[];
 }
 
 const STATUS_OPTIONS = Object.values(InventoryItemStatus);
 const ENERGY_CLASSES = ['A', 'B', 'C', 'D', 'E', 'F', 'G'] as const;
 
-const InventoryModal: React.FC<InventoryModalProps> = ({ isOpen, onClose, onSave, initialData, availableSpaces, availableCategories, allInventory }) => {
+const InventoryModal: React.FC<InventoryModalProps> = ({ isOpen, onClose, onSave, initialData, availableSpaces, availableCategories }) => {
   const [name, setName] = useState('');
   const [brand, setBrand] = useState('');
   const [modelNumber, setModelNumber] = useState('');
   const [serialNumber, setSerialNumber] = useState('');
-  const [qrCodeIdentifier, setQrCodeIdentifier] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
   const [category, setCategory] = useState('Other');
   const [spaceId, setSpaceId] = useState('');
-  const [parentItemId, setParentItemId] = useState('');
   const [status, setStatus] = useState<InventoryItemStatus>(InventoryItemStatus.Good);
   const [quantity, setQuantity] = useState('1');
   const [unit, setUnit] = useState('pcs');
@@ -42,10 +40,9 @@ const InventoryModal: React.FC<InventoryModalProps> = ({ isOpen, onClose, onSave
       setBrand(initialData.brand || '');
       setModelNumber(initialData.modelNumber || '');
       setSerialNumber(initialData.serialNumber || '');
-      setQrCodeIdentifier(initialData.qrCodeIdentifier || '');
+      setImageUrl(initialData.imageUrl || '');
       setCategory(initialData.category);
       setSpaceId(initialData.spaceId || '');
-      setParentItemId(initialData.parentItemId || '');
       setStatus(initialData.status || InventoryItemStatus.Good);
       setQuantity(initialData.quantity?.toString() || '1');
       setUnit(initialData.unit || 'pcs');
@@ -60,10 +57,9 @@ const InventoryModal: React.FC<InventoryModalProps> = ({ isOpen, onClose, onSave
       setBrand('');
       setModelNumber('');
       setSerialNumber('');
-      setQrCodeIdentifier('');
+      setImageUrl('');
       setCategory(availableCategories[0]?.name || 'Other');
       setSpaceId('');
-      setParentItemId('');
       setStatus(InventoryItemStatus.Good);
       setQuantity('1');
       setUnit('pcs');
@@ -85,10 +81,9 @@ const InventoryModal: React.FC<InventoryModalProps> = ({ isOpen, onClose, onSave
       brand,
       modelNumber,
       serialNumber,
-      qrCodeIdentifier: qrCodeIdentifier || null,
+      imageUrl: imageUrl || null,
       category,
       spaceId: spaceId || null,
-      parentItemId: parentItemId || null,
       status,
       quantity: parseInt(quantity) || 1,
       unit,
@@ -109,7 +104,7 @@ const InventoryModal: React.FC<InventoryModalProps> = ({ isOpen, onClose, onSave
       <div className="relative bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[95vh]">
         <div className="px-8 py-6 border-b border-gray-100 flex items-center justify-between shrink-0">
           <h2 className="text-xl font-black text-gray-900 tracking-tight leading-none">
-            {initialData ? 'Edit Item' : 'Add New Item'}
+            {initialData ? 'Edit inventory item' : 'New inventory item'}
           </h2>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400">
             <X size={20} />
@@ -118,28 +113,44 @@ const InventoryModal: React.FC<InventoryModalProps> = ({ isOpen, onClose, onSave
 
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 space-y-8">
           <div className="space-y-6">
-            <SectionHeading label="Core Identity" icon={Package} />
+            <SectionHeading label="Asset Overview" icon={Box} />
             <Input 
               autoFocus
-              label="Item Name"
+              label="Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Smart LED Television"
               required
             />
-            <div className="grid grid-cols-2 gap-6">
-              <Input label="Brand / Manufacturer" icon={BrandIcon} value={brand} onChange={(e) => setBrand(e.target.value)} />
-              <Input label="Model Reference" icon={Hash} value={modelNumber} onChange={(e) => setModelNumber(e.target.value)} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Category</label>
+                <select 
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl focus:outline-none focus:ring-4 focus:ring-slate-900/5 transition-all text-sm font-bold text-slate-900 shadow-inner"
+                >
+                  {availableCategories.map(cat => (
+                    <option key={cat.id} value={cat.name}>{cat.name}</option>
+                  ))}
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <Input label="Brand" value={brand} onChange={(e) => setBrand(e.target.value)} placeholder="e.g. Samsung" />
             </div>
-            <Input label="Physical ID (QR/Barcode)" icon={QrCode} value={qrCodeIdentifier} onChange={(e) => setQrCodeIdentifier(e.target.value)} placeholder="e.g. ASSET-001" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Input label="Model number" icon={Hash} value={modelNumber} onChange={(e) => setModelNumber(e.target.value)} placeholder="e.g. QN55Q60" />
+              <Input label="Serial number" value={serialNumber} onChange={(e) => setSerialNumber(e.target.value)} placeholder="e.g. SN-12345" />
+            </div>
+            <Input label="Image URL" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://…" />
           </div>
 
           <div className="space-y-6">
-            <SectionHeading label="Sustainability & Energy" icon={Zap} />
+            <SectionHeading label="Energy" icon={Zap} />
             <div className="grid grid-cols-2 gap-6">
-              <Input label="Power Load (Watts)" type="number" value={powerWattage} onChange={(e) => setPowerWattage(e.target.value)} placeholder="e.g. 150" />
+              <Input label="Power (W)" type="number" value={powerWattage} onChange={(e) => setPowerWattage(e.target.value)} placeholder="e.g. 150" />
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Energy Rating</label>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Energy class</label>
                 <select 
                   value={energyClass}
                   onChange={(e) => setEnergyClass(e.target.value as any)}
@@ -153,10 +164,10 @@ const InventoryModal: React.FC<InventoryModalProps> = ({ isOpen, onClose, onSave
           </div>
 
           <div className="space-y-6">
-            <SectionHeading label="Architectural Placement" icon={Layers} />
+            <SectionHeading label="Location" icon={MapPin} />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Physical Room</label>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Space</label>
                 <select 
                   value={spaceId}
                   onChange={(e) => setSpaceId(e.target.value)}
@@ -166,25 +177,14 @@ const InventoryModal: React.FC<InventoryModalProps> = ({ isOpen, onClose, onSave
                   {availableSpaces.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                 </select>
               </div>
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Contained In (Parent)</label>
-                <select 
-                  value={parentItemId}
-                  onChange={(e) => setParentItemId(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl focus:outline-none focus:ring-4 focus:ring-slate-900/5 focus:border-slate-400 transition-all text-sm font-bold text-slate-900 shadow-inner"
-                >
-                  <option value="">Standalone / Container Root</option>
-                  {allInventory.filter(i => i.id !== initialData?.id).map(i => <option key={i.id} value={i.id}>{i.name}</option>)}
-                </select>
-              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-             <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center">
-                   <Activity size={10} className="mr-1.5" /> Functional Status
-                </label>
+          <div className="space-y-6">
+            <SectionHeading label="Stock & Condition" icon={Activity} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-1">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Condition</label>
                 <select 
                   value={status}
                   onChange={(e) => setStatus(e.target.value as InventoryItemStatus)}
@@ -194,32 +194,21 @@ const InventoryModal: React.FC<InventoryModalProps> = ({ isOpen, onClose, onSave
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <Input label="Stock Qty" type="number" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
-                <Input label="Unit Type" placeholder="pcs" value={unit} onChange={(e) => setUnit(e.target.value)} />
+                <Input label="Quantity" type="number" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
+                <Input label="Unit" placeholder="pcs" value={unit} onChange={(e) => setUnit(e.target.value)} />
               </div>
+            </div>
           </div>
 
           <div className="space-y-6">
-            <SectionHeading label="History & Taxonomy" icon={ShoppingCart} />
+            <SectionHeading label="Procurement & Valuation" icon={ShoppingCart} />
             <div className="grid grid-cols-2 gap-6">
-               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Global Category</label>
-                <select 
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl focus:outline-none focus:ring-4 focus:ring-slate-900/5 transition-all text-sm font-bold text-slate-900 shadow-inner"
-                >
-                  {availableCategories.map(cat => (
-                    <option key={cat.id} value={cat.name}>{cat.name}</option>
-                  ))}
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-              <Input label="Acquisition Date" type="date" value={purchaseDate} onChange={(e) => setPurchaseDate(e.target.value)} />
+              <Input label="Store" value={store} onChange={(e) => setStore(e.target.value)} placeholder="e.g. IKEA" />
+              <Input label="Purchase date" type="date" value={purchaseDate} onChange={(e) => setPurchaseDate(e.target.value)} />
             </div>
             <div className="grid grid-cols-2 gap-6">
-              <Input label="Initial Cost" icon={DollarSign} type="number" step="0.01" value={purchasePrice} onChange={(e) => setPurchasePrice(e.target.value)} />
-              <Input label="Current Value" icon={TrendingUp} type="number" step="0.01" value={value} onChange={(e) => setValue(e.target.value)} />
+              <Input label="Purchase price" icon={DollarSign} type="number" step="0.01" value={purchasePrice} onChange={(e) => setPurchasePrice(e.target.value)} />
+              <Input label="Value" icon={TrendingUp} type="number" step="0.01" value={value} onChange={(e) => setValue(e.target.value)} />
             </div>
           </div>
         </form>
@@ -227,7 +216,7 @@ const InventoryModal: React.FC<InventoryModalProps> = ({ isOpen, onClose, onSave
         <div className="px-8 py-6 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end space-x-3 shrink-0">
           <button onClick={onClose} className="px-6 py-2.5 text-sm font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 rounded-xl transition-all">Dismiss</button>
           <button onClick={handleSubmit} className="px-8 py-2.5 bg-slate-900 text-white text-sm font-black uppercase tracking-widest rounded-xl hover:bg-black shadow-xl shadow-slate-200 transition-all active:scale-95">
-            {initialData ? 'Update Item' : 'Save Item'}
+            {initialData ? 'Update item' : 'Create item'}
           </button>
         </div>
       </div>

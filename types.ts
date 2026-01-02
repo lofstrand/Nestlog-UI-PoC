@@ -338,12 +338,10 @@ export interface InventoryItem {
   id: string;
   propertyId: string;
   spaceId?: string | null;
-  parentItemId?: string | null;
   name: string;
   brand?: string | null;
   modelNumber?: string | null;
   serialNumber?: string | null;
-  qrCodeIdentifier?: string | null;
   category: string;
   status: InventoryItemStatus;
   quantity: number;

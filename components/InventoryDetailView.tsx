@@ -9,8 +9,6 @@ import {
   TrendingUp,
   History,
   Zap,
-  QrCode,
-  Layers,
   ArrowRight,
   AlertTriangle,
   ExternalLink,
@@ -126,8 +124,6 @@ const InventoryDetailView: React.FC<InventoryDetailViewProps> = ({
   const categoryDef = availableCategories.find(
     (c) => c.name === entity.category
   );
-  const subItems = allInventory.filter((i) => i.parentItemId === entity.id);
-  const parentItem = allInventory.find((i) => i.id === entity.parentItemId);
 
   const handleNavigate = (id: string) => {
     if (onNavigateToEntity) {
@@ -199,51 +195,45 @@ const InventoryDetailView: React.FC<InventoryDetailViewProps> = ({
                     </div>
                   )}
                 </div>
+              </div>
 
-                <div className="flex flex-wrap gap-2">
-                  <Badge
-                    color={statusStyles.color}
-                    bgColor={statusStyles.bg}
-                    borderColor={statusStyles.border}
-                  >
-                    <div className="flex items-center space-x-1.5">
-                      <Activity size={10} />
-                      <span>{entity.status}</span>
-                    </div>
-                  </Badge>
-                  {entity.qrCodeIdentifier && (
-                    <Badge
-                      color="text-slate-500"
-                      bgColor="bg-slate-50"
-                      borderColor="border-slate-200"
-                      className="font-mono tracking-tighter"
-                    >
-                      <div className="flex items-center space-x-1.5">
-                        <QrCode size={10} />
-                        <span>{entity.qrCodeIdentifier}</span>
-                      </div>
-                    </Badge>
-                  )}
-                  <Badge
-                    color="text-slate-500"
-                    bgColor="bg-slate-50"
-                    borderColor="border-slate-200"
+              <div className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div
+                    className="p-4 rounded-[1.75rem] border shadow-sm"
                     style={
                       categoryDef?.colorHex
                         ? {
-                            color: categoryDef.colorHex,
                             backgroundColor: `${categoryDef.colorHex}10`,
                             borderColor: `${categoryDef.colorHex}25`,
                           }
                         : undefined
                     }
                   >
-                    {entity.category || "Uncategorized"}
-                  </Badge>
-                </div>
-              </div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                      Category
+                    </p>
+                    <p
+                      className="text-xl font-black tracking-tight mt-1.5"
+                      style={categoryDef?.colorHex ? { color: categoryDef.colorHex } : undefined}
+                    >
+                      {entity.category || "Uncategorized"}
+                    </p>
+                  </div>
 
-              <div className="space-y-8">
+                  <div
+                    className={`p-4 rounded-[1.75rem] border shadow-sm ${statusStyles.bg} ${statusStyles.border}`}
+                  >
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                      Condition
+                    </p>
+                    <div className={`flex items-center space-x-2 mt-1.5 ${statusStyles.color}`}>
+                      <Activity size={16} />
+                      <p className="text-xl font-black tracking-tight">{entity.status}</p>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-2">
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
@@ -292,7 +282,7 @@ const InventoryDetailView: React.FC<InventoryDetailViewProps> = ({
                       Serial Number
                     </p>
                     <p className="text-sm font-bold text-slate-900 font-mono tracking-tight">
-                      {entity.serialNumber || "—"}
+                      {entity.serialNumber || "-"}
                     </p>
                   </div>
 
@@ -406,69 +396,6 @@ const InventoryDetailView: React.FC<InventoryDetailViewProps> = ({
             </div>
           </div>
 
-          {(parentItem || subItems.length > 0) && (
-            <div className="bg-white border border-slate-200 rounded-[2.5rem] p-10 space-y-8 shadow-sm">
-              <SectionHeading label="Relationships" icon={Layers} />
-              <div className="space-y-6">
-                {parentItem && (
-                  <button
-                    onClick={() => handleNavigate(parentItem.id)}
-                    className="w-full flex items-center justify-between p-5 bg-slate-50 border border-slate-100 rounded-[1.75rem] hover:bg-white hover:border-slate-300 transition-all text-left"
-                  >
-                    <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 bg-white border border-slate-200 rounded-2xl flex items-center justify-center text-slate-400 shadow-sm">
-                        <Layers size={18} />
-                      </div>
-                      <div>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                          Contained In
-                        </p>
-                        <p className="text-lg font-black text-slate-900 tracking-tight leading-tight">
-                          {parentItem.name}
-                        </p>
-                      </div>
-                    </div>
-                    <ArrowRight size={16} className="text-slate-300" />
-                  </button>
-                )}
-
-                {subItems.length > 0 && (
-                  <div className="space-y-3">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                      Contains ({subItems.length})
-                    </p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {subItems.map((sub) => (
-                        <button
-                          key={sub.id}
-                          onClick={() => handleNavigate(sub.id)}
-                          className="flex items-center justify-between p-4 bg-white border border-slate-100 rounded-2xl hover:border-slate-300 hover:bg-slate-50/40 transition-all text-left group"
-                        >
-                          <div className="flex items-center space-x-3 min-w-0">
-                            <div className="w-10 h-10 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-white group-hover:border-slate-300 transition-all shrink-0">
-                              <Box size={16} />
-                            </div>
-                            <div className="min-w-0">
-                              <p className="text-sm font-black text-slate-900 truncate">
-                                {sub.name}
-                              </p>
-                              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest truncate">
-                                {sub.category || "Uncategorized"}
-                              </p>
-                            </div>
-                          </div>
-                          <ArrowRight
-                            size={14}
-                            className="text-slate-300 shrink-0"
-                          />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
         </div>
 
         <div className="lg:col-span-1 space-y-12">
