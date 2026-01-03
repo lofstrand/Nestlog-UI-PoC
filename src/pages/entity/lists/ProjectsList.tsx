@@ -4,6 +4,7 @@ import { Search, Plus, Eye, FolderOpen, ChevronUp, ChevronDown, ChevronLeft, Che
 import { Project, Tag, Space, Contact } from "../../../types";
 import ProjectModal from "@/features/projects/components/ProjectModal";
 import { Button, Card, PageHeader, Badge } from "@/components/ui";
+import { usePreferences } from "@/contexts/PreferencesContext";
 
 interface ProjectsListProps {
   projects: Project[];
@@ -21,6 +22,7 @@ const ProjectsList: React.FC<ProjectsListProps> = ({ projects, availableTags, av
   const [sortConfig, setSortConfig] = useState<{ key: keyof Project; direction: 'asc' | 'desc' }>({ key: 'title', direction: 'asc' });
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+  const { formatCurrency } = usePreferences();
 
   const handleSort = (key: keyof Project) => {
     setSortConfig(prev => ({
@@ -135,8 +137,12 @@ const ProjectsList: React.FC<ProjectsListProps> = ({ projects, availableTags, av
                   <td className="px-8 py-6">
                     <div className="space-y-1">
                       <div className="flex items-baseline space-x-1">
-                        <span className="text-sm font-black text-slate-900">${(p.actualCost || 0).toLocaleString()}</span>
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">/ ${(p.budget || 0).toLocaleString()}</span>
+                        <span className="text-sm font-black text-slate-900">
+                          {formatCurrency(p.actualCost || 0)}
+                        </span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase">
+                          / {formatCurrency(p.budget || 0)}
+                        </span>
                       </div>
                       <div className="w-24 h-1 bg-slate-100 rounded-full overflow-hidden">
                         <div 

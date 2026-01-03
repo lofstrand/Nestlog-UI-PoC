@@ -17,6 +17,7 @@ import HouseholdArchitectureSection from "@/features/households/components/House
 import InviteModal from "@/features/households/components/InviteModal";
 import HouseholdModal from "@/features/households/components/HouseholdModal";
 import SystemMetadataCard from "@/components/sections/SystemMetadataCard";
+import ContextPreferencesCard from "@/components/sections/ContextPreferencesCard";
 import { Badge } from "@/components/ui";
 
 interface HouseholdDetailViewProps {
@@ -103,6 +104,13 @@ const HouseholdDetailView: React.FC<HouseholdDetailViewProps> = ({
     setIsDeleteConfirmOpen(false);
   };
 
+  const handleUpdatePreferences = (data: Partial<Household>) => {
+    onUpdateEntity("household", entity.id, {
+      ...data,
+      updatedAtUtc: new Date().toISOString(),
+    });
+  };
+
   const metadataRows = [
     {
       label: "Record ID",
@@ -182,6 +190,16 @@ const HouseholdDetailView: React.FC<HouseholdDetailViewProps> = ({
 
         <div className="lg:col-span-1 space-y-12">
           <SystemMetadataCard rows={metadataRows} />
+          <ContextPreferencesCard
+            unitSystem={entity.unitSystem ?? "metric"}
+            currencyCode={entity.currencyCode ?? "SEK"}
+            onChangeUnitSystem={(next) =>
+              handleUpdatePreferences({ unitSystem: next })
+            }
+            onChangeCurrencyCode={(next) =>
+              handleUpdatePreferences({ currencyCode: next })
+            }
+          />
           <TagsSection
             entityTags={entity.tags || []}
             availableTags={availableTags}

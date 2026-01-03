@@ -7,7 +7,8 @@ export interface Household {
   description: string;
   propertyCount: number;
   lastMaintained: string;
-  currencyCode?: string;
+  unitSystem?: "metric" | "imperial";
+  currencyCode?: "SEK" | "EUR" | "USD";
   createdAtUtc?: string;
   updatedAtUtc?: string | null;
   notes: Note[];
@@ -40,4 +41,3 @@ export interface HouseholdInvite {
   invitedBy: string;
   createdAtUtc: string;
 }
-

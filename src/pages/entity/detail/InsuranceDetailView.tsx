@@ -57,6 +57,7 @@ import {
 import InsurancePolicyModal from "@/features/insurance/components/InsurancePolicyModal";
 import DocumentPreview from "@/features/documents/components/DocumentPreview";
 import SystemMetadataCard from "@/components/sections/SystemMetadataCard";
+import { usePreferences } from "@/contexts/PreferencesContext";
 
 interface InsuranceDetailViewProps {
   entity: InsurancePolicy;
@@ -115,6 +116,7 @@ const InsuranceDetailView: React.FC<InsuranceDetailViewProps> = ({
   const [activeTab, setActiveTab] = useState<"policy" | "claims">("policy");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const { formatCurrency } = usePreferences();
 
   const handleLinkDocument = (documentId: string) => {
     const current = entity.documentIds || [];
@@ -236,9 +238,9 @@ const InsuranceDetailView: React.FC<InsuranceDetailViewProps> = ({
     const activity: ClaimActivity = {
       id: Math.random().toString(36).substr(2, 9),
       type: "Payout",
-      content: `Resolution confirmed. Funds: $${parseFloat(
-        finalPayout
-      ).toLocaleString()} dispatched to ${payoutDest || "Primary Account"}.`,
+      content: `Resolution confirmed. Funds: ${formatCurrency(
+        parseFloat(finalPayout) || 0
+      )} dispatched to ${payoutDest || "Primary Account"}.`,
       timestamp: new Date().toISOString(),
       eventDateUtc: settlementDate
         ? new Date(settlementDate).toISOString()
@@ -481,7 +483,7 @@ const InsuranceDetailView: React.FC<InsuranceDetailViewProps> = ({
                       Policy Limit
                     </p>
                     <p className="text-3xl font-black text-slate-900 tracking-tighter">
-                      ${entity.coverageLimit.toLocaleString()}
+                      {formatCurrency(entity.coverageLimit)}
                     </p>
                   </div>
                   <div className="space-y-1">
@@ -489,7 +491,7 @@ const InsuranceDetailView: React.FC<InsuranceDetailViewProps> = ({
                       Monthly Premium
                     </p>
                     <p className="text-3xl font-black text-slate-900 tracking-tighter">
-                      ${entity.premium.toLocaleString()}
+                      {formatCurrency(entity.premium, { maximumFractionDigits: 0 })}
                     </p>
                   </div>
                   <div className="space-y-1">
@@ -497,7 +499,7 @@ const InsuranceDetailView: React.FC<InsuranceDetailViewProps> = ({
                       Deductible
                     </p>
                     <p className="text-3xl font-black text-slate-900 tracking-tighter">
-                      ${entity.deductible.toLocaleString()}
+                      {formatCurrency(entity.deductible, { maximumFractionDigits: 0 })}
                     </p>
                   </div>
                 </div>
@@ -515,7 +517,7 @@ const InsuranceDetailView: React.FC<InsuranceDetailViewProps> = ({
                         Total Recovery Volume
                       </p>
                       <h4 className="text-2xl font-black text-slate-900 tracking-tight leading-none mt-1">
-                        ${totalRecovered.toLocaleString()} Returned
+                        {formatCurrency(totalRecovered)} Returned
                       </h4>
                     </div>
                   </div>

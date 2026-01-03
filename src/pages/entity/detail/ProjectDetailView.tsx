@@ -42,6 +42,7 @@ import GalleryModal from "@/features/gallery/components/GalleryModal";
 import ProjectModal from "@/features/projects/components/ProjectModal";
 import SystemMetadataCard from "@/components/sections/SystemMetadataCard";
 import { SectionHeading, Badge, Button as UIButton } from "@/components/ui";
+import { usePreferences } from "@/contexts/PreferencesContext";
 
 interface ProjectDetailViewProps {
   entity: Project;
@@ -88,6 +89,7 @@ const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
   const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const { formatCurrency } = usePreferences();
 
   const handleLinkDocument = (documentId: string) => {
     const current = entity.documentIds || [];
@@ -478,7 +480,7 @@ const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
                       Total Budget
                     </p>
                     <p className="text-xl font-black text-slate-900 tracking-tighter">
-                      ${budget.toLocaleString()}
+                      {formatCurrency(budget)}
                     </p>
                   </div>
                   <div className="space-y-0.5">
@@ -490,7 +492,7 @@ const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
                         isOverBudget ? "text-[#b45c43]" : "text-slate-900"
                       }`}
                     >
-                      ${actual.toLocaleString()}
+                      {formatCurrency(actual)}
                     </p>
                   </div>
                   <div className="space-y-0.5">
@@ -503,7 +505,7 @@ const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
                           isOverBudget ? "text-[#b45c43]" : "text-[#5a6b5d]"
                         }`}
                       >
-                        ${Math.abs(variance).toLocaleString()}
+                        {formatCurrency(Math.abs(variance))}
                       </p>
                       {isOverBudget && (
                         <AlertTriangle size={14} className="text-[#b45c43]" />
@@ -690,7 +692,7 @@ const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
                               </div>
                               <div className="flex items-center space-x-6 shrink-0">
                                 <span className="text-sm font-black text-slate-900">
-                                  ${expense.amount.toLocaleString()}
+                                  {formatCurrency(expense.amount)}
                                 </span>
                                 <button
                                   onClick={() => removeExpense(expense.id)}

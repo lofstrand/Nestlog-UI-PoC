@@ -28,6 +28,7 @@ import {
   Calendar,
   ArrowRight,
   Clock,
+  LightbulbIcon,
 } from "lucide-react";
 import {
   UtilityAccount,
@@ -50,6 +51,7 @@ import {
 } from "@/components/ui";
 import UtilityAccountModal from "@/features/utilities/components/UtilityAccountModal";
 import SystemMetadataCard from "@/components/sections/SystemMetadataCard";
+import { usePreferences } from "@/contexts/PreferencesContext";
 
 interface UtilityDetailViewProps {
   entity: UtilityAccount;
@@ -94,6 +96,7 @@ const UtilityDetailView: React.FC<UtilityDetailViewProps> = ({
 }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const { formatCurrency } = usePreferences();
 
   const handleLinkDocument = (documentId: string) => {
     const current = entity.documentIds || [];
@@ -245,14 +248,9 @@ const UtilityDetailView: React.FC<UtilityDetailViewProps> = ({
             <div className="p-8 md:p-10 space-y-10">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div
-                    className={`w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-white shadow-lg`}
-                  >
-                    <theme.icon size={20} strokeWidth={2.5} />
-                  </div>
                   <SectionHeading
                     label="Consumption Metrics"
-                    icon={DollarSign}
+                    icon={LightbulbIcon}
                   />
                 </div>
                 <div className="flex items-center space-x-2">
@@ -293,9 +291,8 @@ const UtilityDetailView: React.FC<UtilityDetailViewProps> = ({
                           : "text-slate-900"
                       }`}
                     >
-                      $
-                      {displayAverage.toLocaleString(undefined, {
-                        minimumFractionDigits: 0,
+                      {formatCurrency(displayAverage, {
+                        maximumFractionDigits: 0,
                       })}
                     </span>
                     <span className="text-lg font-black text-slate-300 tracking-tight">
@@ -458,8 +455,8 @@ const UtilityDetailView: React.FC<UtilityDetailViewProps> = ({
                         <div className="min-w-0 space-y-1">
                           <div className="flex items-center space-x-3">
                             <span className="text-xl font-black text-slate-900 tracking-tighter">
-                              $
-                              {inv.amount.toLocaleString(undefined, {
+                              {formatCurrency(inv.amount, {
+                                maximumFractionDigits: 2,
                                 minimumFractionDigits: 2,
                               })}
                             </span>

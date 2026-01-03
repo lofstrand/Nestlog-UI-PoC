@@ -7,6 +7,8 @@ export interface Property {
   isArchived: boolean;
   isPrimaryResidence: boolean;
   address: Address;
+  unitSystem?: "metric" | "imperial";
+  currencyCode?: "SEK" | "EUR" | "USD";
   constructionYear?: number | null;
   constructionMonth?: number | null;
   floorArea?: number | null;

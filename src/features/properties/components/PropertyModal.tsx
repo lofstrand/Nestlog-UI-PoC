@@ -18,6 +18,8 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ isOpen, onClose, onSave, 
   const [isArchived, setIsArchived] = useState(false);
   const [propertyType, setPropertyType] = useState('Single Family');
   const [floorArea, setFloorArea] = useState<string>('');
+  const [unitSystem, setUnitSystem] = useState<"" | "metric" | "imperial">("");
+  const [currencyCode, setCurrencyCode] = useState<"" | "SEK" | "EUR" | "USD">("");
   const [address, setAddress] = useState<Address>({
     line1: '',
     line2: '',
@@ -37,6 +39,8 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ isOpen, onClose, onSave, 
       setAddress(initialData.address);
       setPropertyType(initialData.propertyType || 'Single Family');
       setFloorArea(initialData.floorArea?.toString() || '');
+      setUnitSystem(initialData.unitSystem || "");
+      setCurrencyCode(initialData.currencyCode || "");
       setConstructionYear(initialData.constructionYear?.toString() || '');
       setConstructionMonth(initialData.constructionMonth?.toString() || '');
     } else {
@@ -46,6 +50,8 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ isOpen, onClose, onSave, 
       setAddress({ line1: '', line2: '', city: '', stateOrRegion: '', postalCode: '', countryCode: 'US' });
       setPropertyType('Single Family');
       setFloorArea('');
+      setUnitSystem("");
+      setCurrencyCode("");
       setConstructionYear('');
       setConstructionMonth('');
     }
@@ -75,6 +81,8 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ isOpen, onClose, onSave, 
             isPrimaryResidence: isPrimary, 
             isArchived, 
             address,
+            unitSystem: unitSystem || undefined,
+            currencyCode: currencyCode || undefined,
             propertyType,
             floorArea: floorArea ? parseInt(floorArea) : null,
             constructionYear: constructionYear ? parseInt(constructionYear) : null,
@@ -148,6 +156,31 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ isOpen, onClose, onSave, 
                   placeholder="e.g. 150"
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-500/10 focus:border-slate-500 transition-all text-gray-900"
                 />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Unit system</label>
+                <select
+                  value={unitSystem}
+                  onChange={(e) => setUnitSystem(e.target.value as any)}
+                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-500/10 focus:border-slate-500 text-sm text-gray-900"
+                >
+                  <option value="">Inherit</option>
+                  <option value="metric">Metric (m², °C)</option>
+                  <option value="imperial">Imperial (ft², °F)</option>
+                </select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Currency</label>
+                <select
+                  value={currencyCode}
+                  onChange={(e) => setCurrencyCode(e.target.value as any)}
+                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-500/10 focus:border-slate-500 text-sm text-gray-900"
+                >
+                  <option value="">Inherit</option>
+                  <option value="SEK">Swedish Krona (SEK)</option>
+                  <option value="EUR">Euro (EUR)</option>
+                  <option value="USD">US Dollar (USD)</option>
+                </select>
               </div>
             </div>
           </section>
@@ -230,6 +263,8 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ isOpen, onClose, onSave, 
               isPrimaryResidence: isPrimary, 
               isArchived, 
               address,
+              unitSystem: unitSystem || undefined,
+              currencyCode: currencyCode || undefined,
               propertyType,
               floorArea: floorArea ? parseInt(floorArea) : null,
               constructionYear: constructionYear ? parseInt(constructionYear) : null,

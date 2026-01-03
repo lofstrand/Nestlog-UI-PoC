@@ -2,10 +2,11 @@
 import React from 'react';
 import { ArrowRight, ShieldCheck, Wrench, FileText, Users, Box, Tags, LayoutGrid, Home, Building2, Layout, FolderOpen, Zap, DollarSign, Wallet, TrendingDown, Clock, Calendar, AlertCircle } from 'lucide-react';
 import { View } from "../types";
+import { usePreferences } from "@/contexts/PreferencesContext";
 
 interface GroupDashboardProps {
   title: string;
-  type: 'workspace' | 'planner' | 'finance' | 'library';
+  type: 'workspace' | 'planner' | 'finance' | 'global' | 'library';
   onNavigate: (view: View) => void;
   stats: any;
   financeData?: {
@@ -24,6 +25,7 @@ interface GroupDashboardProps {
 }
 
 const GroupDashboard: React.FC<GroupDashboardProps> = ({ title, type, onNavigate, stats, financeData }) => {
+  const { formatCurrency } = usePreferences();
   const dashboards = {
     workspace: [
       { id: 'households', label: 'Households', desc: 'Managed workspaces', icon: Home, color: 'text-slate-800', bg: 'bg-slate-50', count: stats.households },
@@ -38,12 +40,14 @@ const GroupDashboard: React.FC<GroupDashboardProps> = ({ title, type, onNavigate
       { id: 'insurance', label: 'Insurance', desc: 'Active policies', icon: ShieldCheck, color: 'text-[#5a6b5d]', bg: 'bg-[#f2f4f2]', count: stats.insurance },
       { id: 'utilities', label: 'Utilities', desc: 'Operational accounts', icon: Zap, color: 'text-amber-600', bg: 'bg-amber-50', count: stats.utilities },
     ],
+    global: [
+      { id: 'contacts', label: 'Contacts', desc: 'People and contractors', icon: Users, color: 'text-[#5a6b5d]', bg: 'bg-[#f2f4f2]', count: stats.contacts },
+      { id: 'inventory_categories', label: 'Inventory categories', desc: 'Shared classification rules', icon: LayoutGrid, color: 'text-[#8c7e6d]', bg: 'bg-[#f9f7f4]', count: stats.inventory_categories },
+      { id: 'tags', label: 'Tags', desc: 'Global labeling index', icon: Tags, color: 'text-[#4a4e69]', bg: 'bg-[#f2f2f7]', count: stats.tags },
+    ],
     library: [
       { id: 'documents', label: 'Documents', desc: 'Manuals and records', icon: FileText, color: 'text-slate-800', bg: 'bg-slate-50', count: stats.documents },
-      { id: 'contacts', label: 'Contacts', desc: 'People and contractors', icon: Users, color: 'text-[#5a6b5d]', bg: 'bg-[#f2f4f2]', count: stats.contacts },
       { id: 'inventory', label: 'Inventory', desc: 'Assets and belongings', icon: Box, color: 'text-[#1a2e4c]', bg: 'bg-[#f0f4f8]', count: stats.inventory },
-      { id: 'inventory_categories', label: 'Categories', desc: 'Inventory taxonomy', icon: LayoutGrid, color: 'text-[#8c7e6d]', bg: 'bg-[#f9f7f4]', count: stats.inventory_categories },
-      { id: 'tags', label: 'Tags', desc: 'Generic labels', icon: Tags, color: 'text-[#4a4e69]', bg: 'bg-[#f2f2f7]', count: stats.tags },
     ]
   };
 
@@ -67,18 +71,18 @@ const GroupDashboard: React.FC<GroupDashboardProps> = ({ title, type, onNavigate
                <div>
                   <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.25em] mb-4">Cumulative Monthly Spend</p>
                   <div className="flex items-baseline space-x-4">
-                     <span className="text-6xl font-black tracking-tighter">${financeData.totalMonthlyCommitment.toLocaleString()}</span>
+                     <span className="text-6xl font-black tracking-tighter">{formatCurrency(financeData.totalMonthlyCommitment)}</span>
                      <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">Commitment / MO</span>
                   </div>
                </div>
                <div className="grid grid-cols-2 gap-8 pt-8 border-t border-slate-800">
                   <div className="space-y-1">
                     <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Insurance</p>
-                    <p className="text-xl font-bold text-white">${financeData.insuranceLoad.toLocaleString()}</p>
+                    <p className="text-xl font-bold text-white">{formatCurrency(financeData.insuranceLoad)}</p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Utilities</p>
-                    <p className="text-xl font-bold text-white">${financeData.utilityBurn.toLocaleString()}</p>
+                    <p className="text-xl font-bold text-white">{formatCurrency(financeData.utilityBurn)}</p>
                   </div>
                </div>
             </div>
@@ -117,7 +121,9 @@ const GroupDashboard: React.FC<GroupDashboardProps> = ({ title, type, onNavigate
                                <DollarSign size={10} className="text-slate-300" />
                              )}
                              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                               {deadline.type === 'renewal' ? 'Policy Renewal' : `Payment: $${deadline.amount}`}
+                               {deadline.type === 'renewal'
+                                 ? 'Policy Renewal'
+                                 : `Payment: ${formatCurrency(deadline.amount ?? 0)}`}
                              </p>
                           </div>
                        </div>

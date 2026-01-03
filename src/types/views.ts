@@ -1,5 +1,6 @@
 export type View =
   | "landing"
+  | "global"
   | "overview"
   | "workspace"
   | "planner"

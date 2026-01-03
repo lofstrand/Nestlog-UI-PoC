@@ -4,6 +4,7 @@ import { Search, Plus, Eye, ShieldCheck, ChevronUp, ChevronDown, ChevronLeft, Ch
 import { InsurancePolicy, Contact } from "../../../types";
 import { Button, Card, PageHeader, Badge } from "@/components/ui";
 import InsurancePolicyModal from "@/features/insurance/components/InsurancePolicyModal";
+import { usePreferences } from "@/contexts/PreferencesContext";
 
 interface InsuranceListProps {
   policies: InsurancePolicy[];
@@ -23,6 +24,7 @@ const InsuranceList: React.FC<InsuranceListProps> = ({ policies, contacts, onVie
   const [sortConfig, setSortConfig] = useState<{ key: keyof InsurancePolicy; direction: 'asc' | 'desc' }>({ key: 'renewalDate', direction: 'asc' });
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+  const { formatCurrency } = usePreferences();
 
   const handleSort = (key: keyof InsurancePolicy) => {
     setSortConfig(prev => ({
@@ -114,21 +116,30 @@ const InsuranceList: React.FC<InsuranceListProps> = ({ policies, contacts, onVie
                       </div>
                     </td>
                     <td className="px-8 py-6">
-                      <span className="text-sm font-black text-slate-800">${p.coverageLimit.toLocaleString()}</span>
+                      <span className="text-sm font-black text-slate-800">
+                        {formatCurrency(p.coverageLimit)}
+                      </span>
                     </td>
                     <td className="px-8 py-6">
                       <div className="space-y-0.5">
                         <div className="flex items-center space-x-1.5 text-slate-900 font-black text-xs">
-                           <span>${p.premium}/mo</span>
+                          <span>
+                            {formatCurrency(p.premium, { maximumFractionDigits: 0 })}
+                            /mo
+                          </span>
                         </div>
-                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">Ded: ${p.deductible}</p>
+                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">
+                          Ded: {formatCurrency(p.deductible, { maximumFractionDigits: 0 })}
+                        </p>
                       </div>
                     </td>
                     <td className="px-8 py-6">
                        {totalRecovered > 0 ? (
                          <div className="flex items-center space-x-2 text-[#5a6b5d]">
                             <TrendingUp size={12} strokeWidth={3} />
-                            <span className="text-xs font-black">+${totalRecovered.toLocaleString()}</span>
+                            <span className="text-xs font-black">
+                              +{formatCurrency(totalRecovered)}
+                            </span>
                          </div>
                        ) : (
                          <span className="text-[10px] font-bold text-slate-300 uppercase">None logged</span>

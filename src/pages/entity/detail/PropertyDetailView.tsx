@@ -26,7 +26,9 @@ import VisualArchive from "@/features/gallery/components/VisualArchive";
 import GalleryModal from "@/features/gallery/components/GalleryModal";
 import PropertyModal from "@/features/properties/components/PropertyModal";
 import SystemMetadataCard from "@/components/sections/SystemMetadataCard";
+import ContextPreferencesCard from "@/components/sections/ContextPreferencesCard";
 import { SectionHeading, Badge } from "@/components/ui";
+import { usePreferences } from "@/contexts/PreferencesContext";
 
 interface PropertyDetailViewProps {
   entity: Property;
@@ -72,6 +74,7 @@ const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
   const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const { formatArea, areaUnitLabel } = usePreferences();
 
   const handleLinkDocument = (documentId: string) => {
     const current = entity.documentIds || [];
@@ -132,6 +135,13 @@ const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
   const confirmDelete = () => {
     onDelete();
     setIsDeleteConfirmOpen(false);
+  };
+
+  const handleUpdatePreferences = (data: Partial<Property>) => {
+    onUpdateEntity("property", entity.id, {
+      ...data,
+      updatedAtUtc: new Date().toISOString(),
+    });
   };
 
   const metadataRows = [
@@ -201,10 +211,13 @@ const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
                       </p>
                       <div className="flex items-baseline space-x-1">
                         <p className="text-slate-900 font-black text-2xl tracking-tight">
-                          {entity.floorArea || "--"}
+                          {formatArea(entity.floorArea)}
                         </p>
-                        <span className="text-[10px] font-bold text-[#5a6b5d]">
+                        <span className="text-[10px] font-bold text-[#5a6b5d] hidden">
                           m²
+                        </span>
+                        <span className="text-[10px] font-bold text-[#5a6b5d]">
+                          {areaUnitLabel}
                         </span>
                       </div>
                     </div>
@@ -333,6 +346,17 @@ const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
           />
 
           <SystemMetadataCard rows={metadataRows} />
+          <ContextPreferencesCard
+            allowInherit
+            unitSystem={entity.unitSystem}
+            currencyCode={entity.currencyCode}
+            onChangeUnitSystem={(next) =>
+              handleUpdatePreferences({ unitSystem: next })
+            }
+            onChangeCurrencyCode={(next) =>
+              handleUpdatePreferences({ currencyCode: next })
+            }
+          />
 
           <TagsSection
             entityTags={entity.tags || []}

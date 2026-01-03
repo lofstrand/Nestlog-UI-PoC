@@ -49,6 +49,7 @@ import InsuranceList from "./pages/entity/lists/InsuranceList";
 import UtilityList from "./pages/entity/lists/UtilityList";
 import NotificationsArchive from "./pages/NotificationsArchive";
 import ActivityLog from "./pages/ActivityLog";
+import { PreferencesProvider } from "@/contexts/PreferencesContext";
 
 // --- SEED DATA: TAGS ---
 const MOCK_TAGS: Tag[] = [
@@ -1413,6 +1414,7 @@ const MOCK_HOUSEHOLDS: Household[] = [
     propertyCount: 3,
     lastMaintained: "2024-05-10",
     currencyCode: "SEK",
+    unitSystem: "metric",
     notes: [],
     tags: ["Primary"],
     documentIds: [],
@@ -1425,6 +1427,7 @@ const MOCK_HOUSEHOLDS: Household[] = [
     propertyCount: 2,
     lastMaintained: "2024-03-22",
     currencyCode: "SEK",
+    unitSystem: "metric",
     notes: [],
     tags: ["Vacation"],
     documentIds: [],
@@ -1519,6 +1522,8 @@ const MOCK_PROPERTIES: Property[] = [
     name: "Östermalm Penthouse",
     isPrimaryResidence: true,
     isArchived: false,
+    unitSystem: "metric",
+    currencyCode: "SEK",
     address: {
       line1: "Grev Turegatan 12",
       city: "Stockholm",
@@ -1545,6 +1550,8 @@ const MOCK_PROPERTIES: Property[] = [
     name: "Södermalm Loft",
     isPrimaryResidence: false,
     isArchived: false,
+    unitSystem: "metric",
+    currencyCode: "SEK",
     address: {
       line1: "Hornsgatan 88",
       city: "Stockholm",
@@ -1571,6 +1578,8 @@ const MOCK_PROPERTIES: Property[] = [
     name: "Nacka Townhouse",
     isPrimaryResidence: false,
     isArchived: false,
+    unitSystem: "metric",
+    currencyCode: "SEK",
     address: {
       line1: "Värmdövägen 214",
       city: "Nacka",
@@ -1597,6 +1606,8 @@ const MOCK_PROPERTIES: Property[] = [
     name: "Gotland Summer House",
     isPrimaryResidence: false,
     isArchived: false,
+    unitSystem: "metric",
+    currencyCode: "SEK",
     address: {
       line1: "Klintvägen 4",
       city: "Visby",
@@ -1623,6 +1634,8 @@ const MOCK_PROPERTIES: Property[] = [
     name: "Åre Mountain Cabin",
     isPrimaryResidence: false,
     isArchived: false,
+    unitSystem: "metric",
+    currencyCode: "SEK",
     address: {
       line1: "Fjällvägen 22",
       city: "Åre",
@@ -6121,6 +6134,25 @@ const App: React.FC = () => {
     [utilities, activePropertyId]
   );
 
+  const activeHousehold = useMemo(
+    () =>
+      (activeHouseholdId
+        ? households.find((h) => h.id === activeHouseholdId)
+        : null) ||
+      households[0] ||
+      null,
+    [households, activeHouseholdId]
+  );
+  const activeProperty = useMemo(
+    () =>
+      activePropertyId ? properties.find((p) => p.id === activePropertyId) : null,
+    [properties, activePropertyId]
+  );
+  const effectiveUnitSystem =
+    activeProperty?.unitSystem ?? activeHousehold?.unitSystem ?? "metric";
+  const effectiveCurrencyCode =
+    activeProperty?.currencyCode ?? activeHousehold?.currencyCode ?? "SEK";
+
   const tagUsageByName = useMemo(() => {
     const counts: Record<string, number> = {};
     const add = (tagNames?: string[]) => {
@@ -6522,26 +6554,30 @@ const App: React.FC = () => {
       </div>
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <Header
-          sidebarOpen={sidebarOpen}
-          setCurrentView={navigateTo}
-          households={households}
-          properties={scopedProperties}
-          activeHouseholdId={activeHouseholdId}
-          activePropertyId={activePropertyId}
-          onSelectHousehold={setActiveHouseholdId}
-          onSelectProperty={setActivePropertyId}
-          onToggleSidebar={() => setSidebarOpen((v) => !v)}
-        />
-        <main className="flex-1 overflow-y-auto p-4 md:p-8">
-          <div className="max-w-7xl mx-auto space-y-8">
+        <PreferencesProvider
+          unitSystem={effectiveUnitSystem}
+          currencyCode={effectiveCurrencyCode}
+        >
+          <Header
+            sidebarOpen={sidebarOpen}
+            setCurrentView={navigateTo}
+            households={households}
+            properties={scopedProperties}
+            activeHouseholdId={activeHouseholdId}
+            activePropertyId={activePropertyId}
+            onSelectHousehold={setActiveHouseholdId}
+            onSelectProperty={setActivePropertyId}
+            onToggleSidebar={() => setSidebarOpen((v) => !v)}
+          />
+          <main className="flex-1 overflow-y-auto p-4 md:p-8">
+            <div className="max-w-7xl mx-auto space-y-8">
             {currentView === "landing" && (
               <LandingPage onNavigate={navigateTo} />
             )}
             {currentView === "overview" && (
               <Dashboard households={households} onNavigate={navigateTo} />
             )}
-            {["workspace", "planner", "finance", "library"].includes(
+            {["workspace", "planner", "finance", "global", "library"].includes(
               currentView
             ) && (
               <GroupDashboard
@@ -6806,8 +6842,9 @@ const App: React.FC = () => {
                 }}
               />
             )}
-          </div>
-        </main>
+            </div>
+          </main>
+        </PreferencesProvider>
       </div>
     </div>
   );

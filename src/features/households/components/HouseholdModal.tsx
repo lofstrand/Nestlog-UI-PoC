@@ -14,16 +14,22 @@ const HouseholdModal: React.FC<HouseholdModalProps> = ({ isOpen, onClose, onSave
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [isArchived, setIsArchived] = useState(false);
+  const [unitSystem, setUnitSystem] = useState<"metric" | "imperial">("metric");
+  const [currencyCode, setCurrencyCode] = useState<"SEK" | "EUR" | "USD">("SEK");
 
   useEffect(() => {
     if (initialData) {
       setName(initialData.name);
       setDescription(initialData.description);
       setIsArchived(initialData.status === 'Inactive');
+      setUnitSystem(initialData.unitSystem || "metric");
+      setCurrencyCode(initialData.currencyCode || "SEK");
     } else {
       setName('');
       setDescription('');
       setIsArchived(false);
+      setUnitSystem("metric");
+      setCurrencyCode("SEK");
     }
   }, [initialData, isOpen]);
 
@@ -51,7 +57,13 @@ const HouseholdModal: React.FC<HouseholdModalProps> = ({ isOpen, onClose, onSave
 
         <form onSubmit={(e) => {
           e.preventDefault();
-          onSave({ name, description, status: isArchived ? 'Inactive' : 'Active' });
+          onSave({
+            name,
+            description,
+            status: isArchived ? 'Inactive' : 'Active',
+            unitSystem,
+            currencyCode,
+          });
         }} className="p-6 space-y-6">
           
           <div className="space-y-4">
@@ -83,6 +95,44 @@ const HouseholdModal: React.FC<HouseholdModalProps> = ({ isOpen, onClose, onSave
                 rows={3}
                 className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-sm text-gray-900 resize-none"
               />
+            </div>
+          </div>
+
+          <div className="pt-4 border-t border-gray-100 space-y-4">
+            <div className="flex items-center space-x-2 mb-1">
+              <div className="w-6 h-6 bg-slate-100 rounded flex items-center justify-center text-slate-600">
+                <Info size={14} />
+              </div>
+              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-tight">Preferences</h3>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+                  Unit system
+                </label>
+                <select
+                  value={unitSystem}
+                  onChange={(e) => setUnitSystem(e.target.value as any)}
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium text-gray-900"
+                >
+                  <option value="metric">Metric (m², °C)</option>
+                  <option value="imperial">Imperial (ft², °F)</option>
+                </select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+                  Currency
+                </label>
+                <select
+                  value={currencyCode}
+                  onChange={(e) => setCurrencyCode(e.target.value as any)}
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium text-gray-900"
+                >
+                  <option value="SEK">Swedish Krona (SEK)</option>
+                  <option value="EUR">Euro (EUR)</option>
+                  <option value="USD">US Dollar (USD)</option>
+                </select>
+              </div>
             </div>
           </div>
 
