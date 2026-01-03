@@ -70,7 +70,7 @@ const FEATURE_REQUESTS: Array<{
 }> = [
   {
     title: "Improve Overall User Interface and Visual Design",
-    status: "Planned",
+    status: "Requested",
     description:
       "Redesign the user interface to improve visual consistency, readability, and usability. This includes updating layout, spacing, typography, color usage, and component hierarchy to create a more modern, intuitive, and accessible user experience.",
     quote: "The design is ugly",
