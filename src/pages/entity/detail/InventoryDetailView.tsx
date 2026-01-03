@@ -12,6 +12,7 @@ import {
   ArrowRight,
   AlertTriangle,
   ExternalLink,
+  TrendingDown,
 } from "lucide-react";
 import {
   InventoryItem,
@@ -28,6 +29,7 @@ import AttachmentsSection from "@/features/documents/components/AttachmentsSecti
 import InventoryModal from "@/features/inventory/components/InventoryModal";
 import SystemMetadataCard from "@/components/sections/SystemMetadataCard";
 import { SectionHeading, Badge, DynamicIcon } from "@/components/ui";
+import { usePreferences } from "@/contexts/PreferencesContext";
 
 interface InventoryDetailViewProps {
   entity: InventoryItem;
@@ -74,6 +76,7 @@ const InventoryDetailView: React.FC<InventoryDetailViewProps> = ({
 }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const { formatCurrency } = usePreferences();
 
   const handleLinkDocument = (documentId: string) => {
     const current = entity.documentIds || [];
@@ -385,10 +388,7 @@ const InventoryDetailView: React.FC<InventoryDetailViewProps> = ({
                       Purchase Price
                     </p>
                     <div className="flex items-center space-x-2 text-slate-900 font-black">
-                      <DollarSign size={14} className="text-slate-300" />
-                      <span>
-                        {entity.purchasePrice?.toLocaleString() || "0"}
-                      </span>
+                      <span>{formatCurrency(entity.purchasePrice)}</span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
@@ -396,8 +396,13 @@ const InventoryDetailView: React.FC<InventoryDetailViewProps> = ({
                       Current Value
                     </p>
                     <div className="flex items-center space-x-2 text-[#5a6b5d] font-black">
-                      <TrendingUp size={14} className="text-[#5a6b5d]" />
-                      <span>{entity.value?.toLocaleString() || "0"}</span>
+                      {entity.value >= entity.purchasePrice ? (
+                        <TrendingUp size={14} className="text-[#5a6b5d]" />
+                      ) : (
+                        <TrendingDown size={14} className="text-[#b45c43]" />
+                      )}
+
+                      <span>{formatCurrency(entity.value)}</span>
                     </div>
                   </div>
                 </div>

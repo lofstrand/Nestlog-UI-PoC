@@ -4,6 +4,7 @@ import { Search, Plus, Eye, Box, ChevronUp, ChevronDown, ChevronLeft, ChevronRig
 import { InventoryItem, Space, InventoryCategory, Tag, InventoryItemStatus } from "../../../types";
 import InventoryModal from "@/features/inventory/components/InventoryModal";
 import { Button, Card, PageHeader, Badge } from "@/components/ui";
+import { usePreferences } from "@/contexts/PreferencesContext";
 
 interface InventoryListProps {
   items: InventoryItem[];
@@ -20,6 +21,7 @@ const InventoryList: React.FC<InventoryListProps> = ({ items, spaces, categories
   const [sortConfig, setSortConfig] = useState<{ key: keyof InventoryItem; direction: 'asc' | 'desc' }>({ key: 'name', direction: 'asc' });
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+  const { formatCurrency } = usePreferences();
 
   const handleSort = (key: keyof InventoryItem) => {
     setSortConfig(prev => ({
@@ -91,6 +93,7 @@ const InventoryList: React.FC<InventoryListProps> = ({ items, spaces, categories
                   </button>
                 </th>
                 <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Stock & Category</th>
+                <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Value</th>
                 <th className="px-8 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">Actions</th>
               </tr>
             </thead>
@@ -124,6 +127,11 @@ const InventoryList: React.FC<InventoryListProps> = ({ items, spaces, categories
                        <Badge color="text-slate-400" bgColor="bg-slate-50" borderColor="border-slate-100">
                         {item.category}
                       </Badge>
+                    </div>
+                  </td>
+                  <td className="px-8 py-6">
+                    <div className="text-sm font-black text-slate-900">
+                      {formatCurrency(item.value ?? item.purchasePrice ?? null)}
                     </div>
                   </td>
                   <td className="px-8 py-6 text-right">

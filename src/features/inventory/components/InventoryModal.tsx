@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Box, MapPin, DollarSign, TrendingUp, Hash, ShoppingCart, Activity, Layers, Zap } from 'lucide-react';
 import { InventoryItem, Space, InventoryCategory, InventoryItemStatus } from "@/types";
 import { Input, SectionHeading } from "@/components/ui";
+import { usePreferences } from "@/contexts/PreferencesContext";
 
 interface InventoryModalProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ const STATUS_OPTIONS = Object.values(InventoryItemStatus);
 const ENERGY_CLASSES = ['A', 'B', 'C', 'D', 'E', 'F', 'G'] as const;
 
 const InventoryModal: React.FC<InventoryModalProps> = ({ isOpen, onClose, onSave, initialData, availableSpaces, availableCategories }) => {
+  const { currencyCode } = usePreferences();
   const [name, setName] = useState('');
   const [brand, setBrand] = useState('');
   const [modelNumber, setModelNumber] = useState('');
@@ -207,8 +209,8 @@ const InventoryModal: React.FC<InventoryModalProps> = ({ isOpen, onClose, onSave
               <Input label="Purchase date" type="date" value={purchaseDate} onChange={(e) => setPurchaseDate(e.target.value)} />
             </div>
             <div className="grid grid-cols-2 gap-6">
-              <Input label="Purchase price" icon={DollarSign} type="number" step="0.01" value={purchasePrice} onChange={(e) => setPurchasePrice(e.target.value)} />
-              <Input label="Value" icon={TrendingUp} type="number" step="0.01" value={value} onChange={(e) => setValue(e.target.value)} />
+              <Input label={`Purchase price (${currencyCode})`} icon={DollarSign} type="number" step="0.01" value={purchasePrice} onChange={(e) => setPurchasePrice(e.target.value)} />
+              <Input label={`Value (${currencyCode})`} icon={TrendingUp} type="number" step="0.01" value={value} onChange={(e) => setValue(e.target.value)} />
             </div>
           </div>
         </form>
