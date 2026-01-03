@@ -50,6 +50,7 @@ import UtilityList from "./pages/entity/lists/UtilityList";
 import NotificationsArchive from "./pages/NotificationsArchive";
 import ActivityLog from "./pages/ActivityLog";
 import { PreferencesProvider } from "@/contexts/PreferencesContext";
+import type { DismissedMaintenanceSuggestion } from "@/features/maintenance/suggestions/types";
 
 // --- SEED DATA: TAGS ---
 const MOCK_TAGS: Tag[] = [
@@ -5774,6 +5775,8 @@ const App: React.FC = () => {
       updatedAtUtc: t.updatedAtUtc || nowIso,
     }));
   });
+  const [dismissedMaintenanceSuggestions, setDismissedMaintenanceSuggestions] =
+    useState<DismissedMaintenanceSuggestion[]>([]);
   const [projects, setProjects] = useState<Project[]>(MOCK_PROJECTS);
   const [tags, setTags] = useState<Tag[]>(() => {
     const nowIso = new Date().toISOString();
@@ -6318,6 +6321,77 @@ const App: React.FC = () => {
     ]);
   };
 
+  const handleCreateTask = (data: Partial<MaintenanceTask>) => {
+    const nowIso = new Date().toISOString();
+    const id = Math.random().toString(36).substr(2, 9);
+    const propertyId = data.propertyId || activePropertyId || "p1";
+
+    const newTask: MaintenanceTask = {
+      id,
+      propertyId,
+      sourceTemplateId: data.sourceTemplateId ?? null,
+      spaceIds: data.spaceIds || [],
+      assignedContactId: data.assignedContactId ?? null,
+      requiredInventoryIds: data.requiredInventoryIds || [],
+      laborHoursEstimate: data.laborHoursEstimate ?? null,
+      title: data.title || "New maintenance task",
+      description: data.description ?? null,
+      dueDateUtc: data.dueDateUtc ?? null,
+      completedAtUtc: null,
+      nextDateUtc: data.nextDateUtc ?? null,
+      reminderAtUtc: data.reminderAtUtc ?? null,
+      estimatedCost: data.estimatedCost ?? null,
+      actualCost: data.actualCost ?? null,
+      priority: data.priority || MaintenanceTaskPriority.Medium,
+      status: data.status || MaintenanceTaskStatus.Pending,
+      recurrence: data.recurrence ?? null,
+      createdAtUtc: nowIso,
+      updatedAtUtc: nowIso,
+      tags: data.tags || ["Maintenance"],
+      notes: data.notes || [],
+      documentIds: data.documentIds || [],
+    };
+
+    setTasks((prev) => [newTask, ...prev]);
+    setActivities((prev) => [
+      {
+        id: createActivityId(),
+        entityType: "task",
+        entityId: id,
+        action: "created",
+        timestamp: nowIso,
+        userName: "John Doe",
+        details: `Created task: ${newTask.title}.`,
+      },
+      ...prev,
+    ]);
+  };
+
+  const handleDismissMaintenanceSuggestion = (
+    templateId: string,
+    entityType: DismissedMaintenanceSuggestion["entityType"],
+    entityId: string
+  ) => {
+    setDismissedMaintenanceSuggestions((prev) => {
+      const exists = prev.some(
+        (d) =>
+          d.templateId === templateId &&
+          d.entityType === entityType &&
+          d.entityId === entityId
+      );
+      if (exists) return prev;
+      return [
+        ...prev,
+        {
+          templateId,
+          entityType,
+          entityId,
+          dismissedAtUtc: new Date().toISOString(),
+        },
+      ];
+    });
+  };
+
   const handleQuickAddContact = async (
     data: Partial<Contact>
   ): Promise<string> => {
@@ -6835,6 +6909,9 @@ const App: React.FC = () => {
                 onRemoveTag={handleRemoveTagFromSelectedEntity}
                 onAddAttachment={() => {}}
                 onUpdateEntity={handleUpdateEntity}
+                onCreateTask={handleCreateTask}
+                dismissedMaintenanceSuggestions={dismissedMaintenanceSuggestions}
+                onDismissMaintenanceSuggestion={handleDismissMaintenanceSuggestion}
                 onQuickAddContact={handleQuickAddContact}
                 onNavigateToEntity={(type, id) => {
                   setSelectedEntity({ type, id });

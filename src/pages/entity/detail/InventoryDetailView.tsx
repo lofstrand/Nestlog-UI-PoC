@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Box,
   ShoppingCart,
@@ -16,8 +16,11 @@ import {
 } from "lucide-react";
 import {
   InventoryItem,
+  Property,
   Tag,
   Document,
+  MaintenanceTask,
+  MaintenanceTaskStatus,
   InventoryItemStatus,
   Space,
   InventoryCategory,
@@ -30,15 +33,28 @@ import InventoryModal from "@/features/inventory/components/InventoryModal";
 import SystemMetadataCard from "@/components/sections/SystemMetadataCard";
 import { SectionHeading, Badge, DynamicIcon } from "@/components/ui";
 import { usePreferences } from "@/contexts/PreferencesContext";
+import { MaintenanceSuggestionsSection } from "@/features/maintenance/components/MaintenanceSuggestionsSection";
+import { MAINTENANCE_TEMPLATES } from "@/features/maintenance/suggestions/templates";
+import { suggestMaintenanceTasks } from "@/features/maintenance/suggestions/engine";
+import type { DismissedMaintenanceSuggestion } from "@/features/maintenance/suggestions/types";
 
 interface InventoryDetailViewProps {
   entity: InventoryItem;
+  allProperties?: Property[];
   availableTags: Tag[];
   allInventory: InventoryItem[];
   linkedDocuments: Document[];
   allDocuments?: Document[];
   availableSpaces: Space[];
   availableCategories: InventoryCategory[];
+  availableTasks?: MaintenanceTask[];
+  dismissedMaintenanceSuggestions?: DismissedMaintenanceSuggestion[];
+  onDismissMaintenanceSuggestion?: (
+    templateId: string,
+    entityType: DismissedMaintenanceSuggestion["entityType"],
+    entityId: string
+  ) => void;
+  onCreateTask?: (data: Partial<MaintenanceTask>) => void;
   onBack: () => void;
   onEdit: () => void;
   onDelete: () => void;
@@ -55,12 +71,17 @@ interface InventoryDetailViewProps {
 
 const InventoryDetailView: React.FC<InventoryDetailViewProps> = ({
   entity,
+  allProperties = [],
   availableTags,
   allInventory,
   linkedDocuments,
   allDocuments = [],
   availableSpaces,
   availableCategories,
+  availableTasks = [],
+  dismissedMaintenanceSuggestions = [],
+  onDismissMaintenanceSuggestion,
+  onCreateTask,
   onBack,
   onEdit: _onEdit,
   onDelete,
@@ -77,6 +98,18 @@ const InventoryDetailView: React.FC<InventoryDetailViewProps> = ({
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const { formatCurrency } = usePreferences();
+
+  const property = allProperties.find((p) => p.id === entity.propertyId);
+  const suggestions = useMemo(() => {
+    if (!property) return [];
+    return suggestMaintenanceTasks(MAINTENANCE_TEMPLATES, {
+      entityType: "inventory",
+      property,
+      inventoryItem: entity,
+      existingTasks: availableTasks,
+      dismissed: dismissedMaintenanceSuggestions,
+    });
+  }, [availableTasks, dismissedMaintenanceSuggestions, entity, property]);
 
   const handleLinkDocument = (documentId: string) => {
     const current = entity.documentIds || [];
@@ -438,6 +471,35 @@ const InventoryDetailView: React.FC<InventoryDetailViewProps> = ({
 
         <div className="lg:col-span-1 space-y-12">
           <SystemMetadataCard rows={metadataRows} />
+          <MaintenanceSuggestionsSection
+            suggestions={suggestions}
+            onAccept={(s) => {
+              const spaceIds = Array.from(
+                new Set([
+                  ...s.target.spaceIds,
+                  ...(entity.spaceId ? [entity.spaceId] : []),
+                ])
+              );
+              onCreateTask?.({
+                propertyId: s.target.propertyId,
+                sourceTemplateId: s.templateId,
+                title: s.title,
+                description: s.description,
+                dueDateUtc: s.dueDateUtc,
+                recurrence: s.recurrence,
+                priority: s.priority,
+                status: MaintenanceTaskStatus.Pending,
+                spaceIds,
+                requiredInventoryIds: s.target.requiredInventoryIds,
+                tags: s.tags,
+                estimatedCost: s.estimatedCost,
+                laborHoursEstimate: s.laborHoursEstimate,
+              });
+            }}
+            onDismiss={(s) => {
+              onDismissMaintenanceSuggestion?.(s.templateId, s.entityType, s.entityId);
+            }}
+          />
 
           <TagsSection
             entityTags={entity.tags || []}

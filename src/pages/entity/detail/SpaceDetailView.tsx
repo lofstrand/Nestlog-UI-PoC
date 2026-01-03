@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Layers,
   Palette,
@@ -16,9 +16,12 @@ import {
   MapPin,
 } from "lucide-react";
 import {
+  Property,
   Space,
   Tag,
   Document,
+  MaintenanceTask,
+  MaintenanceTaskStatus,
   SurfaceCondition,
   GalleryItem,
   SpaceSurface,
@@ -33,12 +36,25 @@ import SpaceModal from "@/features/spaces/components/SpaceModal";
 import SpaceSurfaceModal from "@/features/spaces/components/SpaceSurfaceModal";
 import SystemMetadataCard from "@/components/sections/SystemMetadataCard";
 import { Badge, SectionHeading, Button } from "@/components/ui";
+import { MaintenanceSuggestionsSection } from "@/features/maintenance/components/MaintenanceSuggestionsSection";
+import { MAINTENANCE_TEMPLATES } from "@/features/maintenance/suggestions/templates";
+import { suggestMaintenanceTasks } from "@/features/maintenance/suggestions/engine";
+import type { DismissedMaintenanceSuggestion } from "@/features/maintenance/suggestions/types";
 
 interface SpaceDetailViewProps {
   entity: Space;
+  allProperties?: Property[];
   availableTags: Tag[];
   linkedDocuments: Document[];
   allDocuments: Document[];
+  availableTasks?: MaintenanceTask[];
+  dismissedMaintenanceSuggestions?: DismissedMaintenanceSuggestion[];
+  onDismissMaintenanceSuggestion?: (
+    templateId: string,
+    entityType: DismissedMaintenanceSuggestion["entityType"],
+    entityId: string
+  ) => void;
+  onCreateTask?: (data: Partial<MaintenanceTask>) => void;
   onBack: () => void;
   onEdit: () => void;
   onDelete: () => void;
@@ -54,9 +70,14 @@ interface SpaceDetailViewProps {
 
 const SpaceDetailView: React.FC<SpaceDetailViewProps> = ({
   entity,
+  allProperties = [],
   availableTags,
   linkedDocuments,
   allDocuments,
+  availableTasks = [],
+  dismissedMaintenanceSuggestions = [],
+  onDismissMaintenanceSuggestion,
+  onCreateTask,
   onBack,
   onEdit,
   onDelete,
@@ -79,6 +100,18 @@ const SpaceDetailView: React.FC<SpaceDetailViewProps> = ({
   const [editingSurface, setEditingSurface] = useState<SpaceSurface | null>(
     null
   );
+
+  const property = allProperties.find((p) => p.id === entity.propertyId);
+  const suggestions = useMemo(() => {
+    if (!property) return [];
+    return suggestMaintenanceTasks(MAINTENANCE_TEMPLATES, {
+      entityType: "space",
+      property,
+      space: entity,
+      existingTasks: availableTasks,
+      dismissed: dismissedMaintenanceSuggestions,
+    });
+  }, [availableTasks, dismissedMaintenanceSuggestions, entity, property]);
 
   const handleLinkDocument = (documentId: string) => {
     const current = entity.documentIds || [];
@@ -459,6 +492,29 @@ const SpaceDetailView: React.FC<SpaceDetailViewProps> = ({
 
         <div className="lg:col-span-1 space-y-12">
           <SystemMetadataCard rows={metadataRows} />
+          <MaintenanceSuggestionsSection
+            suggestions={suggestions}
+            onAccept={(s) => {
+              onCreateTask?.({
+                propertyId: s.target.propertyId,
+                sourceTemplateId: s.templateId,
+                title: s.title,
+                description: s.description,
+                dueDateUtc: s.dueDateUtc,
+                recurrence: s.recurrence,
+                priority: s.priority,
+                status: MaintenanceTaskStatus.Pending,
+                spaceIds: s.target.spaceIds,
+                requiredInventoryIds: s.target.requiredInventoryIds,
+                tags: s.tags,
+                estimatedCost: s.estimatedCost,
+                laborHoursEstimate: s.laborHoursEstimate,
+              });
+            }}
+            onDismiss={(s) => {
+              onDismissMaintenanceSuggestion?.(s.templateId, s.entityType, s.entityId);
+            }}
+          />
           <TagsSection
             entityTags={entity.tags || []}
             availableTags={availableTags}

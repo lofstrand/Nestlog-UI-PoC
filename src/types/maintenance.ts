@@ -31,6 +31,7 @@ export interface MaintenanceRecurrence {
 export interface MaintenanceTask {
   id: string;
   propertyId: string;
+  sourceTemplateId?: string | null;
   spaceIds: string[];
   assignedContactId?: string | null;
   requiredInventoryIds?: string[];
@@ -52,4 +53,3 @@ export interface MaintenanceTask {
   notes: Note[];
   documentIds: string[];
 }
-

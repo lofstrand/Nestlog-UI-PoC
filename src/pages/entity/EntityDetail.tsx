@@ -43,6 +43,9 @@ interface EntityDetailProps {
   onViewItem?: (id: string) => void;
   onNavigateToEntity?: (type: string, id: string) => void;
   onUpdateEntity: (type: string, id: string, data: any) => void;
+  onCreateTask?: (data: any) => void;
+  dismissedMaintenanceSuggestions?: any[];
+  onDismissMaintenanceSuggestion?: (templateId: string, entityType: string, entityId: string) => void;
   onQuickUploadDoc?: (title: string, file: any) => Promise<string>;
   // Fixed: Added onQuickAddContact to EntityDetailProps to resolve property access error in App.tsx
   onQuickAddContact?: (data: any) => Promise<string>;
@@ -50,7 +53,20 @@ interface EntityDetailProps {
 
 const EntityDetail: React.FC<EntityDetailProps> = ({ 
   type, entity, allTags, allDocuments, allSpaces, allContacts, allProjects, allTasks, allInventory, allCategories, allHouseholds = [], allInsurance = [], allUtilities = [], allMembers = [], allInvites = [], allProperties = [], onBack, onEdit, onDelete, 
-  onAddNote, onUpdateNote, onDeleteNote, onAddTag, onRemoveTag, onAddAttachment, onViewItem, onNavigateToEntity, onUpdateEntity, onQuickUploadDoc, onQuickAddContact
+  onAddNote,
+  onUpdateNote,
+  onDeleteNote,
+  onAddTag,
+  onRemoveTag,
+  onAddAttachment,
+  onViewItem,
+  onNavigateToEntity,
+  onUpdateEntity,
+  onCreateTask,
+  dismissedMaintenanceSuggestions = [],
+  onDismissMaintenanceSuggestion,
+  onQuickUploadDoc,
+  onQuickAddContact,
 }) => {
   if (!entity) return (
     <div className="flex flex-col items-center justify-center py-20 text-gray-500">
@@ -167,11 +183,14 @@ const EntityDetail: React.FC<EntityDetailProps> = ({
     onAddAttachment,
     onViewItem,
     onNavigateToEntity,
-    onUpdateEntity,
-    onQuickUploadDoc,
-    // Fixed: Passed onQuickAddContact through to commonProps for detail views
-    onQuickAddContact
-  };
+     onUpdateEntity,
+     onCreateTask,
+     dismissedMaintenanceSuggestions,
+     onDismissMaintenanceSuggestion,
+     onQuickUploadDoc,
+     // Fixed: Passed onQuickAddContact through to commonProps for detail views
+     onQuickAddContact
+   };
 
   switch (type) {
     case 'household': return <HouseholdDetailView {...commonProps} />;

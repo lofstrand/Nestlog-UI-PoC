@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   MapPin,
   Zap,
@@ -16,6 +16,8 @@ import {
   GalleryItem,
   HouseholdMember,
   Contact,
+  MaintenanceTask,
+  MaintenanceTaskStatus,
 } from "../../../types";
 import DetailLayout from "../../../layouts/DetailLayout";
 import NotesSection from "@/components/sections/NotesSection";
@@ -29,6 +31,10 @@ import SystemMetadataCard from "@/components/sections/SystemMetadataCard";
 import ContextPreferencesCard from "@/components/sections/ContextPreferencesCard";
 import { SectionHeading, Badge } from "@/components/ui";
 import { usePreferences } from "@/contexts/PreferencesContext";
+import { MaintenanceSuggestionsSection } from "@/features/maintenance/components/MaintenanceSuggestionsSection";
+import { MAINTENANCE_TEMPLATES } from "@/features/maintenance/suggestions/templates";
+import { suggestMaintenanceTasks } from "@/features/maintenance/suggestions/engine";
+import type { DismissedMaintenanceSuggestion } from "@/features/maintenance/suggestions/types";
 
 interface PropertyDetailViewProps {
   entity: Property;
@@ -37,6 +43,14 @@ interface PropertyDetailViewProps {
   allDocuments?: Document[];
   allMembers: HouseholdMember[];
   availableContacts: Contact[];
+  availableTasks: MaintenanceTask[];
+  dismissedMaintenanceSuggestions?: DismissedMaintenanceSuggestion[];
+  onDismissMaintenanceSuggestion?: (
+    templateId: string,
+    entityType: DismissedMaintenanceSuggestion["entityType"],
+    entityId: string
+  ) => void;
+  onCreateTask?: (data: Partial<MaintenanceTask>) => void;
   onBack: () => void;
   onEdit: () => void;
   onDelete: () => void;
@@ -58,6 +72,10 @@ const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
   allDocuments = [],
   allMembers,
   availableContacts,
+  availableTasks,
+  dismissedMaintenanceSuggestions = [],
+  onDismissMaintenanceSuggestion,
+  onCreateTask,
   onBack,
   onEdit,
   onDelete,
@@ -75,6 +93,17 @@ const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const { formatArea, areaUnitLabel } = usePreferences();
+
+  const suggestions = useMemo(
+    () =>
+      suggestMaintenanceTasks(MAINTENANCE_TEMPLATES, {
+        entityType: "property",
+        property: entity,
+        existingTasks: availableTasks,
+        dismissed: dismissedMaintenanceSuggestions,
+      }),
+    [availableTasks, dismissedMaintenanceSuggestions, entity]
+  );
 
   const handleLinkDocument = (documentId: string) => {
     const current = entity.documentIds || [];
@@ -356,6 +385,29 @@ const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
             onChangeCurrencyCode={(next) =>
               handleUpdatePreferences({ currencyCode: next })
             }
+          />
+          <MaintenanceSuggestionsSection
+            suggestions={suggestions}
+            onAccept={(s) => {
+              onCreateTask?.({
+                propertyId: s.target.propertyId,
+                sourceTemplateId: s.templateId,
+                title: s.title,
+                description: s.description,
+                dueDateUtc: s.dueDateUtc,
+                recurrence: s.recurrence,
+                priority: s.priority,
+                status: MaintenanceTaskStatus.Pending,
+                spaceIds: s.target.spaceIds,
+                requiredInventoryIds: s.target.requiredInventoryIds,
+                tags: s.tags,
+                estimatedCost: s.estimatedCost,
+                laborHoursEstimate: s.laborHoursEstimate,
+              });
+            }}
+            onDismiss={(s) => {
+              onDismissMaintenanceSuggestion?.(s.templateId, s.entityType, s.entityId);
+            }}
           />
 
           <TagsSection
