@@ -249,6 +249,17 @@ const LandingPage: React.FC<{ onNavigate: (view: View) => void }> = ({
                         </div>
                         {(item.requestor || item.quote) && (
                           <div className="mt-4 space-y-3">
+                            {item.quote && (
+                              <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-b from-slate-50 to-white px-4 py-3">
+                                <MessageSquareQuote
+                                  size={18}
+                                  className="absolute right-3 top-3 text-slate-200"
+                                />
+                                <blockquote className="border-l-4 border-slate-900/10 pl-3 text-sm text-slate-700 italic leading-relaxed">
+                                  “{item.quote}”
+                                </blockquote>
+                              </div>
+                            )}
                             {item.requestor && (
                               <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5">
                                 <div className="w-7 h-7 rounded-full bg-slate-900 text-white flex items-center justify-center text-[10px] font-black tracking-widest">
@@ -262,20 +273,6 @@ const LandingPage: React.FC<{ onNavigate: (view: View) => void }> = ({
                                     {item.requestor}
                                   </div>
                                 </div>
-                              </div>
-                            )}
-                            {item.quote && (
-                              <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-b from-slate-50 to-white px-4 py-3">
-                                <MessageSquareQuote
-                                  size={18}
-                                  className="absolute right-3 top-3 text-slate-200"
-                                />
-                                <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                  Quote
-                                </div>
-                                <blockquote className="mt-2 border-l-4 border-slate-900/10 pl-3 text-sm text-slate-700 italic leading-relaxed">
-                                  “{item.quote}”
-                                </blockquote>
                               </div>
                             )}
                           </div>
