@@ -61,7 +61,12 @@ const EntityDetail: React.FC<EntityDetailProps> = ({
   );
 
   const getLinkedDocs = () => {
-    if (type === 'tag' || type === 'contact' || type === 'inventory_category') {
+    if (
+      type === 'tag' ||
+      type === 'contact' ||
+      type === 'inventory_category' ||
+      type === 'document'
+    ) {
       return [];
     }
 

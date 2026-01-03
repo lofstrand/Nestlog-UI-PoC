@@ -29,7 +29,6 @@ import {
 import DetailLayout from "./DetailLayout";
 import NotesSection from "./NotesSection";
 import TagsSection from "./TagsSection";
-import AttachmentsSection from "./AttachmentsSection";
 import { SectionHeading, Badge } from "./UIPrimitives";
 import DocumentPreview from "./DocumentPreview";
 import DocumentModal from "./DocumentModal";
@@ -434,10 +433,6 @@ const DocumentDetailView: React.FC<DocumentDetailViewProps> = ({
             availableTags={availableTags}
             onAddTag={onAddTag}
             onRemoveTag={onRemoveTag}
-          />
-          <AttachmentsSection
-            linkedDocuments={linkedDocuments}
-            onAddAttachment={onAddAttachment}
           />
           <NotesSection
             notes={entity.notes || []}
