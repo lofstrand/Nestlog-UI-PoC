@@ -12,6 +12,8 @@ export interface Note {
   id: string;
   text: string;
   createdAtUtc: string;
+  authorName?: string;
+  authorAvatarUrl?: string;
 }
 
 export interface GalleryItem {

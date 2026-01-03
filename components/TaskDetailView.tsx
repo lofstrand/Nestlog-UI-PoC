@@ -255,11 +255,11 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
             onAddTag={onAddTag}
             onRemoveTag={onRemoveTag}
           />
-          <NotesSection notes={entity.notes || []} onAddNote={onAddNote} />
           <AttachmentsSection
             linkedDocuments={linkedDocuments}
             onAddAttachment={onAddAttachment}
           />
+          <NotesSection notes={entity.notes || []} onAddNote={onAddNote} />
         </div>
       </div>
 

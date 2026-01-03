@@ -414,7 +414,14 @@ const MOCK_DOCUMENTS: Document[] = [
     ],
     notes: [],
     tags: ["Warranty", "Appliance"],
-    inventoryItems: ["i1"],
+    inventoryItems: [
+      {
+        propertyId: "p1",
+        documentId: "d2",
+        inventoryItemId: "i1",
+        createdAtUtc: "2023-02-10T00:00:00Z",
+      },
+    ],
     createdAtUtc: "2023-02-10T00:00:00Z",
     projectIds: [],
     taskIds: ["t3"],
@@ -510,7 +517,14 @@ const MOCK_DOCUMENTS: Document[] = [
     ],
     notes: [],
     tags: ["Electrical"],
-    inventoryItems: ["i20"],
+    inventoryItems: [
+      {
+        propertyId: "p1",
+        documentId: "d6",
+        inventoryItemId: "i20",
+        createdAtUtc: "2022-11-05T00:00:00Z",
+      },
+    ],
     createdAtUtc: "2022-11-05T00:00:00Z",
     projectIds: ["proj19"],
     taskIds: ["t10"],
@@ -534,7 +548,14 @@ const MOCK_DOCUMENTS: Document[] = [
     ],
     notes: [],
     tags: ["Warranty"],
-    inventoryItems: ["i7"],
+    inventoryItems: [
+      {
+        propertyId: "p1",
+        documentId: "d7",
+        inventoryItemId: "i7",
+        createdAtUtc: "2022-01-20T00:00:00Z",
+      },
+    ],
     createdAtUtc: "2022-01-20T00:00:00Z",
     projectIds: [],
     taskIds: [],
@@ -582,7 +603,14 @@ const MOCK_DOCUMENTS: Document[] = [
     ],
     notes: [],
     tags: ["Heating"],
-    inventoryItems: ["i17"],
+    inventoryItems: [
+      {
+        propertyId: "p1",
+        documentId: "d9",
+        inventoryItemId: "i17",
+        createdAtUtc: "2020-10-01T00:00:00Z",
+      },
+    ],
     createdAtUtc: "2020-10-01T00:00:00Z",
     projectIds: ["proj5"],
     taskIds: ["t15"],
@@ -606,7 +634,14 @@ const MOCK_DOCUMENTS: Document[] = [
     ],
     notes: [],
     tags: ["Cooling"],
-    inventoryItems: ["i18"],
+    inventoryItems: [
+      {
+        propertyId: "p1",
+        documentId: "d10",
+        inventoryItemId: "i18",
+        createdAtUtc: "2022-09-15T00:00:00Z",
+      },
+    ],
     createdAtUtc: "2022-09-15T00:00:00Z",
     projectIds: ["proj11"],
     taskIds: [],
@@ -630,7 +665,14 @@ const MOCK_DOCUMENTS: Document[] = [
     ],
     notes: [],
     tags: ["Security"],
-    inventoryItems: ["i15"],
+    inventoryItems: [
+      {
+        propertyId: "p1",
+        documentId: "d11",
+        inventoryItemId: "i15",
+        createdAtUtc: "2024-02-01T00:00:00Z",
+      },
+    ],
     createdAtUtc: "2024-02-01T00:00:00Z",
     projectIds: ["proj8"],
     taskIds: ["t20"],
@@ -726,7 +768,14 @@ const MOCK_DOCUMENTS: Document[] = [
     ],
     notes: [],
     tags: ["Lighting", "Smart Home"],
-    inventoryItems: ["i10"],
+    inventoryItems: [
+      {
+        propertyId: "p1",
+        documentId: "d15",
+        inventoryItemId: "i10",
+        createdAtUtc: "2023-10-10T00:00:00Z",
+      },
+    ],
     createdAtUtc: "2023-10-10T00:00:00Z",
     projectIds: ["proj3", "proj15"],
     taskIds: [],
@@ -750,7 +799,14 @@ const MOCK_DOCUMENTS: Document[] = [
     ],
     notes: [],
     tags: [],
-    inventoryItems: ["i16"],
+    inventoryItems: [
+      {
+        propertyId: "p1",
+        documentId: "d16",
+        inventoryItemId: "i16",
+        createdAtUtc: "2024-01-15T00:00:00Z",
+      },
+    ],
     createdAtUtc: "2024-01-15T00:00:00Z",
     projectIds: ["proj13"],
     taskIds: [],
@@ -798,7 +854,14 @@ const MOCK_DOCUMENTS: Document[] = [
     ],
     notes: [],
     tags: ["Electrical"],
-    inventoryItems: ["i20"],
+    inventoryItems: [
+      {
+        propertyId: "p1",
+        documentId: "d18",
+        inventoryItemId: "i20",
+        createdAtUtc: "2022-11-10T00:00:00Z",
+      },
+    ],
     createdAtUtc: "2022-11-10T00:00:00Z",
     projectIds: ["proj19"],
     taskIds: [],
@@ -942,7 +1005,14 @@ const MOCK_DOCUMENTS: Document[] = [
     ],
     notes: [],
     tags: ["Smart Home"],
-    inventoryItems: ["i20"],
+    inventoryItems: [
+      {
+        propertyId: "p1",
+        documentId: "d24",
+        inventoryItemId: "i20",
+        createdAtUtc: "2024-06-20T00:00:00Z",
+      },
+    ],
     createdAtUtc: "2024-06-20T00:00:00Z",
     projectIds: ["proj4"],
     taskIds: ["t6"],
@@ -3912,6 +3982,7 @@ const App: React.FC = () => {
       id: Math.random().toString(36).substr(2, 9),
       text: trimmed,
       createdAtUtc: nowIso,
+      authorName: "John Doe",
     };
 
     handleUpdateEntity(selectedEntity.type, selectedEntity.id, {

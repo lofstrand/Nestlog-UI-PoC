@@ -60,9 +60,81 @@ const EntityDetail: React.FC<EntityDetailProps> = ({
 
   const getLinkedDocs = () => {
     if (type === 'tag') {
-      return allDocuments.filter(doc => (doc.tags || []).includes(entity.name));
+      return allDocuments.filter((doc) => (doc.tags || []).includes(entity.name));
     }
-    return allDocuments.filter(doc => (entity.documentIds || []).includes(doc.id));
+
+    const entityDocIds = new Set<string>((entity.documentIds || []) as string[]);
+    const entityId = entity.id as string;
+
+    const docLinksInventoryItem = (doc: any, inventoryItemId: string) => {
+      const links = doc.inventoryItems;
+      if (!Array.isArray(links)) return false;
+      return links.some((link: any) => {
+        if (!link) return false;
+        if (typeof link === 'string') return link === inventoryItemId;
+        return link.inventoryItemId === inventoryItemId;
+      });
+    };
+
+    const docReferencesEntity = (doc: any) => {
+      switch (type) {
+        case 'property':
+          return doc.propertyId === entityId;
+        case 'space':
+          return doc.spaceId === entityId;
+        case 'contact':
+          return doc.contactId === entityId;
+        case 'project':
+          return (doc.projectIds || []).includes(entityId);
+        case 'task':
+          return (doc.taskIds || []).includes(entityId);
+        case 'inventory':
+          return docLinksInventoryItem(doc, entityId);
+        default:
+          return false;
+      }
+    };
+
+    if (type === 'document') {
+      const current = entity as any;
+      const currentInventoryIds = new Set<string>(
+        Array.isArray(current.inventoryItems)
+          ? current.inventoryItems
+              .map((x: any) => (typeof x === 'string' ? x : x?.inventoryItemId))
+              .filter(Boolean)
+          : []
+      );
+
+      const sharesInventory = (doc: any) => {
+        const links = doc.inventoryItems;
+        if (!Array.isArray(links) || currentInventoryIds.size === 0) return false;
+        return links.some((x: any) => {
+          const id = typeof x === 'string' ? x : x?.inventoryItemId;
+          return !!id && currentInventoryIds.has(id);
+        });
+      };
+
+      return allDocuments.filter((doc) => {
+        if (doc.id === current.id) return false;
+        if (doc.propertyId !== current.propertyId) return false;
+        return (
+          (!!current.spaceId && doc.spaceId === current.spaceId) ||
+          (!!current.contactId && doc.contactId === current.contactId) ||
+          (current.projectIds || []).some((id: string) =>
+            (doc.projectIds || []).includes(id)
+          ) ||
+          (current.taskIds || []).some((id: string) =>
+            (doc.taskIds || []).includes(id)
+          ) ||
+          (current.surfaceIds || []).some((id: string) =>
+            (doc.surfaceIds || []).includes(id)
+          ) ||
+          sharesInventory(doc)
+        );
+      });
+    }
+
+    return allDocuments.filter((doc) => entityDocIds.has(doc.id) || docReferencesEntity(doc));
   };
 
   const commonProps = { 
