@@ -323,8 +323,8 @@ const LandingPage: React.FC<{ onNavigate: (view: View) => void }> = ({
               Notes
             </h2>
             <p className="mt-2 text-sm text-slate-600 leading-relaxed">
-              This is a UI/UX proof of concept. Data is seeded locally and
-              changes reset on refresh unless persisted.
+              This is a UI/UX proof of concept. Data is seeded, and all changes
+              are reset when the system is updated.
             </p>
           </Card>
         </div>
