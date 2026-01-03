@@ -3899,6 +3899,27 @@ const App: React.FC = () => {
     });
   };
 
+  const handleAddNoteToSelectedEntity = (text: string) => {
+    if (!selectedEntity) return;
+    const trimmed = text.trim();
+    if (!trimmed) return;
+
+    const entityObj = findEntity();
+    const currentNotes: Note[] = entityObj?.notes || [];
+
+    const nowIso = new Date().toISOString();
+    const newNote: Note = {
+      id: Math.random().toString(36).substr(2, 9),
+      text: trimmed,
+      createdAtUtc: nowIso,
+    };
+
+    handleUpdateEntity(selectedEntity.type, selectedEntity.id, {
+      notes: [newNote, ...currentNotes],
+      updatedAtUtc: nowIso,
+    });
+  };
+
   const findEntity = () => {
     if (!selectedEntity) return null;
     const { type, id } = selectedEntity;
@@ -4205,7 +4226,7 @@ const App: React.FC = () => {
                       return;
                   }
                 }}
-                onAddNote={(text) => {}}
+                onAddNote={handleAddNoteToSelectedEntity}
                 onAddTag={handleAddTagToSelectedEntity}
                 onRemoveTag={handleRemoveTagFromSelectedEntity}
                 onAddAttachment={() => {}}

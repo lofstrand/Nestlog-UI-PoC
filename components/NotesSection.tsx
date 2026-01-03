@@ -63,38 +63,40 @@ const NotesSection: React.FC<NotesSectionProps> = ({ notes, onAddNote }) => {
           )}
         </div>
 
-        <div className="space-y-8 pt-2 relative before:absolute before:left-4 before:top-4 before:bottom-0 before:w-px before:bg-slate-100">
+        <div className="space-y-6 pt-2">
           {notes.length > 0 ? (
             notes.map((note) => (
               <div
                 key={note.id}
-                className="relative pl-10 animate-in fade-in slide-in-from-left-2"
+                className="animate-in fade-in slide-in-from-bottom-1"
               >
-                <div className="absolute left-2.5 top-2 w-3 h-3 bg-white border-2 border-slate-800 rounded-full shadow-sm z-10" />
-                <div className="space-y-1.5">
-                  <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap font-medium">
+                {/* Meta header */}
+                <div className="mb-2 flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  <span>
+                    {new Date(note.createdAtUtc).toLocaleDateString(undefined, {
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </span>
+                  <span className="opacity-30">•</span>
+                  <span>
+                    {new Date(note.createdAtUtc).toLocaleTimeString(undefined, {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </div>
+
+                {/* Content block */}
+                <div className="bg-white border border-slate-200 rounded-2xl px-6 py-5 shadow-sm hover:shadow-md transition-shadow">
+                  <p className="text-sm text-slate-800 leading-relaxed whitespace-pre-wrap font-medium max-w-prose">
                     {note.text}
-                  </p>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest flex items-center">
-                    <span>
-                      {new Date(note.createdAtUtc).toLocaleDateString(
-                        undefined,
-                        { month: "short", day: "numeric" }
-                      )}
-                    </span>
-                    <span className="mx-2 opacity-30">•</span>
-                    <span>
-                      {new Date(note.createdAtUtc).toLocaleTimeString(
-                        undefined,
-                        { hour: "2-digit", minute: "2-digit" }
-                      )}
-                    </span>
                   </p>
                 </div>
               </div>
             ))
           ) : (
-            <div></div>
+            <div />
           )}
         </div>
       </div>
