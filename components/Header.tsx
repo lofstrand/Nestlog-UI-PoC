@@ -1,10 +1,11 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, Sun, Bell, ChevronDown, Check, Clock, AlertTriangle, Info, Wrench, ShieldAlert } from 'lucide-react';
+import { Menu, Search, Sun, Bell, ChevronDown, Check, Clock, AlertTriangle, Info, Wrench, ShieldAlert } from 'lucide-react';
 import { Household, Property, View } from '../types';
 
 interface HeaderProps {
   sidebarOpen: boolean;
+  onToggleSidebar: () => void;
   setCurrentView: (view: View) => void;
   households: Household[];
   properties: Property[];
@@ -31,6 +32,7 @@ const MOCK_NOTIFICATIONS: Notification[] = [
 
 const Header: React.FC<HeaderProps> = ({
   sidebarOpen,
+  onToggleSidebar,
   setCurrentView,
   households,
   properties,
@@ -79,23 +81,33 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header ref={headerRef} className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 sticky top-0 z-30">
-      <div className="flex-1 flex items-center max-w-xl">
-        <div className="relative w-full group">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-slate-800" />
-          <input 
-            type="text" 
-            placeholder="Search tasks, items, or properties..." 
-            className="w-full bg-slate-50 border border-slate-100 rounded-lg pl-10 pr-12 py-2 text-sm text-slate-900 focus:outline-none focus:ring-4 focus:ring-slate-900/5 focus:border-slate-400 transition-all"
-          />
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-1">
-            <kbd className="hidden sm:inline-flex px-1.5 py-0.5 rounded border border-slate-200 bg-white text-[10px] text-slate-400 font-sans shadow-sm">Ctrl</kbd>
-            <kbd className="hidden sm:inline-flex px-1.5 py-0.5 rounded border border-slate-200 bg-white text-[10px] text-slate-400 font-sans shadow-sm">K</kbd>
+    <header ref={headerRef} className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-3 sm:px-6 sticky top-0 z-30">
+      <div className="flex items-center gap-2 flex-1 min-w-0">
+        <button
+          onClick={onToggleSidebar}
+          className="md:hidden p-2 text-slate-500 hover:bg-slate-50 rounded-lg transition-colors"
+          aria-label="Open menu"
+        >
+          <Menu size={18} />
+        </button>
+
+        <div className="flex-1 flex items-center max-w-xl min-w-0">
+          <div className="relative w-full group">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-slate-800" />
+            <input 
+              type="text" 
+              placeholder="Search tasks, items, or properties..." 
+              className="w-full bg-slate-50 border border-slate-100 rounded-lg pl-10 pr-12 py-2 text-sm text-slate-900 focus:outline-none focus:ring-4 focus:ring-slate-900/5 focus:border-slate-400 transition-all"
+            />
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-1">
+              <kbd className="hidden sm:inline-flex px-1.5 py-0.5 rounded border border-slate-200 bg-white text-[10px] text-slate-400 font-sans shadow-sm">Ctrl</kbd>
+              <kbd className="hidden sm:inline-flex px-1.5 py-0.5 rounded border border-slate-200 bg-white text-[10px] text-slate-400 font-sans shadow-sm">K</kbd>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-2 sm:space-x-4">
         <div className="hidden lg:flex items-center space-x-6 text-xs text-slate-500 border-r border-slate-200 pr-6 mr-2">
           <div className="flex items-center space-x-2">
             <span className="uppercase font-bold tracking-tight text-[10px]">Household</span>

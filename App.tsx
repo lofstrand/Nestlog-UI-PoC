@@ -4060,12 +4060,36 @@ const App: React.FC = () => {
 
   return (
     <div className="flex h-screen overflow-hidden blueprint-grid bg-[#fcfcf9]">
-      <Sidebar
-        currentView={currentView}
-        setCurrentView={navigateTo}
-        isOpen={sidebarOpen}
-        toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-      />
+      {/* Desktop sidebar */}
+      <div className="hidden md:block">
+        <Sidebar
+          currentView={currentView}
+          setCurrentView={navigateTo}
+          isOpen={sidebarOpen}
+          toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+          variant="desktop"
+        />
+      </div>
+
+      {/* Mobile sidebar overlay */}
+      <div className="md:hidden">
+        {sidebarOpen && (
+          <>
+            <div
+              className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm"
+              onClick={() => setSidebarOpen(false)}
+            />
+            <Sidebar
+              currentView={currentView}
+              setCurrentView={navigateTo}
+              isOpen={true}
+              toggleSidebar={() => setSidebarOpen(false)}
+              variant="mobile"
+            />
+          </>
+        )}
+      </div>
+
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <Header
           sidebarOpen={sidebarOpen}
@@ -4076,6 +4100,7 @@ const App: React.FC = () => {
           activePropertyId={activePropertyId}
           onSelectHousehold={setActiveHouseholdId}
           onSelectProperty={setActivePropertyId}
+          onToggleSidebar={() => setSidebarOpen((v) => !v)}
         />
         <main className="flex-1 overflow-y-auto p-4 md:p-8">
           <div className="max-w-7xl mx-auto space-y-8">
