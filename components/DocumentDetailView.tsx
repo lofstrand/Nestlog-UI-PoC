@@ -49,6 +49,8 @@ interface DocumentDetailViewProps {
   onEdit: () => void;
   onDelete: () => void;
   onAddNote: (text: string) => void;
+  onUpdateNote?: (noteId: string, text: string) => void;
+  onDeleteNote?: (noteId: string) => void;
   onAddTag: (tagName: string) => void;
   onRemoveTag: (tagName: string) => void;
   onAddAttachment: () => void;
@@ -68,6 +70,8 @@ const DocumentDetailView: React.FC<DocumentDetailViewProps> = ({
   onEdit,
   onDelete,
   onAddNote,
+  onUpdateNote,
+  onDeleteNote,
   onAddTag,
   onRemoveTag,
   onAddAttachment,
@@ -435,7 +439,12 @@ const DocumentDetailView: React.FC<DocumentDetailViewProps> = ({
             linkedDocuments={linkedDocuments}
             onAddAttachment={onAddAttachment}
           />
-          <NotesSection notes={entity.notes || []} onAddNote={onAddNote} />
+          <NotesSection
+            notes={entity.notes || []}
+            onAddNote={onAddNote}
+            onUpdateNote={onUpdateNote}
+            onDeleteNote={onDeleteNote}
+          />
         </div>
       </div>
 

@@ -3991,6 +3991,40 @@ const App: React.FC = () => {
     });
   };
 
+  const handleUpdateNoteInSelectedEntity = (noteId: string, text: string) => {
+    if (!selectedEntity) return;
+    const trimmed = text.trim();
+    if (!trimmed) return;
+
+    const entityObj = findEntity();
+    const currentNotes: Note[] = entityObj?.notes || [];
+    if (currentNotes.length === 0) return;
+
+    const nextNotes = currentNotes.map((note) =>
+      note.id === noteId ? { ...note, text: trimmed } : note
+    );
+    const nowIso = new Date().toISOString();
+    handleUpdateEntity(selectedEntity.type, selectedEntity.id, {
+      notes: nextNotes,
+      updatedAtUtc: nowIso,
+    });
+  };
+
+  const handleDeleteNoteFromSelectedEntity = (noteId: string) => {
+    if (!selectedEntity) return;
+
+    const entityObj = findEntity();
+    const currentNotes: Note[] = entityObj?.notes || [];
+    if (currentNotes.length === 0) return;
+
+    const nextNotes = currentNotes.filter((note) => note.id !== noteId);
+    const nowIso = new Date().toISOString();
+    handleUpdateEntity(selectedEntity.type, selectedEntity.id, {
+      notes: nextNotes,
+      updatedAtUtc: nowIso,
+    });
+  };
+
   const findEntity = () => {
     if (!selectedEntity) return null;
     const { type, id } = selectedEntity;
@@ -4298,6 +4332,8 @@ const App: React.FC = () => {
                   }
                 }}
                 onAddNote={handleAddNoteToSelectedEntity}
+                onUpdateNote={handleUpdateNoteInSelectedEntity}
+                onDeleteNote={handleDeleteNoteFromSelectedEntity}
                 onAddTag={handleAddTagToSelectedEntity}
                 onRemoveTag={handleRemoveTagFromSelectedEntity}
                 onAddAttachment={() => {}}

@@ -35,6 +35,8 @@ interface EntityDetailProps {
   onEdit: () => void;
   onDelete: () => void;
   onAddNote: (text: string) => void;
+  onUpdateNote?: (noteId: string, text: string) => void;
+  onDeleteNote?: (noteId: string) => void;
   onAddTag: (tagName: string) => void;
   onRemoveTag: (tagName: string) => void;
   onAddAttachment: () => void;
@@ -48,7 +50,7 @@ interface EntityDetailProps {
 
 const EntityDetail: React.FC<EntityDetailProps> = ({ 
   type, entity, allTags, allDocuments, allSpaces, allContacts, allProjects, allTasks, allInventory, allCategories, allHouseholds = [], allInsurance = [], allUtilities = [], allMembers = [], allInvites = [], allProperties = [], onBack, onEdit, onDelete, 
-  onAddNote, onAddTag, onRemoveTag, onAddAttachment, onViewItem, onNavigateToEntity, onUpdateEntity, onQuickUploadDoc, onQuickAddContact
+  onAddNote, onUpdateNote, onDeleteNote, onAddTag, onRemoveTag, onAddAttachment, onViewItem, onNavigateToEntity, onUpdateEntity, onQuickUploadDoc, onQuickAddContact
 }) => {
   if (!entity) return (
     <div className="flex flex-col items-center justify-center py-20 text-gray-500">
@@ -139,7 +141,7 @@ const EntityDetail: React.FC<EntityDetailProps> = ({
 
   const commonProps = { 
     entity, onBack, onEdit, onDelete, 
-    onAddNote, onAddTag, onRemoveTag, 
+    onAddNote, onUpdateNote, onDeleteNote, onAddTag, onRemoveTag, 
     availableTags: allTags,
     linkedDocuments: getLinkedDocs(),
     allDocuments,

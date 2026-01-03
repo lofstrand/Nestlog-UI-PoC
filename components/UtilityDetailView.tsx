@@ -62,6 +62,8 @@ interface UtilityDetailViewProps {
   onEdit: () => void;
   onDelete: () => void;
   onAddNote: (text: string) => void;
+  onUpdateNote?: (noteId: string, text: string) => void;
+  onDeleteNote?: (noteId: string) => void;
   onAddTag: (tagName: string) => void;
   onRemoveTag: (tagName: string) => void;
   onAddAttachment: () => void;
@@ -81,6 +83,8 @@ const UtilityDetailView: React.FC<UtilityDetailViewProps> = ({
   onEdit,
   onDelete,
   onAddNote,
+  onUpdateNote,
+  onDeleteNote,
   onAddTag,
   onRemoveTag,
   onAddAttachment,
@@ -90,6 +94,24 @@ const UtilityDetailView: React.FC<UtilityDetailViewProps> = ({
 }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+
+  const handleLinkDocument = (documentId: string) => {
+    const current = entity.documentIds || [];
+    if (current.includes(documentId)) return;
+    onUpdateEntity("utility", entity.id, {
+      documentIds: [...current, documentId],
+      updatedAtUtc: new Date().toISOString(),
+    });
+  };
+
+  const handleUnlinkDocument = (documentId: string) => {
+    const current = entity.documentIds || [];
+    if (!current.includes(documentId)) return;
+    onUpdateEntity("utility", entity.id, {
+      documentIds: current.filter((id) => id !== documentId),
+      updatedAtUtc: new Date().toISOString(),
+    });
+  };
 
   const [isAddingInvoice, setIsAddingInvoice] = useState(false);
   const [newInvoiceAmount, setNewInvoiceAmount] = useState("");
@@ -559,8 +581,17 @@ const UtilityDetailView: React.FC<UtilityDetailViewProps> = ({
           <AttachmentsSection
             linkedDocuments={linkedDocuments}
             onAddAttachment={onAddAttachment}
+            availableDocuments={allDocuments}
+            explicitDocumentIds={entity.documentIds || []}
+            onLinkDocument={handleLinkDocument}
+            onUnlinkDocument={handleUnlinkDocument}
           />
-          <NotesSection notes={entity.notes || []} onAddNote={onAddNote} />
+          <NotesSection
+            notes={entity.notes || []}
+            onAddNote={onAddNote}
+            onUpdateNote={onUpdateNote}
+            onDeleteNote={onDeleteNote}
+          />
         </div>
       </div>
 

@@ -32,6 +32,7 @@ interface TaskDetailViewProps {
   entity: MaintenanceTask;
   availableTags: Tag[];
   linkedDocuments: Document[];
+  allDocuments?: Document[];
   availableSpaces: Space[];
   availableContacts: Contact[];
   availableInventory: InventoryItem[];
@@ -39,6 +40,8 @@ interface TaskDetailViewProps {
   onEdit: () => void;
   onDelete: () => void;
   onAddNote: (text: string) => void;
+  onUpdateNote?: (noteId: string, text: string) => void;
+  onDeleteNote?: (noteId: string) => void;
   onAddTag: (tagName: string) => void;
   onRemoveTag: (tagName: string) => void;
   onAddAttachment: () => void;
@@ -49,6 +52,7 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
   entity,
   availableTags,
   linkedDocuments,
+  allDocuments = [],
   availableSpaces,
   availableContacts,
   availableInventory,
@@ -56,6 +60,8 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
   onEdit,
   onDelete,
   onAddNote,
+  onUpdateNote,
+  onDeleteNote,
   onAddTag,
   onRemoveTag,
   onAddAttachment,
@@ -63,6 +69,24 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
 }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+
+  const handleLinkDocument = (documentId: string) => {
+    const current = entity.documentIds || [];
+    if (current.includes(documentId)) return;
+    onUpdateEntity("task", entity.id, {
+      documentIds: [...current, documentId],
+      updatedAtUtc: new Date().toISOString(),
+    });
+  };
+
+  const handleUnlinkDocument = (documentId: string) => {
+    const current = entity.documentIds || [];
+    if (!current.includes(documentId)) return;
+    onUpdateEntity("task", entity.id, {
+      documentIds: current.filter((id) => id !== documentId),
+      updatedAtUtc: new Date().toISOString(),
+    });
+  };
 
   const getPriorityStyles = (p: MaintenanceTaskPriority) => {
     switch (p) {
@@ -258,8 +282,17 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
           <AttachmentsSection
             linkedDocuments={linkedDocuments}
             onAddAttachment={onAddAttachment}
+            availableDocuments={allDocuments}
+            explicitDocumentIds={entity.documentIds || []}
+            onLinkDocument={handleLinkDocument}
+            onUnlinkDocument={handleUnlinkDocument}
           />
-          <NotesSection notes={entity.notes || []} onAddNote={onAddNote} />
+          <NotesSection
+            notes={entity.notes || []}
+            onAddNote={onAddNote}
+            onUpdateNote={onUpdateNote}
+            onDeleteNote={onDeleteNote}
+          />
         </div>
       </div>
 

@@ -23,6 +23,7 @@ interface HouseholdDetailViewProps {
   entity: Household;
   availableTags: Tag[];
   linkedDocuments: Document[];
+  allDocuments?: Document[];
   allMembers: HouseholdMember[];
   allInvites: HouseholdInvite[];
   allProperties: Property[];
@@ -30,6 +31,8 @@ interface HouseholdDetailViewProps {
   onEdit: () => void;
   onDelete: () => void;
   onAddNote: (text: string) => void;
+  onUpdateNote?: (noteId: string, text: string) => void;
+  onDeleteNote?: (noteId: string) => void;
   onAddTag: (tagName: string) => void;
   onRemoveTag: (tagName: string) => void;
   onAddAttachment: () => void;
@@ -40,6 +43,7 @@ const HouseholdDetailView: React.FC<HouseholdDetailViewProps> = ({
   entity,
   availableTags,
   linkedDocuments,
+  allDocuments = [],
   allMembers,
   allInvites,
   allProperties,
@@ -47,6 +51,8 @@ const HouseholdDetailView: React.FC<HouseholdDetailViewProps> = ({
   onEdit,
   onDelete,
   onAddNote,
+  onUpdateNote,
+  onDeleteNote,
   onAddTag,
   onRemoveTag,
   onAddAttachment,
@@ -66,6 +72,24 @@ const HouseholdDetailView: React.FC<HouseholdDetailViewProps> = ({
     (i) => i.householdId === entity.id && i.status === "Pending"
   );
   const householdProperties = allProperties;
+
+  const handleLinkDocument = (documentId: string) => {
+    const current = entity.documentIds || [];
+    if (current.includes(documentId)) return;
+    onUpdateEntity("household", entity.id, {
+      documentIds: [...current, documentId],
+      updatedAtUtc: new Date().toISOString(),
+    });
+  };
+
+  const handleUnlinkDocument = (documentId: string) => {
+    const current = entity.documentIds || [];
+    if (!current.includes(documentId)) return;
+    onUpdateEntity("household", entity.id, {
+      documentIds: current.filter((id) => id !== documentId),
+      updatedAtUtc: new Date().toISOString(),
+    });
+  };
 
   const handleSaveEdit = (data: Partial<Household>) => {
     onUpdateEntity("household", entity.id, data);
@@ -165,8 +189,17 @@ const HouseholdDetailView: React.FC<HouseholdDetailViewProps> = ({
           <AttachmentsSection
             linkedDocuments={linkedDocuments}
             onAddAttachment={onAddAttachment}
+            availableDocuments={allDocuments}
+            explicitDocumentIds={entity.documentIds || []}
+            onLinkDocument={handleLinkDocument}
+            onUnlinkDocument={handleUnlinkDocument}
           />
-          <NotesSection notes={entity.notes || []} onAddNote={onAddNote} />
+          <NotesSection
+            notes={entity.notes || []}
+            onAddNote={onAddNote}
+            onUpdateNote={onUpdateNote}
+            onDeleteNote={onDeleteNote}
+          />
         </div>
       </div>
 

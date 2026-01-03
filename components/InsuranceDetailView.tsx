@@ -70,6 +70,8 @@ interface InsuranceDetailViewProps {
   onEdit: () => void;
   onDelete: () => void;
   onAddNote: (text: string) => void;
+  onUpdateNote?: (noteId: string, text: string) => void;
+  onDeleteNote?: (noteId: string) => void;
   onAddTag: (tagName: string) => void;
   onRemoveTag: (tagName: string) => void;
   onAddAttachment: () => void;
@@ -100,6 +102,8 @@ const InsuranceDetailView: React.FC<InsuranceDetailViewProps> = ({
   onEdit,
   onDelete,
   onAddNote,
+  onUpdateNote,
+  onDeleteNote,
   onAddTag,
   onRemoveTag,
   onAddAttachment,
@@ -111,6 +115,24 @@ const InsuranceDetailView: React.FC<InsuranceDetailViewProps> = ({
   const [activeTab, setActiveTab] = useState<"policy" | "claims">("policy");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+
+  const handleLinkDocument = (documentId: string) => {
+    const current = entity.documentIds || [];
+    if (current.includes(documentId)) return;
+    onUpdateEntity("insurance", entity.id, {
+      documentIds: [...current, documentId],
+      updatedAtUtc: new Date().toISOString(),
+    });
+  };
+
+  const handleUnlinkDocument = (documentId: string) => {
+    const current = entity.documentIds || [];
+    if (!current.includes(documentId)) return;
+    onUpdateEntity("insurance", entity.id, {
+      documentIds: current.filter((id) => id !== documentId),
+      updatedAtUtc: new Date().toISOString(),
+    });
+  };
 
   // Claims UI States
   const [isAddingClaim, setIsAddingClaim] = useState(false);
@@ -1368,8 +1390,17 @@ const InsuranceDetailView: React.FC<InsuranceDetailViewProps> = ({
           <AttachmentsSection
             linkedDocuments={linkedDocuments}
             onAddAttachment={onAddAttachment}
+            availableDocuments={allDocuments}
+            explicitDocumentIds={entity.documentIds || []}
+            onLinkDocument={handleLinkDocument}
+            onUnlinkDocument={handleUnlinkDocument}
           />
-          <NotesSection notes={entity.notes || []} onAddNote={onAddNote} />
+          <NotesSection
+            notes={entity.notes || []}
+            onAddNote={onAddNote}
+            onUpdateNote={onUpdateNote}
+            onDeleteNote={onDeleteNote}
+          />
         </div>
       </div>
 

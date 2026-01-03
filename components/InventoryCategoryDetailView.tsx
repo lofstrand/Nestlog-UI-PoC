@@ -22,10 +22,13 @@ interface InventoryCategoryDetailViewProps {
   availableTags: Tag[];
   availableCategories: InventoryCategory[];
   linkedDocuments: Document[];
+  allDocuments?: Document[];
   onBack: () => void;
   onEdit: () => void;
   onDelete: () => void;
   onAddNote: (text: string) => void;
+  onUpdateNote?: (noteId: string, text: string) => void;
+  onDeleteNote?: (noteId: string) => void;
   onAddTag: (tagName: string) => void;
   onRemoveTag: (tagName: string) => void;
   onAddAttachment: () => void;
@@ -39,10 +42,13 @@ const InventoryCategoryDetailView: React.FC<
   availableTags,
   availableCategories,
   linkedDocuments,
+  allDocuments = [],
   onBack,
   onEdit: _onEdit,
   onDelete,
   onAddNote,
+  onUpdateNote,
+  onDeleteNote,
   onAddTag,
   onRemoveTag,
   onAddAttachment,
@@ -55,6 +61,24 @@ const InventoryCategoryDetailView: React.FC<
   const subCategories = availableCategories.filter(
     (c) => c.parentId === entity.id
   );
+
+  const handleLinkDocument = (documentId: string) => {
+    const current = entity.documentIds || [];
+    if (current.includes(documentId)) return;
+    onUpdateEntity("inventory_category", entity.id, {
+      documentIds: [...current, documentId],
+      updatedAtUtc: new Date().toISOString(),
+    });
+  };
+
+  const handleUnlinkDocument = (documentId: string) => {
+    const current = entity.documentIds || [];
+    if (!current.includes(documentId)) return;
+    onUpdateEntity("inventory_category", entity.id, {
+      documentIds: current.filter((id) => id !== documentId),
+      updatedAtUtc: new Date().toISOString(),
+    });
+  };
 
   const handleSaveEdit = (data: Partial<InventoryCategory>) => {
     onUpdateEntity("inventory_category", entity.id, data);
@@ -279,8 +303,17 @@ const InventoryCategoryDetailView: React.FC<
           <AttachmentsSection
             linkedDocuments={linkedDocuments}
             onAddAttachment={onAddAttachment}
+            availableDocuments={allDocuments}
+            explicitDocumentIds={entity.documentIds || []}
+            onLinkDocument={handleLinkDocument}
+            onUnlinkDocument={handleUnlinkDocument}
           />
-          <NotesSection notes={entity.notes || []} onAddNote={onAddNote} />
+          <NotesSection
+            notes={entity.notes || []}
+            onAddNote={onAddNote}
+            onUpdateNote={onUpdateNote}
+            onDeleteNote={onDeleteNote}
+          />
         </div>
       </div>
 

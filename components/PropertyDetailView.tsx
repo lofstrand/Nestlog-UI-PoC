@@ -17,12 +17,15 @@ interface PropertyDetailViewProps {
   entity: Property;
   availableTags: Tag[];
   linkedDocuments: Document[];
+  allDocuments?: Document[];
   allMembers: HouseholdMember[];
   availableContacts: Contact[];
   onBack: () => void;
   onEdit: () => void;
   onDelete: () => void;
   onAddNote: (text: string) => void;
+  onUpdateNote?: (noteId: string, text: string) => void;
+  onDeleteNote?: (noteId: string) => void;
   onAddTag: (tagName: string) => void;
   onRemoveTag: (tagName: string) => void;
   onAddAttachment: () => void;
@@ -32,11 +35,29 @@ interface PropertyDetailViewProps {
 }
 
 const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({ 
-  entity, availableTags, linkedDocuments, allMembers, availableContacts, onBack, onEdit, onDelete, onAddNote, onAddTag, onRemoveTag, onAddAttachment, onViewItem, onNavigateToEntity, onUpdateEntity 
+  entity, availableTags, linkedDocuments, allDocuments = [], allMembers, availableContacts, onBack, onEdit, onDelete, onAddNote, onUpdateNote, onDeleteNote, onAddTag, onRemoveTag, onAddAttachment, onViewItem, onNavigateToEntity, onUpdateEntity 
 }) => {
   const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+
+  const handleLinkDocument = (documentId: string) => {
+    const current = entity.documentIds || [];
+    if (current.includes(documentId)) return;
+    onUpdateEntity("property", entity.id, {
+      documentIds: [...current, documentId],
+      updatedAtUtc: new Date().toISOString(),
+    });
+  };
+
+  const handleUnlinkDocument = (documentId: string) => {
+    const current = entity.documentIds || [];
+    if (!current.includes(documentId)) return;
+    onUpdateEntity("property", entity.id, {
+      documentIds: current.filter((id) => id !== documentId),
+      updatedAtUtc: new Date().toISOString(),
+    });
+  };
 
   const getEnergyColor = (rating?: string | null) => {
     switch (rating) {
@@ -216,8 +237,20 @@ const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
             onAddTag={onAddTag} 
             onRemoveTag={onRemoveTag} 
           />
-          <AttachmentsSection linkedDocuments={linkedDocuments} onAddAttachment={onAddAttachment} />
-          <NotesSection notes={entity.notes || []} onAddNote={onAddNote} />
+          <AttachmentsSection
+            linkedDocuments={linkedDocuments}
+            onAddAttachment={onAddAttachment}
+            availableDocuments={allDocuments}
+            explicitDocumentIds={entity.documentIds || []}
+            onLinkDocument={handleLinkDocument}
+            onUnlinkDocument={handleUnlinkDocument}
+          />
+          <NotesSection
+            notes={entity.notes || []}
+            onAddNote={onAddNote}
+            onUpdateNote={onUpdateNote}
+            onDeleteNote={onDeleteNote}
+          />
         </div>
       </div>
 
