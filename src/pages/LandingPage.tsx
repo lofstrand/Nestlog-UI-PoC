@@ -87,9 +87,9 @@ const FEATURE_REQUESTS: Array<{
   },
   {
     title: "Upload Documents and Media Directly from Mobile Devices",
-    status: "Requested",
+    status: "Planned",
     description:
-      "Allow users to upload documents and media directly from their phone, including automatic image-to-text (OCR) conversion for receipts.",
+      "Allow users to upload documents and media directly from their phone.",
     requestor: "Sara Löfstrand",
     area: "UI/UX",
   },
