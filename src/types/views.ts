@@ -1,4 +1,5 @@
 export type View =
+  | "landing"
   | "overview"
   | "workspace"
   | "planner"
@@ -20,4 +21,3 @@ export type View =
   | "profile"
   | "notifications_archive"
   | "activity_log";
-

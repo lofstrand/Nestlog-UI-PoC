@@ -43,6 +43,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const expanded = isMobile ? true : isOpen;
 
   const menuItems = [
+    { id: "landing", label: "Home", icon: Home },
     { id: "overview", label: "Overview", icon: LayoutDashboard },
     {
       id: "workspace",
@@ -118,7 +119,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     >
       <div className="p-6 flex items-center space-x-3 overflow-hidden">
         <button
-          onClick={() => setCurrentView("overview")}
+          onClick={() => setCurrentView("landing")}
           className="w-8 h-8 bg-slate-800 rounded flex items-center justify-center shrink-0 hover:scale-105 transition-transform shadow-md"
         >
           <div className="w-4 h-4 bg-white rounded-sm"></div>
@@ -126,7 +127,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         {expanded && (
           <div
             className="flex flex-col leading-tight whitespace-nowrap cursor-pointer"
-            onClick={() => setCurrentView("overview")}
+            onClick={() => setCurrentView("landing")}
           >
             <span className="font-bold text-slate-900 tracking-tight">
               Nestlog

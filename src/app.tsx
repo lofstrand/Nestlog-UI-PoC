@@ -31,6 +31,7 @@ import {
 import Sidebar from "./layouts/Sidebar";
 import Header from "./layouts/Header";
 import Dashboard from "./pages/Dashboard";
+import LandingPage from "./pages/LandingPage";
 import HouseholdsList from "./pages/entity/lists/HouseholdsList";
 import PropertiesList from "./pages/entity/lists/PropertiesList";
 import SpacesList from "./pages/entity/lists/SpacesList";
@@ -5730,7 +5731,7 @@ const MOCK_UTILITIES: UtilityAccount[] = [
 ];
 
 const App: React.FC = () => {
-  const [currentView, setCurrentView] = useState<View>("overview");
+  const [currentView, setCurrentView] = useState<View>("landing");
   const [lastView, setLastView] = useState<View | null>(null);
   const [households, setHouseholds] = useState<Household[]>(() => {
     const nowIso = new Date().toISOString();
@@ -6534,6 +6535,9 @@ const App: React.FC = () => {
         />
         <main className="flex-1 overflow-y-auto p-4 md:p-8">
           <div className="max-w-7xl mx-auto space-y-8">
+            {currentView === "landing" && (
+              <LandingPage onNavigate={navigateTo} />
+            )}
             {currentView === "overview" && (
               <Dashboard households={households} onNavigate={navigateTo} />
             )}
