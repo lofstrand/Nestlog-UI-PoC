@@ -1,0 +1,23 @@
+export type View =
+  | "overview"
+  | "workspace"
+  | "planner"
+  | "finance"
+  | "library"
+  | "households"
+  | "properties"
+  | "spaces"
+  | "maintenance"
+  | "projects"
+  | "insurance"
+  | "utilities"
+  | "tags"
+  | "documents"
+  | "contacts"
+  | "inventory"
+  | "inventory_categories"
+  | "entity_detail"
+  | "profile"
+  | "notifications_archive"
+  | "activity_log";
+

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Tag as TagIcon, Plus, X } from "lucide-react";
-import { Tag } from "../../types";
+import { Tag } from "@/types";
 
 interface TagsSectionProps {
   entityTags: string[];

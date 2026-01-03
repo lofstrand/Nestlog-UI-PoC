@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Camera, Play, X, Trash2, Plus, ImageOff } from "lucide-react";
 import { GalleryItem } from "@/types";
-import { SectionHeading } from "@/components/ui/UIPrimitives";
+import { SectionHeading } from "@/components/ui";
 
 interface VisualArchiveProps {
   items: GalleryItem[];

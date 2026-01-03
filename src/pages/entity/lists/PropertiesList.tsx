@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { Search, Plus, Home, Star, MapPin, Eye, ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Property, Tag } from "../../../types";
 import PropertyModal from "@/features/properties/components/PropertyModal";
-import { Button, Card, PageHeader, Badge } from "../../../components/ui/UIPrimitives";
+import { Button, Card, PageHeader, Badge } from "@/components/ui";
 
 interface PropertiesListProps {
   properties: Property[];

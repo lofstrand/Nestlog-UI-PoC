@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { X, Mail, Send, Shield, Users } from 'lucide-react';
-import { Button, Input, SectionHeading } from "@/components/ui/UIPrimitives";
+import { Button, Input, SectionHeading } from "@/components/ui";
 
 interface InviteModalProps {
   isOpen: boolean;

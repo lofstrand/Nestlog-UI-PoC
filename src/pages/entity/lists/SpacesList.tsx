@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { Search, Plus, Layout, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Space, Tag, Document } from "../../../types";
 import SpaceModal from "@/features/spaces/components/SpaceModal";
-import { Button, Card, PageHeader, Badge } from "../../../components/ui/UIPrimitives";
+import { Button, Card, PageHeader, Badge } from "@/components/ui";
 
 interface SpacesListProps {
   spaces: Space[];

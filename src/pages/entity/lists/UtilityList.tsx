@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Search, Plus, Eye, Zap, Droplets, Flame, Wind, Globe, DollarSign } from 'lucide-react';
 import { UtilityAccount, Contact, Space } from "../../../types";
-import { Button, Card, PageHeader } from "../../../components/ui/UIPrimitives";
+import { Button, Card, PageHeader } from "@/components/ui";
 import UtilityAccountModal from "@/features/utilities/components/UtilityAccountModal";
 
 interface UtilityListProps {

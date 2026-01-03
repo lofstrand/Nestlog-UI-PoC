@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, FileText, Layout, Calendar, Plus, Link, Trash2, Paperclip, HardDrive, User, FolderOpen, Wrench, Shield, Check, MapPin, Box, Layers, Search } from 'lucide-react';
 import { Document, Space, InventoryItem, Note, DocumentAttachment, Project, MaintenanceTask, Contact } from "@/types";
-import { Input, SectionHeading, Button } from "@/components/ui/UIPrimitives";
+import { Input, SectionHeading, Button } from "@/components/ui";
 import DocumentPreview from "@/features/documents/components/DocumentPreview";
 
 interface DocumentModalProps {

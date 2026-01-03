@@ -39,7 +39,7 @@ import {
 } from "../../../types";
 import DetailLayout from "../../../layouts/DetailLayout";
 import NotesSection from "@/components/sections/NotesSection";
-import TagsSection from "@/components/sections/TagsSection";
+import TagsSection from "@/features/tags/components/TagsSection";
 import AttachmentsSection from "@/features/documents/components/AttachmentsSection";
 // Fixed: Added missing Input to imports from UIPrimitives to resolve 'Cannot find name' error on line 237
 import {
@@ -47,7 +47,7 @@ import {
   Badge,
   Button as UIButton,
   Input,
-} from "../../../components/ui/UIPrimitives";
+} from "@/components/ui";
 import UtilityAccountModal from "@/features/utilities/components/UtilityAccountModal";
 import SystemMetadataCard from "@/components/sections/SystemMetadataCard";
 

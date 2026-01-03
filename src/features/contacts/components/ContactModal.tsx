@@ -16,7 +16,7 @@ import {
   ShieldAlert,
 } from "lucide-react";
 import { Contact, Tag, ContactCategory } from "@/types";
-import { Input, SectionHeading } from "@/components/ui/UIPrimitives";
+import { Input, SectionHeading } from "@/components/ui";
 
 interface ContactModalProps {
   isOpen: boolean;

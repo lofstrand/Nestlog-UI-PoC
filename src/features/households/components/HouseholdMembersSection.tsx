@@ -2,7 +2,7 @@
 import React from 'react';
 import { Users, UserPlus, Shield, Building2, Trash2, Mail, Clock, ChevronDown, Key } from 'lucide-react';
 import { HouseholdMember, HouseholdInvite, Property, PropertyRole } from "@/types";
-import { SectionHeading, Badge, Button } from "@/components/ui/UIPrimitives";
+import { SectionHeading, Badge, Button } from "@/components/ui";
 
 interface HouseholdMembersSectionProps {
   members: HouseholdMember[];

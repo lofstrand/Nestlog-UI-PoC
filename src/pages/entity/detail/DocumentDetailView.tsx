@@ -28,8 +28,8 @@ import {
 } from "../../../types";
 import DetailLayout from "../../../layouts/DetailLayout";
 import NotesSection from "@/components/sections/NotesSection";
-import TagsSection from "@/components/sections/TagsSection";
-import { SectionHeading, Badge } from "../../../components/ui/UIPrimitives";
+import TagsSection from "@/features/tags/components/TagsSection";
+import { SectionHeading, Badge } from "@/components/ui";
 import DocumentPreview from "@/features/documents/components/DocumentPreview";
 import DocumentModal from "@/features/documents/components/DocumentModal";
 import SystemMetadataCard from "@/components/sections/SystemMetadataCard";

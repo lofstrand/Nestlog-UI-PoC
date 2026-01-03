@@ -10,14 +10,14 @@ import {
 } from "../../../types";
 import DetailLayout from "../../../layouts/DetailLayout";
 import NotesSection from "@/components/sections/NotesSection";
-import TagsSection from "@/components/sections/TagsSection";
+import TagsSection from "@/features/tags/components/TagsSection";
 import AttachmentsSection from "@/features/documents/components/AttachmentsSection";
 import HouseholdMembersSection from "@/features/households/components/HouseholdMembersSection";
 import HouseholdArchitectureSection from "@/features/households/components/HouseholdArchitectureSection";
 import InviteModal from "@/features/households/components/InviteModal";
 import HouseholdModal from "@/features/households/components/HouseholdModal";
 import SystemMetadataCard from "@/components/sections/SystemMetadataCard";
-import { Badge } from "../../../components/ui/UIPrimitives";
+import { Badge } from "@/components/ui";
 
 interface HouseholdDetailViewProps {
   entity: Household;

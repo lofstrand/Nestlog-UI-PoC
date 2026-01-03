@@ -4,14 +4,14 @@ import { MapPin, Zap, Users, Camera, AlertTriangle, X, Shield, ExternalLink } fr
 import { Property, Tag, Document, GalleryItem, HouseholdMember, Contact } from "../../../types";
 import DetailLayout from "../../../layouts/DetailLayout";
 import NotesSection from "@/components/sections/NotesSection";
-import TagsSection from "@/components/sections/TagsSection";
+import TagsSection from "@/features/tags/components/TagsSection";
 import AttachmentsSection from "@/features/documents/components/AttachmentsSection";
 import PropertyTeamSection from "@/features/properties/components/PropertyTeamSection";
 import VisualArchive from "@/features/gallery/components/VisualArchive";
 import GalleryModal from "@/features/gallery/components/GalleryModal";
 import PropertyModal from "@/features/properties/components/PropertyModal";
 import SystemMetadataCard from "@/components/sections/SystemMetadataCard";
-import { SectionHeading, Badge } from "../../../components/ui/UIPrimitives";
+import { SectionHeading, Badge } from "@/components/ui";
 
 interface PropertyDetailViewProps {
   entity: Property;

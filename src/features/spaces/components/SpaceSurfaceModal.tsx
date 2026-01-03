@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Layers, Box, Tag, Palette, StickyNote, Check, Ruler, Activity, Calendar, Search, Link, FileText, Trash2, Plus, ArrowLeft } from 'lucide-react';
 import { SpaceSurface, SpaceSurfaceType, SpaceSurfaceMaterialType, Document, SurfaceCondition } from "@/types";
-import { SectionHeading, Input, Button } from "@/components/ui/UIPrimitives";
+import { SectionHeading, Input, Button } from "@/components/ui";
 
 interface SpaceSurfaceModalProps {
   isOpen: boolean;

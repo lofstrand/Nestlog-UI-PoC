@@ -5,7 +5,7 @@ import {
   FolderOpen, Box, FileText, User, ShieldCheck, Zap, MessageSquare, 
   CheckCircle2, PlusCircle, Trash2, Clock, Calendar, ChevronRight 
 } from 'lucide-react';
-import { Card, PageHeader, Button, Badge } from "../components/ui/UIPrimitives";
+import { Card, PageHeader, Button, Badge } from "@/components/ui";
 import { ActivityLogEntry } from "../types";
 
 interface ActivityLogProps {

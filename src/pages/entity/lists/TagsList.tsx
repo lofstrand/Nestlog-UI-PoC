@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { Search, Plus, Eye, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, BarChart2 } from 'lucide-react';
 import { Tag } from "../../../types";
 import TagModal from "@/features/tags/components/TagModal";
-import { Button, Card, PageHeader, DynamicIcon } from "../../../components/ui/UIPrimitives";
+import { Button, Card, PageHeader, DynamicIcon } from "@/components/ui";
 
 interface TagsListProps {
   tags: Tag[];

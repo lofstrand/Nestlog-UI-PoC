@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { Search, Plus, Eye, FileText, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Shield, Link } from 'lucide-react';
 import { Document, Space, InventoryItem, Tag, Project, MaintenanceTask, Contact } from "../../../types";
 import DocumentModal from "@/features/documents/components/DocumentModal";
-import { Button, Card, PageHeader, Badge } from "../../../components/ui/UIPrimitives";
+import { Button, Card, PageHeader, Badge } from "@/components/ui";
 import DocumentPreview from "@/features/documents/components/DocumentPreview";
 
 interface DocumentsListProps {

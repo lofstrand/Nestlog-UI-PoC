@@ -13,7 +13,7 @@ import {
   Monitor,
   Clock,
 } from "lucide-react";
-import { Badge, Button, Card, Input, PageHeader, SectionHeading } from "../components/ui/UIPrimitives";
+import { Badge, Button, Card, Input, PageHeader, SectionHeading } from "@/components/ui";
 
 type TabId = "profile" | "preferences";
 

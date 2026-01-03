@@ -15,12 +15,7 @@ import {
 } from "lucide-react";
 import { Contact, Tag, ContactCategory } from "../../../types";
 import ContactModal from "@/features/contacts/components/ContactModal";
-import {
-  Button,
-  Card,
-  PageHeader,
-  Badge,
-} from "../../../components/ui/UIPrimitives";
+import { Button, Card, PageHeader, Badge } from "@/components/ui";
 
 interface ContactsListProps {
   contacts: Contact[];

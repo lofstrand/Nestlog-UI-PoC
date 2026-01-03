@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, FolderOpen, AlignLeft, Calendar, DollarSign, ListFilter, Layout, User, TrendingUp, Check } from 'lucide-react';
 import { Project, ProjectStatus, Space, Contact } from "@/types";
-import { Input, SectionHeading } from "@/components/ui/UIPrimitives";
+import { Input, SectionHeading } from "@/components/ui";
 
 interface ProjectModalProps {
   isOpen: boolean;

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Tags, Hash, AlignLeft, Palette } from 'lucide-react';
 import { Tag } from "@/types";
-import { Input, SectionHeading } from "@/components/ui/UIPrimitives";
+import { Input, SectionHeading } from "@/components/ui";
 
 interface TagModalProps {
   isOpen: boolean;

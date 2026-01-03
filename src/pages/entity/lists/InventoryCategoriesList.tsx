@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { Search, Plus, Eye, LayoutGrid, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, ShieldAlert, Layers } from 'lucide-react';
 import { InventoryCategory } from "../../../types";
 import InventoryCategoryModal from "@/features/inventoryCategories/components/InventoryCategoryModal";
-import { Button, Card, PageHeader, Badge, DynamicIcon } from "../../../components/ui/UIPrimitives";
+import { Button, Card, PageHeader, Badge, DynamicIcon } from "@/components/ui";
 
 interface InventoryCategoriesListProps {
   categories: InventoryCategory[];

@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { Search, Plus, Eye, FolderOpen, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
 import { Project, Tag, Space, Contact } from "../../../types";
 import ProjectModal from "@/features/projects/components/ProjectModal";
-import { Button, Card, PageHeader, Badge } from "../../../components/ui/UIPrimitives";
+import { Button, Card, PageHeader, Badge } from "@/components/ui";
 
 interface ProjectsListProps {
   projects: Project[];

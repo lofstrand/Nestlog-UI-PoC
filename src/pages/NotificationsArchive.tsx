@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { Bell, Search, Filter, Trash2, CheckCircle, Wrench, ShieldAlert, Sparkles, Info, ChevronLeft, ChevronRight, Clock } from 'lucide-react';
-import { Card, PageHeader, Button, Badge } from "../components/ui/UIPrimitives";
+import { Card, PageHeader, Button, Badge } from "@/components/ui";
 
 interface Notification {
   id: string;

@@ -28,7 +28,7 @@ import {
 import DetailLayout from "../../../layouts/DetailLayout";
 import TagModal from "@/features/tags/components/TagModal";
 import SystemMetadataCard from "@/components/sections/SystemMetadataCard";
-import { SectionHeading, Badge } from "../../../components/ui/UIPrimitives";
+import { SectionHeading, Badge } from "@/components/ui";
 
 interface TagDetailViewProps {
   entity: TagType;

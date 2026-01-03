@@ -1,6 +1,6 @@
 import React from 'react';
 import { History } from 'lucide-react';
-import { SectionHeading } from "../ui/UIPrimitives";
+import { SectionHeading } from "@/components/ui";
 
 type MetadataRow = {
   label: string;

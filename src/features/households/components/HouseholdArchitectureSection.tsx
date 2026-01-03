@@ -2,7 +2,7 @@
 import React from 'react';
 import { Info, Shield, Users } from 'lucide-react';
 import { Household } from "@/types";
-import { SectionHeading } from "@/components/ui/UIPrimitives";
+import { SectionHeading } from "@/components/ui";
 
 interface HouseholdArchitectureSectionProps {
   entity: Household;
