@@ -3833,6 +3833,72 @@ const App: React.FC = () => {
     return newContact.id;
   };
 
+  const ensureTagExists = (tagName: string) => {
+    const trimmed = tagName.trim();
+    if (!trimmed) return null;
+
+    const existing = tags.find(
+      (t) => t.name.toLowerCase() === trimmed.toLowerCase()
+    );
+    if (existing) return existing.name;
+
+    const nowIso = new Date().toISOString();
+    const propertyId = activePropertyId || "p1";
+    const newTag: Tag = {
+      id: Math.random().toString(36).substr(2, 9),
+      propertyId,
+      name: trimmed,
+      description: "",
+      iconName: "Tag",
+      colorHex: "#1e293b",
+      usageCount: 0,
+      notes: [],
+      documentIds: [],
+      createdAtUtc: nowIso,
+      updatedAtUtc: nowIso,
+    };
+
+    setTags((prev) => [newTag, ...prev]);
+    return newTag.name;
+  };
+
+  const handleAddTagToSelectedEntity = (tagName: string) => {
+    if (!selectedEntity) return;
+
+    const canonicalTagName = ensureTagExists(tagName);
+    if (!canonicalTagName) return;
+
+    const entityObj = findEntity();
+    const currentTags: string[] = entityObj?.tags || [];
+    if (
+      currentTags.some(
+        (t) => t.toLowerCase() === canonicalTagName.toLowerCase()
+      )
+    ) {
+      return;
+    }
+
+    const nowIso = new Date().toISOString();
+    handleUpdateEntity(selectedEntity.type, selectedEntity.id, {
+      tags: [...currentTags, canonicalTagName],
+      updatedAtUtc: nowIso,
+    });
+  };
+
+  const handleRemoveTagFromSelectedEntity = (tagName: string) => {
+    if (!selectedEntity) return;
+
+    const entityObj = findEntity();
+    const currentTags: string[] = entityObj?.tags || [];
+    if (currentTags.length === 0) return;
+
+    const nowIso = new Date().toISOString();
+    handleUpdateEntity(selectedEntity.type, selectedEntity.id, {
+      tags: currentTags.filter((t) => t.toLowerCase() !== tagName.toLowerCase()),
+      updatedAtUtc: nowIso,
+    });
+  };
+
   const findEntity = () => {
     if (!selectedEntity) return null;
     const { type, id } = selectedEntity;
@@ -4140,8 +4206,8 @@ const App: React.FC = () => {
                   }
                 }}
                 onAddNote={(text) => {}}
-                onAddTag={(tag) => {}}
-                onRemoveTag={(tag) => {}}
+                onAddTag={handleAddTagToSelectedEntity}
+                onRemoveTag={handleRemoveTagFromSelectedEntity}
                 onAddAttachment={() => {}}
                 onUpdateEntity={handleUpdateEntity}
                 onQuickAddContact={handleQuickAddContact}
