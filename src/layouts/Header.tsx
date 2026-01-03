@@ -164,7 +164,7 @@ const Header: React.FC<HeaderProps> = ({
                 }}
                 className="flex items-center px-2 py-1 bg-slate-50 border border-slate-200 rounded font-medium text-slate-900 hover:bg-slate-100 transition-colors"
               >
-                {currentProperty?.name || 'All properties'} <ChevronDown size={12} className="ml-1 text-slate-400" />
+                {currentProperty?.name || 'Select property'} <ChevronDown size={12} className="ml-1 text-slate-400" />
               </button>
               {propertyOpen && (
                 <div className="absolute left-0 mt-2 w-72 bg-white border border-slate-200 rounded-xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-50">
@@ -172,19 +172,6 @@ const Header: React.FC<HeaderProps> = ({
                     Select property
                   </div>
                   <div className="max-h-72 overflow-y-auto divide-y divide-slate-50">
-                    <button
-                      onClick={() => {
-                        onSelectProperty(null);
-                        setPropertyOpen(false);
-                      }}
-                      className="w-full px-3 py-2.5 text-left hover:bg-slate-50 transition-colors flex items-center justify-between"
-                    >
-                      <div className="min-w-0">
-                        <div className="text-xs font-bold text-slate-900 truncate">All properties</div>
-                        <div className="text-[10px] text-slate-400 font-black uppercase tracking-widest truncate">Show cross-portfolio</div>
-                      </div>
-                      {!activePropertyId && <Check size={14} className="text-indigo-600 shrink-0" />}
-                    </button>
                     {properties.length > 0 ? (
                       properties.map(p => (
                         <button
