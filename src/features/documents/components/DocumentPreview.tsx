@@ -14,6 +14,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ attachment, size = 'm
   const isPdf = attachment.contentType === 'application/pdf';
   const isSpreadsheet = attachment.contentType.includes('spreadsheet') || attachment.contentType.includes('excel') || attachment.fileName.endsWith('.csv');
   const isVideo = attachment.contentType.startsWith('video/');
+  const imageSrc = attachment.thumbnailUrl || attachment.dataUrl;
 
   const getIcon = () => {
     const iconSize = size === 'sm' ? 16 : size === 'lg' ? 48 : 24;
@@ -34,11 +35,11 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ attachment, size = 'm
     lg: "w-full aspect-[4/3] rounded-2xl"
   };
 
-  if (isImage && attachment.thumbnailUrl) {
+  if (isImage && imageSrc) {
     return (
       <div className={`${containerSizes[size]} overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center shrink-0 ${className}`}>
         <img 
-          src={attachment.thumbnailUrl} 
+          src={imageSrc} 
           alt={attachment.fileName} 
           className="w-full h-full object-cover"
         />

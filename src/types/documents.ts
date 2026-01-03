@@ -7,6 +7,16 @@ export interface DocumentAttachment {
   sizeBytes: number;
   createdAtUtc: string;
   thumbnailUrl?: string;
+  dataUrl?: string;
+  ocr?: {
+    status: "idle" | "running" | "done" | "error";
+    text?: string;
+    confidence?: number;
+    progress?: number;
+    progressStatus?: string;
+    error?: string;
+    updatedAtUtc?: string;
+  };
 }
 
 export interface Document {
@@ -34,4 +44,3 @@ export interface Document {
   createdAtUtc: string;
   updatedAtUtc?: string | null;
 }
-

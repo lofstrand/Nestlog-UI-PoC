@@ -96,6 +96,10 @@ const DocumentDetailView: React.FC<DocumentDetailViewProps> = ({
     linkedSpace?.surfaces.filter((surf) =>
       entity.surfaceIds?.includes(surf.id)
     ) || [];
+  const ocrAttachments =
+    entity.attachments?.filter(
+      (a) => a.ocr?.status === "done" && (a.ocr.text || "").trim().length > 0
+    ) || [];
 
   const handleSaveEdit = (data: Partial<Document>) => {
     onUpdateEntity("document", entity.id, data);
@@ -278,6 +282,27 @@ const DocumentDetailView: React.FC<DocumentDetailViewProps> = ({
               )}
             </div>
           </div>
+
+          {ocrAttachments.length > 0 && (
+            <div className="bg-white border border-slate-200 rounded-[2.5rem] p-10 space-y-10 shadow-sm">
+              <SectionHeading label="Extracted Text" icon={FileText} />
+              <div className="space-y-6">
+                {ocrAttachments.map((a) => (
+                  <div
+                    key={a.id}
+                    className="p-6 bg-slate-50/50 border border-slate-100 rounded-[2rem] shadow-inner"
+                  >
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                      {a.fileName}
+                    </p>
+                    <pre className="mt-3 text-sm text-slate-700 whitespace-pre-wrap font-medium leading-relaxed">
+                      {(a.ocr?.text || "").trim()}
+                    </pre>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="bg-white border border-slate-200 rounded-[2.5rem] p-10 space-y-12 shadow-sm">
             <SectionHeading label="Connected to Rooms & Items" icon={Link} />

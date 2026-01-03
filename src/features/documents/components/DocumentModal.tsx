@@ -1,9 +1,10 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { X, FileText, Layout, Calendar, Plus, Link, Trash2, Paperclip, HardDrive, User, FolderOpen, Wrench, Shield, Check, MapPin, Box, Layers, Search } from 'lucide-react';
 import { Document, Space, InventoryItem, Note, DocumentAttachment, Project, MaintenanceTask, Contact } from "@/types";
 import { Input, SectionHeading, Button } from "@/components/ui";
 import DocumentPreview from "@/features/documents/components/DocumentPreview";
+import { ocrImageToText } from "@/utils/ocr";
 
 interface DocumentModalProps {
   isOpen: boolean;
@@ -28,6 +29,7 @@ const DocumentModal: React.FC<DocumentModalProps> = ({
   isOpen, onClose, onSave, initialData, availableSpaces, availableInventory, availableProjects, availableTasks, availableContacts 
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('Other');
   const [spaceId, setSpaceId] = useState('');
@@ -37,6 +39,8 @@ const DocumentModal: React.FC<DocumentModalProps> = ({
   const [expiryDate, setExpiryDate] = useState('');
   const [notes, setNotes] = useState<Note[]>([]);
   const [attachments, setAttachments] = useState<DocumentAttachment[]>([]);
+  const [autoOcrReceipts, setAutoOcrReceipts] = useState(true);
+  const [expandedOcrAttachmentId, setExpandedOcrAttachmentId] = useState<string | null>(null);
   const [selectedInventoryIds, setSelectedInventoryIds] = useState<string[]>([]);
   const [selectedProjectIds, setSelectedProjectIds] = useState<string[]>([]);
   const [selectedTaskIds, setSelectedTaskIds] = useState<string[]>([]);
@@ -70,6 +74,8 @@ const DocumentModal: React.FC<DocumentModalProps> = ({
       setExpiryDate('');
       setNotes([]);
       setAttachments([]);
+      setAutoOcrReceipts(true);
+      setExpandedOcrAttachmentId(null);
       setSelectedInventoryIds([]);
       setSelectedProjectIds([]);
       setSelectedTaskIds([]);
@@ -106,20 +112,146 @@ const DocumentModal: React.FC<DocumentModalProps> = ({
     setter(list.includes(id) ? list.filter(i => i !== id) : [...list, id]);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
+  const readAsDataUrl = (file: File) =>
+    new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error("Failed to read file"));
+      reader.onload = () => resolve(String(reader.result));
+      reader.readAsDataURL(file);
+    });
+
+  const runOcr = useCallback(async (attachmentId: string, image: string) => {
+    setAttachments((prev) =>
+      prev.map((a) =>
+        a.id === attachmentId
+          ? {
+              ...a,
+              ocr: {
+                status: "running",
+                progress: 0,
+                progressStatus: "starting",
+                updatedAtUtc: new Date().toISOString(),
+              },
+            }
+          : a
+      )
+    );
+
+    try {
+      const res = await ocrImageToText(image, {
+        lang: "eng",
+        preprocessImage: true,
+        onProgress: (p) => {
+          setAttachments((prev) =>
+            prev.map((a) =>
+              a.id === attachmentId
+                ? {
+                    ...a,
+                    ocr: {
+                      ...(a.ocr ?? { status: "running" }),
+                      status: "running",
+                      progress: p.progress,
+                      progressStatus: p.status,
+                      updatedAtUtc: new Date().toISOString(),
+                    },
+                  }
+                : a
+            )
+          );
+        },
+      });
+
+      const text = res.text.trim();
+      setAttachments((prev) =>
+        prev.map((a) =>
+          a.id === attachmentId
+            ? {
+                ...a,
+                ocr: {
+                  status: "done",
+                  text,
+                  confidence: res.confidence,
+                  progress: 1,
+                  progressStatus: "done",
+                  updatedAtUtc: new Date().toISOString(),
+                },
+              }
+            : a
+        )
+      );
+
+      setExpandedOcrAttachmentId((cur) => cur ?? attachmentId);
+    } catch (err: any) {
+      setAttachments((prev) =>
+        prev.map((a) =>
+          a.id === attachmentId
+            ? {
+                ...a,
+                ocr: {
+                  status: "error",
+                  error: err?.message || "OCR failed",
+                  updatedAtUtc: new Date().toISOString(),
+                },
+              }
+            : a
+        )
+      );
+    }
+  }, []);
+
+  const addFiles = async (files: FileList | null) => {
     if (!files) return;
-    const newAttachments: DocumentAttachment[] = Array.from(files).map((file: File) => ({
-      id: Math.random().toString(36).substr(2, 9),
-      fileName: file.name,
-      contentType: file.type || 'application/octet-stream',
-      sizeBytes: file.size,
-      createdAtUtc: new Date().toISOString(),
-      thumbnailUrl: file.type.startsWith('image/') ? `https://images.unsplash.com/photo-1586769852044-692d6e3703a0?auto=format&fit=crop&q=80&w=200` : undefined
-    }));
-    setAttachments([...attachments, ...newAttachments]);
-    if (fileInputRef.current) fileInputRef.current.value = '';
+
+    for (const file of Array.from(files)) {
+      const id =
+        typeof crypto !== "undefined" && "randomUUID" in crypto
+          ? (crypto as any).randomUUID()
+          : Math.random().toString(36).slice(2, 11);
+
+      const isImage = file.type.startsWith("image/");
+      const dataUrl = isImage ? await readAsDataUrl(file) : undefined;
+
+      const attachment: DocumentAttachment = {
+        id,
+        fileName: file.name || "upload",
+        contentType: file.type || "application/octet-stream",
+        sizeBytes: file.size,
+        createdAtUtc: new Date().toISOString(),
+        thumbnailUrl: isImage ? dataUrl : undefined,
+        dataUrl: isImage ? dataUrl : undefined,
+        ocr: { status: "idle" },
+      };
+
+      setAttachments((prev) => [...prev, attachment]);
+
+      const shouldAutoOcr =
+        autoOcrReceipts && category === "Receipt" && isImage && Boolean(dataUrl);
+      if (shouldAutoOcr && dataUrl) {
+        void runOcr(id, dataUrl);
+      }
+    }
   };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    void addFiles(e.target.files);
+    e.target.value = "";
+  };
+
+  useEffect(() => {
+    if (!autoOcrReceipts) return;
+    if (category !== "Receipt") return;
+
+    const idleImages = attachments.filter(
+      (a) =>
+        a.contentType.startsWith("image/") &&
+        Boolean(a.dataUrl) &&
+        (a.ocr?.status ?? "idle") === "idle"
+    );
+
+    for (const a of idleImages) {
+      void runOcr(a.id, a.dataUrl!);
+    }
+  }, [autoOcrReceipts, category, attachments, runOcr]);
 
   if (!isOpen) return null;
 
@@ -187,8 +319,57 @@ const DocumentModal: React.FC<DocumentModalProps> = ({
           <section className="space-y-6 pt-4 border-t border-slate-50">
             <div className="flex items-center justify-between">
               <SectionHeading label="Files & Documents" icon={Paperclip} />
-              <button type="button" onClick={() => fileInputRef.current?.click()} className="px-4 py-1.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all flex items-center shadow-lg"><Plus size={14} className="mr-1.5" /> Upload File</button>
-              <input type="file" ref={fileInputRef} className="hidden" multiple onChange={handleFileChange} />
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => cameraInputRef.current?.click()}
+                  className="px-4 py-1.5 bg-white border border-slate-200 text-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest hover:border-slate-400 hover:text-slate-900 transition-all flex items-center shadow-sm"
+                >
+                  <Plus size={14} className="mr-1.5" /> Take photo
+                </button>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="px-4 py-1.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all flex items-center shadow-lg"
+                >
+                  <Plus size={14} className="mr-1.5" /> Upload
+                </button>
+              </div>
+              <input
+                type="file"
+                ref={cameraInputRef}
+                className="hidden"
+                accept="image/*"
+                capture="environment"
+                onChange={handleFileChange}
+              />
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                multiple
+                accept="image/*,application/pdf,video/*"
+                onChange={handleFileChange}
+              />
+            </div>
+
+            <div className="flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50/50 px-4 py-3">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  Receipt OCR
+                </p>
+                <p className="text-xs font-bold text-slate-500 mt-1">
+                  Auto-extract text from receipt photos when category is Receipt.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setAutoOcrReceipts((v) => !v)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${autoOcrReceipts ? 'bg-slate-900' : 'bg-slate-200'}`}
+                aria-label="Toggle automatic receipt OCR"
+              >
+                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${autoOcrReceipts ? 'translate-x-6' : 'translate-x-1'}`} />
+              </button>
             </div>
             <div className="grid grid-cols-1 gap-4">
               {attachments.map(file => (
@@ -197,12 +378,96 @@ const DocumentModal: React.FC<DocumentModalProps> = ({
                     <DocumentPreview attachment={file} size="md" />
                     <div>
                       <p className="text-sm font-black text-slate-900 truncate max-w-xs">{file.fileName}</p>
+                      {file.ocr?.status === "running" && (
+                        <p className="mt-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                          OCR: {file.ocr.progressStatus || "working"}{" "}
+                          {typeof file.ocr.progress === "number"
+                            ? `(${Math.round(file.ocr.progress * 100)}%)`
+                            : ""}
+                        </p>
+                      )}
+                      {file.ocr?.status === "error" && (
+                        <p className="mt-1 text-[10px] font-black uppercase tracking-widest text-[#b45c43]">
+                          OCR failed
+                        </p>
+                      )}
                       <p className="text-[10px] text-slate-400 font-black uppercase">{(file.sizeBytes / 1024).toFixed(1)} KB • {file.contentType.split('/')[1]}</p>
                     </div>
                   </div>
-                  <button type="button" onClick={() => setAttachments(attachments.filter(a => a.id !== file.id))} className="p-2 text-slate-300 hover:text-[#b45c43]"><Trash2 size={18} /></button>
+                  <div className="flex items-center gap-2">
+                    {file.contentType.startsWith("image/") && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (file.ocr?.status === "done") {
+                            setExpandedOcrAttachmentId((cur) => (cur === file.id ? null : file.id));
+                            return;
+                          }
+                          if (file.ocr?.status === "running") return;
+                          if (file.dataUrl) void runOcr(file.id, file.dataUrl);
+                        }}
+                        disabled={file.ocr?.status === "running" || !file.dataUrl}
+                        className="px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-tight bg-slate-50 border border-slate-100 text-slate-500 hover:bg-white hover:border-slate-300 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                        title={file.ocr?.status === "done" ? "View extracted text" : "Extract text (OCR)"}
+                      >
+                        {file.ocr?.status === "done"
+                          ? "Text"
+                          : file.ocr?.status === "running"
+                            ? "OCR…"
+                            : "OCR"}
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAttachments((prev) => prev.filter((a) => a.id !== file.id));
+                        setExpandedOcrAttachmentId((cur) => (cur === file.id ? null : cur));
+                      }}
+                      className="p-2 text-slate-300 hover:text-[#b45c43]"
+                      title="Remove"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
                 </div>
               ))}
+              {expandedOcrAttachmentId && (
+                <div className="p-6 bg-slate-50/50 border border-slate-100 rounded-[2rem] shadow-inner">
+                  {(() => {
+                    const a = attachments.find((x) => x.id === expandedOcrAttachmentId);
+                    if (!a) return null;
+                    const text = a.ocr?.text?.trim() || "";
+                    return (
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                            Extracted text • {a.fileName}
+                          </p>
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              if (!text) return;
+                              try {
+                                await navigator.clipboard.writeText(text);
+                              } catch {
+                              }
+                            }}
+                            disabled={!text}
+                            className="px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-tight bg-white border border-slate-200 text-slate-500 hover:border-slate-400 hover:text-slate-900 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                          >
+                            Copy
+                          </button>
+                        </div>
+                        <div className="max-h-40 overflow-y-auto rounded-2xl border border-slate-100 bg-white p-4">
+                          <pre className="text-xs text-slate-700 whitespace-pre-wrap font-medium leading-relaxed">
+                            {text || "No text detected."}
+                          </pre>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+              )}
               {attachments.length === 0 && <div className="py-16 border-2 border-dashed border-slate-100 rounded-[2.5rem] flex flex-col items-center justify-center text-slate-300 bg-gray-50/20"><HardDrive size={48} className="mb-3 opacity-10" /><p className="text-[10px] font-black uppercase tracking-widest">No files uploaded</p></div>}
             </div>
           </section>
