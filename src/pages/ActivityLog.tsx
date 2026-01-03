@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { 
   History, Search, Filter, Home, Building2, Layout, Wrench, 
   FolderOpen, Box, FileText, User, ShieldCheck, Zap, MessageSquare, 
-  CheckCircle2, PlusCircle, Trash2, Clock, Calendar, ChevronRight 
+  CheckCircle2, PlusCircle, Trash2, Clock, Calendar, ChevronRight, Tag, Layers
 } from 'lucide-react';
 import { Card, PageHeader, Button, Badge } from "@/components/ui";
 import { ActivityLogEntry } from "../types";
@@ -25,6 +25,8 @@ const ActivityLog: React.FC<ActivityLogProps> = ({ activities }) => {
       case 'task': return <Wrench size={size} />;
       case 'project': return <FolderOpen size={size} />;
       case 'inventory': return <Box size={size} />;
+      case 'inventory_category': return <Layers size={size} />;
+      case 'tag': return <Tag size={size} />;
       case 'document': return <FileText size={size} />;
       case 'contact': return <User size={size} />;
       case 'insurance': return <ShieldCheck size={size} />;
@@ -89,7 +91,7 @@ const ActivityLog: React.FC<ActivityLogProps> = ({ activities }) => {
             
             <div className="space-y-1">
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2 mb-2">Category Filter</p>
-              {['all', 'task', 'project', 'inventory', 'document', 'insurance', 'utility'].map(t => (
+              {['all', 'household', 'property', 'space', 'task', 'project', 'inventory', 'inventory_category', 'tag', 'document', 'contact', 'insurance', 'utility', 'system'].map(t => (
                 <button
                   key={t}
                   onClick={() => setTypeFilter(t)}

@@ -1027,7 +1027,7 @@ const MOCK_HOUSEHOLDS: Household[] = [
     name: "Stockholm Portfolio",
     status: "Active",
     description: "Primary urban residence and surrounding investment units.",
-    propertyCount: 2,
+    propertyCount: 3,
     lastMaintained: "2024-05-10",
     currencyCode: "SEK",
     notes: [],
@@ -1048,10 +1048,91 @@ const MOCK_HOUSEHOLDS: Household[] = [
   },
 ];
 
+// --- SEED DATA: HOUSEHOLD COLLABORATORS ---
+const MOCK_HOUSEHOLD_MEMBERS: HouseholdMember[] = [
+  {
+    id: "hm1",
+    householdId: "h1",
+    name: "John Doe",
+    email: "john@example.com",
+    joinedAtUtc: "2023-02-01T00:00:00Z",
+    permissions: [
+      { propertyId: "p1", role: "Owner" },
+      { propertyId: "p2", role: "Manager" },
+      { propertyId: "p3", role: "Owner" },
+    ],
+  },
+  {
+    id: "hm2",
+    householdId: "h1",
+    name: "Jane Doe",
+    email: "jane@example.com",
+    joinedAtUtc: "2023-03-15T00:00:00Z",
+    permissions: [
+      { propertyId: "p1", role: "Manager" },
+      { propertyId: "p2", role: "Viewer" },
+      { propertyId: "p3", role: "Viewer" },
+    ],
+  },
+  {
+    id: "hm3",
+    householdId: "h1",
+    name: "Lars Svensson",
+    email: "lars.svensson@example.com",
+    joinedAtUtc: "2023-10-20T00:00:00Z",
+    permissions: [
+      { propertyId: "p1", role: "Contractor" },
+      { propertyId: "p2", role: "Contractor" },
+    ],
+  },
+  {
+    id: "hm4",
+    householdId: "h2",
+    name: "Emma Lind",
+    email: "emma.lind@example.com",
+    joinedAtUtc: "2024-01-05T00:00:00Z",
+    permissions: [
+      { propertyId: "p4", role: "Owner" },
+      { propertyId: "p5", role: "Manager" },
+    ],
+  },
+  {
+    id: "hm5",
+    householdId: "h2",
+    name: "Oskar Berg",
+    email: "oskar.berg@example.com",
+    joinedAtUtc: "2024-02-10T00:00:00Z",
+    permissions: [
+      { propertyId: "p4", role: "Viewer" },
+      { propertyId: "p5", role: "Viewer" },
+    ],
+  },
+];
+
+const MOCK_HOUSEHOLD_INVITES: HouseholdInvite[] = [
+  {
+    id: "hi1",
+    householdId: "h1",
+    email: "maintenance.manager@example.com",
+    status: "Pending",
+    invitedBy: "John Doe",
+    createdAtUtc: "2024-06-01T00:00:00Z",
+  },
+  {
+    id: "hi2",
+    householdId: "h2",
+    email: "family.member@example.com",
+    status: "Pending",
+    invitedBy: "Emma Lind",
+    createdAtUtc: "2024-06-12T00:00:00Z",
+  },
+];
+
 // --- SEED DATA: PROPERTIES ---
 const MOCK_PROPERTIES: Property[] = [
   {
     id: "p1",
+    householdId: "h1",
     name: "Östermalm Penthouse",
     isPrimaryResidence: true,
     isArchived: false,
@@ -1073,6 +1154,110 @@ const MOCK_PROPERTIES: Property[] = [
     createdAtUtc: "2023-01-15T00:00:00Z",
     notes: [],
     tags: ["Urban"],
+    documentIds: [],
+  },
+  {
+    id: "p2",
+    householdId: "h1",
+    name: "Södermalm Loft",
+    isPrimaryResidence: false,
+    isArchived: false,
+    address: {
+      line1: "Hornsgatan 88",
+      city: "Stockholm",
+      stateOrRegion: "AB",
+      postalCode: "117 26",
+      countryCode: "SE",
+    },
+    constructionYear: 1936,
+    floorArea: 92,
+    propertyType: "Apartment",
+    occupancyStatus: "TenantOccupied",
+    energyRating: "C",
+    heatingSystemType: "District Heating",
+    roofType: "Tile",
+    gallery: [],
+    createdAtUtc: "2023-02-10T00:00:00Z",
+    notes: [],
+    tags: ["Rental"],
+    documentIds: [],
+  },
+  {
+    id: "p3",
+    householdId: "h1",
+    name: "Nacka Townhouse",
+    isPrimaryResidence: false,
+    isArchived: false,
+    address: {
+      line1: "Värmdövägen 214",
+      city: "Nacka",
+      stateOrRegion: "AB",
+      postalCode: "131 54",
+      countryCode: "SE",
+    },
+    constructionYear: 2008,
+    floorArea: 168,
+    propertyType: "Townhouse",
+    occupancyStatus: "Vacant",
+    energyRating: "B",
+    heatingSystemType: "Heat Pump",
+    roofType: "Metal",
+    gallery: [],
+    createdAtUtc: "2023-04-01T00:00:00Z",
+    notes: [],
+    tags: ["Suburban"],
+    documentIds: [],
+  },
+  {
+    id: "p4",
+    householdId: "h2",
+    name: "Gotland Summer House",
+    isPrimaryResidence: false,
+    isArchived: false,
+    address: {
+      line1: "Klintvägen 4",
+      city: "Visby",
+      stateOrRegion: "I",
+      postalCode: "621 55",
+      countryCode: "SE",
+    },
+    constructionYear: 1989,
+    floorArea: 124,
+    propertyType: "House",
+    occupancyStatus: "ShortTermRental",
+    energyRating: "D",
+    heatingSystemType: "Electric",
+    roofType: "Shingle",
+    gallery: [],
+    createdAtUtc: "2022-06-20T00:00:00Z",
+    notes: [],
+    tags: ["Vacation"],
+    documentIds: [],
+  },
+  {
+    id: "p5",
+    householdId: "h2",
+    name: "Åre Mountain Cabin",
+    isPrimaryResidence: false,
+    isArchived: false,
+    address: {
+      line1: "Fjällvägen 22",
+      city: "Åre",
+      stateOrRegion: "Z",
+      postalCode: "837 52",
+      countryCode: "SE",
+    },
+    constructionYear: 1999,
+    floorArea: 78,
+    propertyType: "Cabin",
+    occupancyStatus: "Vacant",
+    energyRating: "E",
+    heatingSystemType: "Wood Stove",
+    roofType: "Metal",
+    gallery: [],
+    createdAtUtc: "2021-11-02T00:00:00Z",
+    notes: [],
+    tags: ["Retreat"],
     documentIds: [],
   },
 ];
@@ -3651,7 +3836,207 @@ const App: React.FC = () => {
       updatedAtUtc: u.updatedAtUtc || nowIso,
     }));
   });
-  const [activities, setActivities] = useState<ActivityLogEntry[]>([]);
+  const [members, setMembers] = useState<HouseholdMember[]>(MOCK_HOUSEHOLD_MEMBERS);
+  const [invites, setInvites] = useState<HouseholdInvite[]>(MOCK_HOUSEHOLD_INVITES);
+
+  const createActivityId = () => {
+    const anyCrypto = globalThis.crypto as any;
+    if (anyCrypto?.randomUUID) return anyCrypto.randomUUID();
+    return `${Date.now()}_${Math.random().toString(16).slice(2)}`;
+  };
+
+  const getEntityLabel = (type: string, id: string) => {
+    switch (type) {
+      case "household":
+        return households.find((x) => x.id === id)?.name ?? id;
+      case "property":
+        return properties.find((x) => x.id === id)?.name ?? id;
+      case "space":
+        return spaces.find((x) => x.id === id)?.name ?? id;
+      case "task":
+        return tasks.find((x) => x.id === id)?.title ?? id;
+      case "project":
+        return projects.find((x) => x.id === id)?.title ?? id;
+      case "inventory":
+        return inventory.find((x) => x.id === id)?.name ?? id;
+      case "inventory_category":
+        return inventoryCategories.find((x) => x.id === id)?.name ?? id;
+      case "tag":
+        return tags.find((x) => x.id === id)?.name ?? id;
+      case "contact": {
+        const c = contacts.find((x) => x.id === id);
+        return c ? `${c.firstName} ${c.surname}`.trim() : id;
+      }
+      case "document":
+        return documents.find((x) => x.id === id)?.title ?? id;
+      case "insurance":
+        return insurance.find((x) => x.id === id)?.title ?? id;
+      case "utility":
+        return utilities.find((x) => x.id === id)?.title ?? id;
+      default:
+        return id;
+    }
+  };
+
+  const buildSeedActivities = (): ActivityLogEntry[] => {
+    const now = Date.now();
+    const iso = (minsAgo: number) =>
+      new Date(now - minsAgo * 60_000).toISOString();
+
+    const pickId = <T extends { id: string }>(arr: T[]) =>
+      arr[Math.floor(Math.random() * Math.max(arr.length, 1))]?.id ?? "system";
+
+    const pickFrom = <T,>(arr: T[]) =>
+      arr[Math.floor(Math.random() * Math.max(arr.length, 1))] as T;
+
+    const users = ["John Doe", "System", "Nestlog Bot", "Admin", "Jane Doe"];
+    const actions: ActivityLogEntry["action"][] = [
+      "created",
+      "updated",
+      "deleted",
+      "completed",
+      "archived",
+      "payment_logged",
+      "note_added",
+    ];
+
+    const entityPools: Array<{
+      type: ActivityLogEntry["entityType"];
+      getId: () => string;
+      getLabel: (id: string) => string;
+    }> = [
+      {
+        type: "household",
+        getId: () => pickId(MOCK_HOUSEHOLDS),
+        getLabel: (id) => MOCK_HOUSEHOLDS.find((x) => x.id === id)?.name ?? id,
+      },
+      {
+        type: "property",
+        getId: () => pickId(MOCK_PROPERTIES),
+        getLabel: (id) => MOCK_PROPERTIES.find((x) => x.id === id)?.name ?? id,
+      },
+      {
+        type: "space",
+        getId: () => pickId(MOCK_SPACES),
+        getLabel: (id) => MOCK_SPACES.find((x) => x.id === id)?.name ?? id,
+      },
+      {
+        type: "task",
+        getId: () => pickId(MOCK_TASKS),
+        getLabel: (id) => MOCK_TASKS.find((x) => x.id === id)?.title ?? id,
+      },
+      {
+        type: "project",
+        getId: () => pickId(MOCK_PROJECTS),
+        getLabel: (id) => MOCK_PROJECTS.find((x) => x.id === id)?.title ?? id,
+      },
+      {
+        type: "inventory",
+        getId: () => pickId(MOCK_INVENTORY),
+        getLabel: (id) => MOCK_INVENTORY.find((x) => x.id === id)?.name ?? id,
+      },
+      {
+        type: "inventory_category",
+        getId: () => pickId(MOCK_CATEGORIES),
+        getLabel: (id) => MOCK_CATEGORIES.find((x) => x.id === id)?.name ?? id,
+      },
+      {
+        type: "tag",
+        getId: () => pickId(MOCK_TAGS),
+        getLabel: (id) => MOCK_TAGS.find((x) => x.id === id)?.name ?? id,
+      },
+      {
+        type: "document",
+        getId: () => pickId(MOCK_DOCUMENTS),
+        getLabel: (id) => MOCK_DOCUMENTS.find((x) => x.id === id)?.title ?? id,
+      },
+      {
+        type: "contact",
+        getId: () => pickId(MOCK_CONTACTS),
+        getLabel: (id) => {
+          const c = MOCK_CONTACTS.find((x) => x.id === id);
+          return c ? `${c.firstName} ${c.surname}`.trim() : id;
+        },
+      },
+      {
+        type: "insurance",
+        getId: () => pickId(MOCK_POLICIES),
+        getLabel: (id) => MOCK_POLICIES.find((x) => x.id === id)?.title ?? id,
+      },
+      {
+        type: "utility",
+        getId: () => pickId(MOCK_UTILITIES),
+        getLabel: (id) => MOCK_UTILITIES.find((x) => x.id === id)?.title ?? id,
+      },
+      {
+        type: "system",
+        getId: () => "system",
+        getLabel: () => "system",
+      },
+    ];
+
+    const buildDetails = (
+      action: ActivityLogEntry["action"],
+      type: ActivityLogEntry["entityType"],
+      label: string
+    ) => {
+      const typeLabel = type.replaceAll("_", " ");
+      switch (action) {
+        case "created":
+          return `Created ${typeLabel} ${label}.`;
+        case "deleted":
+          return `Deleted ${typeLabel} ${label}.`;
+        case "completed":
+          return `Completed ${typeLabel} ${label}.`;
+        case "archived":
+          return `Archived ${typeLabel} ${label}.`;
+        case "payment_logged":
+          return `Logged payment for ${typeLabel} ${label}.`;
+        case "note_added":
+          return `Added note to ${typeLabel} ${label}.`;
+        default:
+          return `Updated ${typeLabel} ${label}.`;
+      }
+    };
+
+    const seeded: ActivityLogEntry[] = [
+      {
+        id: createActivityId(),
+        entityType: "system",
+        entityId: "system",
+        action: "created",
+        timestamp: iso(3),
+        userName: "System",
+        details: "Initialized demo workspace data.",
+      },
+    ];
+
+    // Add ~100 mixed events
+    for (let i = 0; i < 100; i++) {
+      const pool = pickFrom(entityPools);
+      const entityId = pool.getId();
+      const action = pickFrom(actions);
+      const userName = pickFrom(users);
+      const label = pool.getLabel(entityId);
+
+      const minsAgo = 10 + i * 7 + Math.floor(Math.random() * 6);
+      seeded.push({
+        id: createActivityId(),
+        entityType: pool.type,
+        entityId,
+        action,
+        timestamp: iso(minsAgo),
+        userName,
+        details: buildDetails(action, pool.type, label),
+      });
+    }
+
+    return seeded;
+  };
+
+  const [activities, setActivities] = useState<ActivityLogEntry[]>(() =>
+    buildSeedActivities()
+  );
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedEntity, setSelectedEntity] = useState<{
     type: string;
@@ -3877,6 +4262,24 @@ const App: React.FC = () => {
         setUtilities(updater);
         break;
     }
+
+    const entityType =
+      type === "inventory_category" || type === "tag"
+        ? (type as ActivityLogEntry["entityType"])
+        : (type as ActivityLogEntry["entityType"]);
+    const label = getEntityLabel(type, id);
+    setActivities((prev) => [
+      {
+        id: createActivityId(),
+        entityType: entityType,
+        entityId: id,
+        action: "updated",
+        timestamp: new Date().toISOString(),
+        userName: "John Doe",
+        details: `Updated ${label}.`,
+      },
+      ...prev,
+    ]);
   };
 
   const handleQuickAddContact = async (
@@ -3900,6 +4303,18 @@ const App: React.FC = () => {
       updatedAtUtc: nowIso,
     };
     setContacts((prev) => [newContact, ...prev]);
+    setActivities((prev) => [
+      {
+        id: createActivityId(),
+        entityType: "contact",
+        entityId: newContact.id,
+        action: "created",
+        timestamp: nowIso,
+        userName: "John Doe",
+        details: `Created contact ${newContact.firstName} ${newContact.surname}.`,
+      },
+      ...prev,
+    ]);
     return newContact.id;
   };
 
@@ -3929,6 +4344,18 @@ const App: React.FC = () => {
     };
 
     setTags((prev) => [newTag, ...prev]);
+    setActivities((prev) => [
+      {
+        id: createActivityId(),
+        entityType: "tag",
+        entityId: newTag.id,
+        action: "created",
+        timestamp: nowIso,
+        userName: "John Doe",
+        details: `Created tag ${newTag.name}.`,
+      },
+      ...prev,
+    ]);
     return newTag.name;
   };
 
@@ -4329,6 +4756,8 @@ const App: React.FC = () => {
                 allHouseholds={households}
                 allInsurance={insurance}
                 allUtilities={utilities}
+                allMembers={members}
+                allInvites={invites}
                 onBack={() => navigateTo(lastView || "overview")}
                 onEdit={() => {}}
                 onDelete={() => {

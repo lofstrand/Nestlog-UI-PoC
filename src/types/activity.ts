@@ -7,6 +7,8 @@ export interface ActivityLogEntry {
     | "task"
     | "project"
     | "inventory"
+    | "inventory_category"
+    | "tag"
     | "document"
     | "contact"
     | "insurance"
@@ -25,4 +27,3 @@ export interface ActivityLogEntry {
   userName: string;
   details: string;
 }
-

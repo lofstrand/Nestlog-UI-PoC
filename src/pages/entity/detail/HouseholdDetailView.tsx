@@ -71,7 +71,9 @@ const HouseholdDetailView: React.FC<HouseholdDetailViewProps> = ({
   const householdInvites = allInvites.filter(
     (i) => i.householdId === entity.id && i.status === "Pending"
   );
-  const householdProperties = allProperties;
+  const householdProperties = allProperties.filter(
+    (p) => p.householdId === entity.id
+  );
 
   const handleLinkDocument = (documentId: string) => {
     const current = entity.documentIds || [];

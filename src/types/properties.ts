@@ -2,6 +2,7 @@ import type { Address, GalleryItem, Note } from "./common";
 
 export interface Property {
   id: string;
+  householdId?: string;
   name: string;
   isArchived: boolean;
   isPrimaryResidence: boolean;
@@ -23,4 +24,3 @@ export interface Property {
   tags: string[];
   documentIds: string[];
 }
-
