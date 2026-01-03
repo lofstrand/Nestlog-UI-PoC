@@ -3,7 +3,6 @@ import {
   Tags,
   BarChart2,
   Info,
-  FileText,
   Box,
   Wrench,
   FolderOpen,
@@ -15,7 +14,6 @@ import {
 } from "lucide-react";
 import {
   Tag as TagType,
-  Document,
   InventoryItem,
   InventoryCategory,
   Household,
@@ -35,8 +33,6 @@ import { SectionHeading, Badge } from "./UIPrimitives";
 interface TagDetailViewProps {
   entity: TagType;
   availableTags: TagType[];
-  linkedDocuments: Document[];
-  allDocuments?: Document[];
   allInventory?: InventoryItem[];
   allCategories?: InventoryCategory[];
   allHouseholds?: Household[];
@@ -62,9 +58,7 @@ const TagDetailView: React.FC<TagDetailViewProps> = ({
   onEdit: _onEdit,
   onDelete,
   onAddNote,
-  linkedDocuments,
   onUpdateEntity,
-  allDocuments,
   allInventory,
   allCategories,
   allHouseholds,
@@ -110,9 +104,6 @@ const TagDetailView: React.FC<TagDetailViewProps> = ({
   ];
 
   const normalizedTagName = entity.name;
-  const computedDocuments = (allDocuments || []).filter((d) =>
-    (d.tags || []).includes(normalizedTagName)
-  );
   const computedInventory = (allInventory || []).filter((i) =>
     (i.tags || []).includes(normalizedTagName)
   );
@@ -144,15 +135,12 @@ const TagDetailView: React.FC<TagDetailViewProps> = ({
     (p.tags || []).includes(normalizedTagName)
   );
 
-  const effectiveDocumentCount =
-    computedDocuments.length || linkedDocuments.length;
   const totalLinkedEntities =
     computedInventory.length +
     computedInventoryCategories.length +
     computedHouseholds.length +
     computedInsurance.length +
     computedUtilities.length +
-    effectiveDocumentCount +
     computedTasks.length +
     computedProjects.length +
     computedSpaces.length +
@@ -237,28 +225,23 @@ const TagDetailView: React.FC<TagDetailViewProps> = ({
               </Badge>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {[
-                {
-                  label: "Inventory Categories",
-                  icon: Layers,
-                  count: computedInventoryCategories.length,
-                },
-                {
-                  label: "Inventory Assets",
-                  icon: Box,
-                  count: computedInventory.length,
-                },
-                {
-                  label: "Documents",
-                  icon: FileText,
-                  count: effectiveDocumentCount,
-                },
-                {
-                  label: "Service Tasks",
-                  icon: Wrench,
-                  count: computedTasks.length,
-                },
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[
+                  {
+                    label: "Inventory Categories",
+                    icon: Layers,
+                    count: computedInventoryCategories.length,
+                  },
+                  {
+                    label: "Inventory Assets",
+                    icon: Box,
+                    count: computedInventory.length,
+                  },
+                  {
+                    label: "Service Tasks",
+                    icon: Wrench,
+                    count: computedTasks.length,
+                  },
                 {
                   label: "Active Projects",
                   icon: FolderOpen,

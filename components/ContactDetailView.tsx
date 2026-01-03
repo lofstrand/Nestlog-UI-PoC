@@ -20,7 +20,6 @@ import { Contact, Tag, Document } from "../types";
 import DetailLayout from "./DetailLayout";
 import NotesSection from "./NotesSection";
 import TagsSection from "./TagsSection";
-import AttachmentsSection from "./AttachmentsSection";
 import ContactModal from "./ContactModal";
 import SystemMetadataCard from "./SystemMetadataCard";
 import { SectionHeading, Badge } from "./UIPrimitives";
@@ -60,24 +59,6 @@ const ContactDetailView: React.FC<ContactDetailViewProps> = ({
 }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
-
-  const handleLinkDocument = (documentId: string) => {
-    const current = entity.documentIds || [];
-    if (current.includes(documentId)) return;
-    onUpdateEntity("contact", entity.id, {
-      documentIds: [...current, documentId],
-      updatedAtUtc: new Date().toISOString(),
-    });
-  };
-
-  const handleUnlinkDocument = (documentId: string) => {
-    const current = entity.documentIds || [];
-    if (!current.includes(documentId)) return;
-    onUpdateEntity("contact", entity.id, {
-      documentIds: current.filter((id) => id !== documentId),
-      updatedAtUtc: new Date().toISOString(),
-    });
-  };
 
   const handleSaveEdit = (data: Partial<Contact>) => {
     onUpdateEntity("contact", entity.id, data);
@@ -359,14 +340,6 @@ const ContactDetailView: React.FC<ContactDetailViewProps> = ({
             availableTags={availableTags}
             onAddTag={onAddTag}
             onRemoveTag={onRemoveTag}
-          />
-          <AttachmentsSection
-            linkedDocuments={linkedDocuments}
-            onAddAttachment={onAddAttachment}
-            availableDocuments={allDocuments}
-            explicitDocumentIds={entity.documentIds || []}
-            onLinkDocument={handleLinkDocument}
-            onUnlinkDocument={handleUnlinkDocument}
           />
           <NotesSection
             notes={entity.notes || []}

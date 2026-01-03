@@ -4,6 +4,7 @@ import {
   LayoutDashboard, 
   Home, 
   Building2, 
+  Globe,
   Layers, 
   Calendar, 
   Library, 
@@ -47,12 +48,14 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView, isOpen, 
       { id: 'insurance', label: 'Insurance', icon: ShieldCheck },
       { id: 'utilities', label: 'Utilities', icon: Zap },
     ]},
-    { id: 'library', label: 'Library', icon: Library, isExpandable: true, subItems: [
-      { id: 'documents', label: 'Documents', icon: FileText },
+    { id: 'global', label: 'Global', icon: Globe, isExpandable: true, subItems: [
       { id: 'contacts', label: 'Contacts', icon: Users },
-      { id: 'inventory', label: 'Inventory', icon: Box },
       { id: 'inventory_categories', label: 'Inventory categories', icon: LayoutGrid },
       { id: 'tags', label: 'Tags', icon: Tags },
+    ]},
+    { id: 'library', label: 'Library', icon: Library, isExpandable: true, subItems: [
+      { id: 'documents', label: 'Documents', icon: FileText },
+      { id: 'inventory', label: 'Inventory', icon: Box },
     ]},
   ];
 

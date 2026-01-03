@@ -61,8 +61,8 @@ const EntityDetail: React.FC<EntityDetailProps> = ({
   );
 
   const getLinkedDocs = () => {
-    if (type === 'tag') {
-      return allDocuments.filter((doc) => (doc.tags || []).includes(entity.name));
+    if (type === 'tag' || type === 'contact' || type === 'inventory_category') {
+      return [];
     }
 
     const entityDocIds = new Set<string>((entity.documentIds || []) as string[]);

@@ -12,7 +12,6 @@ import { InventoryCategory, Tag, Document } from "../types";
 import DetailLayout from "./DetailLayout";
 import NotesSection from "./NotesSection";
 import TagsSection from "./TagsSection";
-import AttachmentsSection from "./AttachmentsSection";
 import InventoryCategoryModal from "./InventoryCategoryModal";
 import SystemMetadataCard from "./SystemMetadataCard";
 import { SectionHeading, Badge, DynamicIcon } from "./UIPrimitives";
@@ -61,24 +60,6 @@ const InventoryCategoryDetailView: React.FC<
   const subCategories = availableCategories.filter(
     (c) => c.parentId === entity.id
   );
-
-  const handleLinkDocument = (documentId: string) => {
-    const current = entity.documentIds || [];
-    if (current.includes(documentId)) return;
-    onUpdateEntity("inventory_category", entity.id, {
-      documentIds: [...current, documentId],
-      updatedAtUtc: new Date().toISOString(),
-    });
-  };
-
-  const handleUnlinkDocument = (documentId: string) => {
-    const current = entity.documentIds || [];
-    if (!current.includes(documentId)) return;
-    onUpdateEntity("inventory_category", entity.id, {
-      documentIds: current.filter((id) => id !== documentId),
-      updatedAtUtc: new Date().toISOString(),
-    });
-  };
 
   const handleSaveEdit = (data: Partial<InventoryCategory>) => {
     onUpdateEntity("inventory_category", entity.id, data);
@@ -299,14 +280,6 @@ const InventoryCategoryDetailView: React.FC<
             availableTags={availableTags}
             onAddTag={onAddTag}
             onRemoveTag={onRemoveTag}
-          />
-          <AttachmentsSection
-            linkedDocuments={linkedDocuments}
-            onAddAttachment={onAddAttachment}
-            availableDocuments={allDocuments}
-            explicitDocumentIds={entity.documentIds || []}
-            onLinkDocument={handleLinkDocument}
-            onUnlinkDocument={handleUnlinkDocument}
           />
           <NotesSection
             notes={entity.notes || []}
