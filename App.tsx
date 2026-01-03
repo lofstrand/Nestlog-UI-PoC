@@ -3554,6 +3554,7 @@ const App: React.FC = () => {
     const nowIso = new Date().toISOString();
     return MOCK_CATEGORIES.map((c, index) => ({
       ...c,
+      canHaveChildren: c.canHaveChildren ?? true,
       createdAtUtc:
         c.createdAtUtc ||
         new Date(Date.now() - (index + 1) * 86400000).toISOString(),

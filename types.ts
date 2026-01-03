@@ -316,6 +316,7 @@ export interface InventoryCategory {
   name: string;
   iconName?: string | null;
   colorHex?: string | null;
+  canHaveChildren?: boolean;
   estimatedDepreciationRate?: number | null;
   isInsuranceCritical: boolean;
   sortOrder: number;

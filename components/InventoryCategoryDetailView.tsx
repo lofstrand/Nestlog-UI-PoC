@@ -15,7 +15,7 @@ import TagsSection from "./TagsSection";
 import AttachmentsSection from "./AttachmentsSection";
 import InventoryCategoryModal from "./InventoryCategoryModal";
 import SystemMetadataCard from "./SystemMetadataCard";
-import { SectionHeading, Badge } from "./UIPrimitives";
+import { SectionHeading, Badge, DynamicIcon } from "./UIPrimitives";
 
 interface InventoryCategoryDetailViewProps {
   entity: InventoryCategory;
@@ -84,6 +84,10 @@ const InventoryCategoryDetailView: React.FC<
         ? new Date(entity.updatedAtUtc).toLocaleDateString()
         : "—",
     },
+    {
+      label: "Parent Eligible",
+      value: (entity.canHaveChildren ?? true) ? "Yes" : "No",
+    },
   ];
 
   return (
@@ -108,9 +112,11 @@ const InventoryCategoryDetailView: React.FC<
                 <div className="rounded-[2rem] border border-slate-200 bg-slate-50 p-6 shadow-inner space-y-4">
                   <div className="flex items-center justify-between">
                     <div
-                      className="w-12 h-12 rounded-2xl border border-slate-200 shadow-sm"
+                      className="w-12 h-12 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-center text-white"
                       style={{ backgroundColor: entity.colorHex || "#1e293b" }}
-                    />
+                    >
+                      <DynamicIcon name={entity.iconName || "LayoutGrid"} size={18} />
+                    </div>
                     <Badge
                       color="text-slate-500"
                       bgColor="bg-white"
@@ -118,6 +124,13 @@ const InventoryCategoryDetailView: React.FC<
                     >
                       ORD-{entity.sortOrder.toString().padStart(3, "0")}
                     </Badge>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {(entity.canHaveChildren ?? true) ? (
+                      <Badge color="text-slate-600" bgColor="bg-white" borderColor="border-slate-200">Parent Enabled</Badge>
+                    ) : (
+                      <Badge color="text-slate-500" bgColor="bg-slate-50" borderColor="border-slate-200">Leaf Category</Badge>
+                    )}
                   </div>
                   <div className="space-y-1">
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
@@ -232,7 +245,7 @@ const InventoryCategoryDetailView: React.FC<
                       className="flex items-center space-x-3 p-4 bg-white border border-slate-100 rounded-2xl shadow-sm"
                     >
                       <div className="w-10 h-10 rounded-xl border border-slate-100 bg-slate-50 flex items-center justify-center text-slate-400 shrink-0">
-                        <LayoutGrid size={16} />
+                        <DynamicIcon name={sub.iconName || "LayoutGrid"} size={16} />
                       </div>
                       <div className="min-w-0">
                         <p className="text-sm font-black text-slate-900 truncate">

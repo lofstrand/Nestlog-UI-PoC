@@ -28,44 +28,50 @@ const InventoryCategoryModal: React.FC<InventoryCategoryModalProps> = ({
 }) => {
   const [name, setName] = useState('');
   const [parentId, setParentId] = useState('');
+  const [canHaveChildren, setCanHaveChildren] = useState(true);
   const [iconName, setIconName] = useState('Package');
   const [colorHex, setColorHex] = useState('#1e293b');
   const [depreciationRate, setDepreciationRate] = useState('');
   const [isInsuranceCritical, setIsInsuranceCritical] = useState(false);
-  const [sortOrder, setSortOrder] = useState('0');
 
   useEffect(() => {
     if (initialData) {
       setName(initialData.name);
       setParentId(initialData.parentId || '');
+      setCanHaveChildren(initialData.canHaveChildren ?? true);
       setIconName(initialData.iconName || 'Package');
       setColorHex(initialData.colorHex || '#1e293b');
       setDepreciationRate(initialData.estimatedDepreciationRate?.toString() || '');
       setIsInsuranceCritical(initialData.isInsuranceCritical || false);
-      setSortOrder(initialData.sortOrder.toString());
     } else {
       setName('');
       setParentId('');
+      setCanHaveChildren(true);
       setIconName('Package');
       setColorHex('#1e293b');
       setDepreciationRate('');
       setIsInsuranceCritical(false);
-      setSortOrder('0');
     }
   }, [initialData, isOpen]);
 
   if (!isOpen) return null;
+
+  const hasChildren = !!initialData && availableCategories.some(c => c.parentId === initialData.id);
+  const computedSortOrder = initialData
+    ? initialData.sortOrder
+    : Math.max(0, ...availableCategories.map(c => c.sortOrder || 0)) + 1;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave({
       name,
       parentId: parentId || null,
+      canHaveChildren: hasChildren ? true : canHaveChildren,
       iconName,
       colorHex,
       estimatedDepreciationRate: depreciationRate ? parseFloat(depreciationRate) : null,
       isInsuranceCritical,
-      sortOrder: parseInt(sortOrder) || 0
+      sortOrder: computedSortOrder
     });
   };
 
@@ -104,10 +110,35 @@ const InventoryCategoryModal: React.FC<InventoryCategoryModalProps> = ({
                 className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl focus:outline-none focus:ring-4 focus:ring-slate-900/5 focus:border-slate-400 transition-all text-sm font-bold text-slate-900 shadow-inner"
               >
                 <option value="">Top-Level Group</option>
-                {availableCategories.filter(c => c.id !== initialData?.id).map(c => (
+                {availableCategories
+                  .filter(c => c.id !== initialData?.id)
+                  .filter(c => (c.canHaveChildren ?? true))
+                  .map(c => (
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
               </select>
+            </div>
+
+            <div className="p-4 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Allow Sub-categories</p>
+                {hasChildren ? (
+                  <p className="text-xs font-bold text-slate-500">Locked (this category has children)</p>
+                ) : (
+                  <p className="text-xs font-bold text-slate-500">Controls whether this category can be used as a parent</p>
+                )}
+              </div>
+              <button
+                type="button"
+                disabled={hasChildren}
+                onClick={() => setCanHaveChildren(v => !v)}
+                className={`
+                  px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all
+                  ${hasChildren ? 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed' : (canHaveChildren ? 'bg-slate-900 border-slate-900 text-white' : 'bg-white border-slate-200 text-slate-600')}
+                `}
+              >
+                {canHaveChildren ? 'Enabled' : 'Disabled'}
+              </button>
             </div>
           </div>
 
@@ -163,17 +194,14 @@ const InventoryCategoryModal: React.FC<InventoryCategoryModalProps> = ({
 
           <div className="space-y-6">
             <SectionHeading label="Asset Lifecycle Rules" icon={TrendingDown} />
-            <div className="grid grid-cols-2 gap-6">
-               <Input 
-                label="Depreciation (% / yr)" 
-                type="number" 
-                step="0.1"
-                value={depreciationRate} 
-                onChange={(e) => setDepreciationRate(e.target.value)} 
-                placeholder="e.g. 15"
-              />
-              <Input label="UI Sort Priority" type="number" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} />
-            </div>
+            <Input 
+              label="Depreciation (% / yr)" 
+              type="number" 
+              step="0.1"
+              value={depreciationRate} 
+              onChange={(e) => setDepreciationRate(e.target.value)} 
+              placeholder="e.g. 15"
+            />
           </div>
         </form>
 

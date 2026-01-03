@@ -27,7 +27,7 @@ import TagsSection from "./TagsSection";
 import AttachmentsSection from "./AttachmentsSection";
 import InventoryModal from "./InventoryModal";
 import SystemMetadataCard from "./SystemMetadataCard";
-import { SectionHeading, Badge } from "./UIPrimitives";
+import { SectionHeading, Badge, DynamicIcon } from "./UIPrimitives";
 
 interface InventoryDetailViewProps {
   entity: InventoryItem;
@@ -213,12 +213,34 @@ const InventoryDetailView: React.FC<InventoryDetailViewProps> = ({
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                       Category
                     </p>
-                    <p
-                      className="text-xl font-black tracking-tight mt-1.5"
-                      style={categoryDef?.colorHex ? { color: categoryDef.colorHex } : undefined}
-                    >
-                      {entity.category || "Uncategorized"}
-                    </p>
+                    <div className="flex items-center space-x-2 mt-1.5">
+                      <div
+                        className="w-8 h-8 rounded-xl border border-slate-200 flex items-center justify-center text-slate-600 bg-white/70"
+                        style={
+                          categoryDef?.colorHex
+                            ? {
+                                borderColor: `${categoryDef.colorHex}25`,
+                                color: categoryDef.colorHex,
+                              }
+                            : undefined
+                        }
+                      >
+                        <DynamicIcon
+                          name={categoryDef?.iconName || "LayoutGrid"}
+                          size={14}
+                        />
+                      </div>
+                      <p
+                        className="text-xl font-black tracking-tight"
+                        style={
+                          categoryDef?.colorHex
+                            ? { color: categoryDef.colorHex }
+                            : undefined
+                        }
+                      >
+                        {entity.category || "Uncategorized"}
+                      </p>
+                    </div>
                   </div>
 
                   <div
@@ -227,9 +249,13 @@ const InventoryDetailView: React.FC<InventoryDetailViewProps> = ({
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                       Condition
                     </p>
-                    <div className={`flex items-center space-x-2 mt-1.5 ${statusStyles.color}`}>
+                    <div
+                      className={`flex items-center space-x-2 mt-1.5 ${statusStyles.color}`}
+                    >
                       <Activity size={16} />
-                      <p className="text-xl font-black tracking-tight">{entity.status}</p>
+                      <p className="text-xl font-black tracking-tight">
+                        {entity.status}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -284,22 +310,6 @@ const InventoryDetailView: React.FC<InventoryDetailViewProps> = ({
                     <p className="text-sm font-bold text-slate-900 font-mono tracking-tight">
                       {entity.serialNumber || "-"}
                     </p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                      Last Audit
-                    </p>
-                    <div className="flex items-center space-x-2 text-slate-900 font-black text-sm tracking-tight">
-                      <History size={14} className="text-slate-300" />
-                      <span>
-                        {entity.lastAuditDateUtc
-                          ? new Date(
-                              entity.lastAuditDateUtc
-                            ).toLocaleDateString()
-                          : "Not audited"}
-                      </span>
-                    </div>
                   </div>
                 </div>
 
@@ -395,7 +405,6 @@ const InventoryDetailView: React.FC<InventoryDetailViewProps> = ({
               </div>
             </div>
           </div>
-
         </div>
 
         <div className="lg:col-span-1 space-y-12">

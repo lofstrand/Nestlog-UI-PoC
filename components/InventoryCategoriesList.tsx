@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { Search, Plus, Eye, LayoutGrid, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, ShieldAlert, Layers } from 'lucide-react';
 import { InventoryCategory } from '../types';
 import InventoryCategoryModal from './InventoryCategoryModal';
-import { Button, Card, PageHeader, Badge } from './UIPrimitives';
+import { Button, Card, PageHeader, Badge, DynamicIcon } from './UIPrimitives';
 
 interface InventoryCategoriesListProps {
   categories: InventoryCategory[];
@@ -91,7 +91,7 @@ const InventoryCategoriesList: React.FC<InventoryCategoriesListProps> = ({ categ
                         className="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0 shadow-lg" 
                         style={{ backgroundColor: c.colorHex || '#1e293b' }}
                       >
-                        <LayoutGrid size={18} />
+                        <DynamicIcon name={c.iconName || 'LayoutGrid'} size={18} />
                       </div>
                       <div>
                         <span className="font-black text-slate-900 text-lg cursor-pointer hover:text-slate-600 transition-colors tracking-tight block leading-tight" onClick={() => onView(c.id)}>{c.name}</span>
@@ -119,6 +119,9 @@ const InventoryCategoriesList: React.FC<InventoryCategoriesListProps> = ({ categ
                        )}
                        {c.estimatedDepreciationRate && (
                          <Badge color="text-[#a47148]" bgColor="bg-[#f9f4f0]">-{c.estimatedDepreciationRate}% DEP</Badge>
+                       )}
+                       {(c.canHaveChildren ?? true) === false && (
+                         <Badge color="text-slate-500" bgColor="bg-slate-50" borderColor="border-slate-100">Leaf</Badge>
                        )}
                     </div>
                   </td>
