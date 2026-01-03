@@ -1,8 +1,8 @@
 
 import React, { useMemo, useState } from "react";
 import { Paperclip, FileText, ExternalLink, Plus, X } from "lucide-react";
-import { Document } from "../../types";
-import DocumentPreview from "./DocumentPreview";
+import { Document } from "@/types";
+import DocumentPreview from "@/features/documents/components/DocumentPreview";
 
 interface AttachmentsSectionProps {
   linkedDocuments: Document[];

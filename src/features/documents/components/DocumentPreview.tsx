@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { FileText, Image as ImageIcon, FileCode, FileQuestion, FileSpreadsheet, FileArchive, FileJson, Presentation, FileText as PdfIcon, Clapperboard } from 'lucide-react';
-import { DocumentAttachment } from "../../types";
+import { DocumentAttachment } from "@/types";
 
 interface DocumentPreviewProps {
   attachment: DocumentAttachment;

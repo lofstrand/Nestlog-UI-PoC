@@ -45,9 +45,9 @@ import {
   InventoryItem,
 } from "../../../types";
 import DetailLayout from "../../../layouts/DetailLayout";
-import NotesSection from "../../../components/sections/NotesSection";
-import TagsSection from "../../../components/sections/TagsSection";
-import AttachmentsSection from "../../../components/sections/AttachmentsSection";
+import NotesSection from "@/components/sections/NotesSection";
+import TagsSection from "@/components/sections/TagsSection";
+import AttachmentsSection from "@/features/documents/components/AttachmentsSection";
 import {
   SectionHeading,
   Badge,
@@ -55,8 +55,8 @@ import {
   Input,
 } from "../../../components/ui/UIPrimitives";
 import InsurancePolicyModal from "@/features/insurance/components/InsurancePolicyModal";
-import DocumentPreview from "../../../components/sections/DocumentPreview";
-import SystemMetadataCard from "../../../components/sections/SystemMetadataCard";
+import DocumentPreview from "@/features/documents/components/DocumentPreview";
+import SystemMetadataCard from "@/components/sections/SystemMetadataCard";
 
 interface InsuranceDetailViewProps {
   entity: InsurancePolicy;

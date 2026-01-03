@@ -38,9 +38,9 @@ import {
   UtilityInvoice,
 } from "../../../types";
 import DetailLayout from "../../../layouts/DetailLayout";
-import NotesSection from "../../../components/sections/NotesSection";
-import TagsSection from "../../../components/sections/TagsSection";
-import AttachmentsSection from "../../../components/sections/AttachmentsSection";
+import NotesSection from "@/components/sections/NotesSection";
+import TagsSection from "@/components/sections/TagsSection";
+import AttachmentsSection from "@/features/documents/components/AttachmentsSection";
 // Fixed: Added missing Input to imports from UIPrimitives to resolve 'Cannot find name' error on line 237
 import {
   SectionHeading,
@@ -49,7 +49,7 @@ import {
   Input,
 } from "../../../components/ui/UIPrimitives";
 import UtilityAccountModal from "@/features/utilities/components/UtilityAccountModal";
-import SystemMetadataCard from "../../../components/sections/SystemMetadataCard";
+import SystemMetadataCard from "@/components/sections/SystemMetadataCard";
 
 interface UtilityDetailViewProps {
   entity: UtilityAccount;

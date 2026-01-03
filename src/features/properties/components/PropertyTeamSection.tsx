@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { Users, ArrowUpRight, ShieldCheck } from 'lucide-react';
-import { HouseholdMember, PropertyRole, Contact } from "../../types";
-import { SectionHeading, Badge } from "../ui/UIPrimitives";
+import { HouseholdMember, PropertyRole, Contact } from "@/types";
+import { SectionHeading, Badge } from "@/components/ui/UIPrimitives";
 
 interface PropertyTeamSectionProps {
   members: HouseholdMember[];

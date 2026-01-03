@@ -4,7 +4,7 @@ import { Search, Plus, Eye, FileText, ChevronUp, ChevronDown, ChevronLeft, Chevr
 import { Document, Space, InventoryItem, Tag, Project, MaintenanceTask, Contact } from "../../../types";
 import DocumentModal from "@/features/documents/components/DocumentModal";
 import { Button, Card, PageHeader, Badge } from "../../../components/ui/UIPrimitives";
-import DocumentPreview from "../../../components/sections/DocumentPreview";
+import DocumentPreview from "@/features/documents/components/DocumentPreview";
 
 interface DocumentsListProps {
   documents: Document[];

@@ -9,14 +9,14 @@ import {
   Property,
 } from "../../../types";
 import DetailLayout from "../../../layouts/DetailLayout";
-import NotesSection from "../../../components/sections/NotesSection";
-import TagsSection from "../../../components/sections/TagsSection";
-import AttachmentsSection from "../../../components/sections/AttachmentsSection";
-import HouseholdMembersSection from "../../../components/sections/HouseholdMembersSection";
-import HouseholdArchitectureSection from "../../../components/sections/HouseholdArchitectureSection";
+import NotesSection from "@/components/sections/NotesSection";
+import TagsSection from "@/components/sections/TagsSection";
+import AttachmentsSection from "@/features/documents/components/AttachmentsSection";
+import HouseholdMembersSection from "@/features/households/components/HouseholdMembersSection";
+import HouseholdArchitectureSection from "@/features/households/components/HouseholdArchitectureSection";
 import InviteModal from "@/features/households/components/InviteModal";
 import HouseholdModal from "@/features/households/components/HouseholdModal";
-import SystemMetadataCard from "../../../components/sections/SystemMetadataCard";
+import SystemMetadataCard from "@/components/sections/SystemMetadataCard";
 import { Badge } from "../../../components/ui/UIPrimitives";
 
 interface HouseholdDetailViewProps {

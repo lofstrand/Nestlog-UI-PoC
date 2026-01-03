@@ -22,11 +22,11 @@ import {
   InventoryCategory,
 } from "../../../types";
 import DetailLayout from "../../../layouts/DetailLayout";
-import NotesSection from "../../../components/sections/NotesSection";
-import TagsSection from "../../../components/sections/TagsSection";
-import AttachmentsSection from "../../../components/sections/AttachmentsSection";
+import NotesSection from "@/components/sections/NotesSection";
+import TagsSection from "@/components/sections/TagsSection";
+import AttachmentsSection from "@/features/documents/components/AttachmentsSection";
 import InventoryModal from "@/features/inventory/components/InventoryModal";
-import SystemMetadataCard from "../../../components/sections/SystemMetadataCard";
+import SystemMetadataCard from "@/components/sections/SystemMetadataCard";
 import { SectionHeading, Badge, DynamicIcon } from "../../../components/ui/UIPrimitives";
 
 interface InventoryDetailViewProps {

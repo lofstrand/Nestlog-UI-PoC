@@ -34,13 +34,13 @@ import {
   ProjectExpense,
 } from "../../../types";
 import DetailLayout from "../../../layouts/DetailLayout";
-import NotesSection from "../../../components/sections/NotesSection";
-import TagsSection from "../../../components/sections/TagsSection";
-import AttachmentsSection from "../../../components/sections/AttachmentsSection";
-import VisualArchive from "../../../components/sections/VisualArchive";
+import NotesSection from "@/components/sections/NotesSection";
+import TagsSection from "@/components/sections/TagsSection";
+import AttachmentsSection from "@/features/documents/components/AttachmentsSection";
+import VisualArchive from "@/features/gallery/components/VisualArchive";
 import GalleryModal from "@/features/gallery/components/GalleryModal";
 import ProjectModal from "@/features/projects/components/ProjectModal";
-import SystemMetadataCard from "../../../components/sections/SystemMetadataCard";
+import SystemMetadataCard from "@/components/sections/SystemMetadataCard";
 import { SectionHeading, Badge, Button as UIButton } from "../../../components/ui/UIPrimitives";
 
 interface ProjectDetailViewProps {

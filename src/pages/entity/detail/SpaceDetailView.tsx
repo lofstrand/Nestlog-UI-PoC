@@ -24,14 +24,14 @@ import {
   SpaceSurface,
 } from "../../../types";
 import DetailLayout from "../../../layouts/DetailLayout";
-import NotesSection from "../../../components/sections/NotesSection";
-import TagsSection from "../../../components/sections/TagsSection";
-import AttachmentsSection from "../../../components/sections/AttachmentsSection";
-import VisualArchive from "../../../components/sections/VisualArchive";
+import NotesSection from "@/components/sections/NotesSection";
+import TagsSection from "@/components/sections/TagsSection";
+import AttachmentsSection from "@/features/documents/components/AttachmentsSection";
+import VisualArchive from "@/features/gallery/components/VisualArchive";
 import GalleryModal from "@/features/gallery/components/GalleryModal";
 import SpaceModal from "@/features/spaces/components/SpaceModal";
 import SpaceSurfaceModal from "@/features/spaces/components/SpaceSurfaceModal";
-import SystemMetadataCard from "../../../components/sections/SystemMetadataCard";
+import SystemMetadataCard from "@/components/sections/SystemMetadataCard";
 import { Badge, SectionHeading, Button } from "../../../components/ui/UIPrimitives";
 
 interface SpaceDetailViewProps {
