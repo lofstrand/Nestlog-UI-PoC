@@ -86,20 +86,20 @@ const FEATURE_REQUESTS: Array<{
     area: "Data",
   },
   {
-    title: "Upload Documents and Media Directly from Mobile Devices",
-    status: "Planned",
-    description:
-      "Allow users to upload documents and media directly from their phone.",
-    requestor: "Sara Löfstrand",
-    area: "UI/UX",
-  },
-  {
     title: "Project Templates (e.g. Renovation Projects)",
     status: "Requested",
     description:
       "Users can start a project from a predefined template that includes common tasks, timelines, and cost categories, reducing setup time and ensuring best practices.",
     requestor: "Sara Löfstrand",
     area: "Data",
+  },
+  {
+    title: "Upload Documents and Media Directly from Mobile Devices",
+    status: "Done",
+    description:
+      "Allow users to upload documents and media directly from their phone.",
+    requestor: "Sara Löfstrand",
+    area: "UI/UX",
   },
 ];
 
