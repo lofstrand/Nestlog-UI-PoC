@@ -26,7 +26,7 @@ import {
   Property,
 } from "../../../types";
 import DetailLayout from "../../../layouts/DetailLayout";
-import TagModal from "../../../components/modals/TagModal";
+import TagModal from "@/features/tags/components/TagModal";
 import SystemMetadataCard from "../../../components/sections/SystemMetadataCard";
 import { SectionHeading, Badge } from "../../../components/ui/UIPrimitives";
 

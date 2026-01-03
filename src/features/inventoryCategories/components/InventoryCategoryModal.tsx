@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, LayoutGrid, Palette, Hash, TrendingDown, ShieldAlert, ChevronRight, Layers } from 'lucide-react';
-import { InventoryCategory } from "../../types";
-import { Input, SectionHeading } from "../ui/UIPrimitives";
+import { InventoryCategory } from "@/types";
+import { Input, SectionHeading } from "@/components/ui/UIPrimitives";
 
 interface InventoryCategoryModalProps {
   isOpen: boolean;

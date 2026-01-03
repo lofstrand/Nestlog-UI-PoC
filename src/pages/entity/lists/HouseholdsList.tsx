@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from 'react';
 import { Search, Plus, Eye, ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Household, Tag } from "../../../types";
-import HouseholdModal from "../../../components/modals/HouseholdModal";
+import HouseholdModal from "@/features/households/components/HouseholdModal";
 import { Button, Card, PageHeader, Badge } from "../../../components/ui/UIPrimitives";
 
 interface HouseholdsListProps {

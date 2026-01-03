@@ -20,7 +20,7 @@ import { Contact, Tag, Document } from "../../../types";
 import DetailLayout from "../../../layouts/DetailLayout";
 import NotesSection from "../../../components/sections/NotesSection";
 import TagsSection from "../../../components/sections/TagsSection";
-import ContactModal from "../../../components/modals/ContactModal";
+import ContactModal from "@/features/contacts/components/ContactModal";
 import SystemMetadataCard from "../../../components/sections/SystemMetadataCard";
 import { SectionHeading, Badge } from "../../../components/ui/UIPrimitives";
 

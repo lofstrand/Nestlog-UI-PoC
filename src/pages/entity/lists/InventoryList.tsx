@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from 'react';
 import { Search, Plus, Eye, Box, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Activity } from 'lucide-react';
 import { InventoryItem, Space, InventoryCategory, Tag, InventoryItemStatus } from "../../../types";
-import InventoryModal from "../../../components/modals/InventoryModal";
+import InventoryModal from "@/features/inventory/components/InventoryModal";
 import { Button, Card, PageHeader, Badge } from "../../../components/ui/UIPrimitives";
 
 interface InventoryListProps {

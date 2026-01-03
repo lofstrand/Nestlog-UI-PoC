@@ -24,7 +24,7 @@ import DetailLayout from "../../../layouts/DetailLayout";
 import NotesSection from "../../../components/sections/NotesSection";
 import TagsSection from "../../../components/sections/TagsSection";
 import AttachmentsSection from "../../../components/sections/AttachmentsSection";
-import MaintenanceTaskModal from "../../../components/modals/MaintenanceTaskModal";
+import MaintenanceTaskModal from "@/features/maintenance/components/MaintenanceTaskModal";
 import SystemMetadataCard from "../../../components/sections/SystemMetadataCard";
 import { SectionHeading, Badge } from "../../../components/ui/UIPrimitives";
 

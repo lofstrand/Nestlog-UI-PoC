@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { Search, Plus, Eye, ShieldCheck, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Calendar, TrendingUp } from 'lucide-react';
 import { InsurancePolicy, Contact } from "../../../types";
 import { Button, Card, PageHeader, Badge } from "../../../components/ui/UIPrimitives";
-import InsurancePolicyModal from "../../../components/modals/InsurancePolicyModal";
+import InsurancePolicyModal from "@/features/insurance/components/InsurancePolicyModal";
 
 interface InsuranceListProps {
   policies: InsurancePolicy[];

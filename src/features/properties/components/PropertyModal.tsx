@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, Building2, MapPin, Calendar, Star, Info, Archive, Maximize } from 'lucide-react';
-import { Property, Address } from "../../types";
+import { Property, Address } from "@/types";
 
 interface PropertyModalProps {
   isOpen: boolean;

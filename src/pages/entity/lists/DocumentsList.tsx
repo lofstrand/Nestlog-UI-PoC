@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from 'react';
 import { Search, Plus, Eye, FileText, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Shield, Link } from 'lucide-react';
 import { Document, Space, InventoryItem, Tag, Project, MaintenanceTask, Contact } from "../../../types";
-import DocumentModal from "../../../components/modals/DocumentModal";
+import DocumentModal from "@/features/documents/components/DocumentModal";
 import { Button, Card, PageHeader, Badge } from "../../../components/ui/UIPrimitives";
 import DocumentPreview from "../../../components/sections/DocumentPreview";
 

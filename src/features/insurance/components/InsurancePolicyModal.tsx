@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, ShieldCheck, Hash, User, DollarSign, Calendar, Plus, Type } from 'lucide-react';
-import { InsurancePolicy, Contact, InsurancePolicyType } from "../../types";
-import { Input, SectionHeading } from "../ui/UIPrimitives";
+import { InsurancePolicy, Contact, InsurancePolicyType } from "@/types";
+import { Input, SectionHeading } from "@/components/ui/UIPrimitives";
 
 interface InsurancePolicyModalProps {
   isOpen: boolean;

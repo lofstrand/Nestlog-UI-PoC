@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, Home, AlignLeft, Archive, Info } from 'lucide-react';
-import { Household } from "../../types";
+import { Household } from "@/types";
 
 interface HouseholdModalProps {
   isOpen: boolean;

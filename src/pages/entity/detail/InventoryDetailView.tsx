@@ -25,7 +25,7 @@ import DetailLayout from "../../../layouts/DetailLayout";
 import NotesSection from "../../../components/sections/NotesSection";
 import TagsSection from "../../../components/sections/TagsSection";
 import AttachmentsSection from "../../../components/sections/AttachmentsSection";
-import InventoryModal from "../../../components/modals/InventoryModal";
+import InventoryModal from "@/features/inventory/components/InventoryModal";
 import SystemMetadataCard from "../../../components/sections/SystemMetadataCard";
 import { SectionHeading, Badge, DynamicIcon } from "../../../components/ui/UIPrimitives";
 

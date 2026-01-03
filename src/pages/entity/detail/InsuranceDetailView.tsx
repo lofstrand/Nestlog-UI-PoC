@@ -54,7 +54,7 @@ import {
   Button as UIButton,
   Input,
 } from "../../../components/ui/UIPrimitives";
-import InsurancePolicyModal from "../../../components/modals/InsurancePolicyModal";
+import InsurancePolicyModal from "@/features/insurance/components/InsurancePolicyModal";
 import DocumentPreview from "../../../components/sections/DocumentPreview";
 import SystemMetadataCard from "../../../components/sections/SystemMetadataCard";
 

@@ -38,8 +38,8 @@ import NotesSection from "../../../components/sections/NotesSection";
 import TagsSection from "../../../components/sections/TagsSection";
 import AttachmentsSection from "../../../components/sections/AttachmentsSection";
 import VisualArchive from "../../../components/sections/VisualArchive";
-import GalleryModal from "../../../components/modals/GalleryModal";
-import ProjectModal from "../../../components/modals/ProjectModal";
+import GalleryModal from "@/features/gallery/components/GalleryModal";
+import ProjectModal from "@/features/projects/components/ProjectModal";
 import SystemMetadataCard from "../../../components/sections/SystemMetadataCard";
 import { SectionHeading, Badge, Button as UIButton } from "../../../components/ui/UIPrimitives";
 

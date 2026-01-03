@@ -14,8 +14,8 @@ import TagsSection from "../../../components/sections/TagsSection";
 import AttachmentsSection from "../../../components/sections/AttachmentsSection";
 import HouseholdMembersSection from "../../../components/sections/HouseholdMembersSection";
 import HouseholdArchitectureSection from "../../../components/sections/HouseholdArchitectureSection";
-import InviteModal from "../../../components/modals/InviteModal";
-import HouseholdModal from "../../../components/modals/HouseholdModal";
+import InviteModal from "@/features/households/components/InviteModal";
+import HouseholdModal from "@/features/households/components/HouseholdModal";
 import SystemMetadataCard from "../../../components/sections/SystemMetadataCard";
 import { Badge } from "../../../components/ui/UIPrimitives";
 

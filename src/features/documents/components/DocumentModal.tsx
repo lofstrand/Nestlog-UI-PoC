@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { X, FileText, Layout, Calendar, Plus, Link, Trash2, Paperclip, HardDrive, User, FolderOpen, Wrench, Shield, Check, MapPin, Box, Layers, Search } from 'lucide-react';
-import { Document, Space, InventoryItem, Note, DocumentAttachment, Project, MaintenanceTask, Contact } from "../../types";
-import { Input, SectionHeading, Button } from "../ui/UIPrimitives";
-import DocumentPreview from "../sections/DocumentPreview";
+import { Document, Space, InventoryItem, Note, DocumentAttachment, Project, MaintenanceTask, Contact } from "@/types";
+import { Input, SectionHeading, Button } from "@/components/ui/UIPrimitives";
+import DocumentPreview from "@/components/sections/DocumentPreview";
 
 interface DocumentModalProps {
   isOpen: boolean;

@@ -31,7 +31,7 @@ import NotesSection from "../../../components/sections/NotesSection";
 import TagsSection from "../../../components/sections/TagsSection";
 import { SectionHeading, Badge } from "../../../components/ui/UIPrimitives";
 import DocumentPreview from "../../../components/sections/DocumentPreview";
-import DocumentModal from "../../../components/modals/DocumentModal";
+import DocumentModal from "@/features/documents/components/DocumentModal";
 import SystemMetadataCard from "../../../components/sections/SystemMetadataCard";
 
 interface DocumentDetailViewProps {

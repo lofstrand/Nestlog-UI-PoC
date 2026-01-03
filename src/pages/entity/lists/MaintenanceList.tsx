@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from 'react';
 import { Search, Plus, Eye, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Repeat, MapPin } from 'lucide-react';
 import { MaintenanceTask, MaintenanceTaskPriority, Space, Tag, MaintenanceRecurrenceFrequency, InventoryItem, Contact } from "../../../types";
-import MaintenanceTaskModal from "../../../components/modals/MaintenanceTaskModal";
+import MaintenanceTaskModal from "@/features/maintenance/components/MaintenanceTaskModal";
 import { Button, Card, PageHeader, Badge } from "../../../components/ui/UIPrimitives";
 
 interface MaintenanceListProps {

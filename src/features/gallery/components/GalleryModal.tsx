@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { X, Camera, Film, Link, Type, AlignLeft, Send } from 'lucide-react';
-import { Input, SectionHeading } from "../ui/UIPrimitives";
+import { Input, SectionHeading } from "@/components/ui/UIPrimitives";
 
 interface GalleryModalProps {
   isOpen: boolean;

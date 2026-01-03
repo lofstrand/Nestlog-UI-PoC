@@ -12,7 +12,7 @@ import { InventoryCategory, Tag, Document } from "../../../types";
 import DetailLayout from "../../../layouts/DetailLayout";
 import NotesSection from "../../../components/sections/NotesSection";
 import TagsSection from "../../../components/sections/TagsSection";
-import InventoryCategoryModal from "../../../components/modals/InventoryCategoryModal";
+import InventoryCategoryModal from "@/features/inventoryCategories/components/InventoryCategoryModal";
 import SystemMetadataCard from "../../../components/sections/SystemMetadataCard";
 import { SectionHeading, Badge, DynamicIcon } from "../../../components/ui/UIPrimitives";
 

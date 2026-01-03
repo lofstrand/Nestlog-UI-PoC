@@ -8,8 +8,8 @@ import TagsSection from "../../../components/sections/TagsSection";
 import AttachmentsSection from "../../../components/sections/AttachmentsSection";
 import PropertyTeamSection from "../../../components/sections/PropertyTeamSection";
 import VisualArchive from "../../../components/sections/VisualArchive";
-import GalleryModal from "../../../components/modals/GalleryModal";
-import PropertyModal from "../../../components/modals/PropertyModal";
+import GalleryModal from "@/features/gallery/components/GalleryModal";
+import PropertyModal from "@/features/properties/components/PropertyModal";
 import SystemMetadataCard from "../../../components/sections/SystemMetadataCard";
 import { SectionHeading, Badge } from "../../../components/ui/UIPrimitives";
 

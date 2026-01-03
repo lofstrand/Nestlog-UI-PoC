@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, Zap, Hash, User, DollarSign, Calendar, Layout, Info, Plus, Type, Calculator, Settings2 } from 'lucide-react';
-import { UtilityAccount, Contact, Space } from "../../types";
-import { Input, SectionHeading } from "../ui/UIPrimitives";
+import { UtilityAccount, Contact, Space } from "@/types";
+import { Input, SectionHeading } from "@/components/ui/UIPrimitives";
 
 interface UtilityAccountModalProps {
   isOpen: boolean;

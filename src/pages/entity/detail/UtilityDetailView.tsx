@@ -48,7 +48,7 @@ import {
   Button as UIButton,
   Input,
 } from "../../../components/ui/UIPrimitives";
-import UtilityAccountModal from "../../../components/modals/UtilityAccountModal";
+import UtilityAccountModal from "@/features/utilities/components/UtilityAccountModal";
 import SystemMetadataCard from "../../../components/sections/SystemMetadataCard";
 
 interface UtilityDetailViewProps {

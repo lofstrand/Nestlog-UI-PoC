@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, Layers, Archive, ListFilter, AlignLeft, ArrowUpCircle, TreePine } from 'lucide-react';
-import { Space, SpaceType, Document } from "../../types";
+import { Space, SpaceType, Document } from "@/types";
 
 interface SpaceModalProps {
   isOpen: boolean;

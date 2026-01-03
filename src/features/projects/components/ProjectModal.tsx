@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, FolderOpen, AlignLeft, Calendar, DollarSign, ListFilter, Layout, User, TrendingUp, Check } from 'lucide-react';
-import { Project, ProjectStatus, Space, Contact } from "../../types";
-import { Input, SectionHeading } from "../ui/UIPrimitives";
+import { Project, ProjectStatus, Space, Contact } from "@/types";
+import { Input, SectionHeading } from "@/components/ui/UIPrimitives";
 
 interface ProjectModalProps {
   isOpen: boolean;

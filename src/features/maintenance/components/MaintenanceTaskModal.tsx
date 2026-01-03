@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, Wrench, Calendar, Clock, AlertTriangle, Tag, MessageSquare, Plus, Trash2, Info, Layout, DollarSign, User, Repeat, Check, Box, CheckCircle } from 'lucide-react';
-import { MaintenanceTask, MaintenanceTaskPriority, MaintenanceTaskStatus, Space, Contact, MaintenanceRecurrenceFrequency, InventoryItem } from "../../types";
-import { Input, SectionHeading } from "../ui/UIPrimitives";
+import { MaintenanceTask, MaintenanceTaskPriority, MaintenanceTaskStatus, Space, Contact, MaintenanceRecurrenceFrequency, InventoryItem } from "@/types";
+import { Input, SectionHeading } from "@/components/ui/UIPrimitives";
 
 interface MaintenanceTaskModalProps {
   isOpen: boolean;

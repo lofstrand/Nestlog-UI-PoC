@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, Box, MapPin, DollarSign, TrendingUp, Hash, ShoppingCart, Activity, Layers, Zap } from 'lucide-react';
-import { InventoryItem, Space, InventoryCategory, InventoryItemStatus } from "../../types";
-import { Input, SectionHeading } from "../ui/UIPrimitives";
+import { InventoryItem, Space, InventoryCategory, InventoryItemStatus } from "@/types";
+import { Input, SectionHeading } from "@/components/ui/UIPrimitives";
 
 interface InventoryModalProps {
   isOpen: boolean;
