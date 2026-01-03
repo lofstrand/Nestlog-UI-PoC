@@ -28,26 +28,26 @@ import {
   HouseholdInvite,
   SurfaceCondition,
 } from "./types";
-import Sidebar from "./components/Sidebar";
-import Header from "./components/Header";
-import Dashboard from "./components/Dashboard";
-import HouseholdsList from "./components/HouseholdsList";
-import PropertiesList from "./components/PropertiesList";
-import SpacesList from "./components/SpacesList";
-import MaintenanceList from "./components/MaintenanceList";
-import ProjectsList from "./components/ProjectsList";
-import TagsList from "./components/TagsList";
-import InventoryList from "./components/InventoryList";
-import ContactsList from "./components/ContactsList";
-import DocumentsList from "./components/DocumentsList";
-import InventoryCategoriesList from "./components/InventoryCategoriesList";
-import GroupDashboard from "./components/GroupDashboard";
-import EntityDetail from "./components/EntityDetail";
-import ProfilePage from "./components/ProfilePage";
-import InsuranceList from "./components/InsuranceList";
-import UtilityList from "./components/UtilityList";
-import NotificationsArchive from "./components/NotificationsArchive";
-import ActivityLog from "./components/ActivityLog";
+import Sidebar from "./components/layout/Sidebar";
+import Header from "./components/layout/Header";
+import Dashboard from "./components/pages/Dashboard";
+import HouseholdsList from "./components/lists/HouseholdsList";
+import PropertiesList from "./components/lists/PropertiesList";
+import SpacesList from "./components/lists/SpacesList";
+import MaintenanceList from "./components/lists/MaintenanceList";
+import ProjectsList from "./components/lists/ProjectsList";
+import TagsList from "./components/lists/TagsList";
+import InventoryList from "./components/lists/InventoryList";
+import ContactsList from "./components/lists/ContactsList";
+import DocumentsList from "./components/lists/DocumentsList";
+import InventoryCategoriesList from "./components/lists/InventoryCategoriesList";
+import GroupDashboard from "./components/pages/GroupDashboard";
+import EntityDetail from "./components/detail/EntityDetail";
+import ProfilePage from "./components/pages/ProfilePage";
+import InsuranceList from "./components/lists/InsuranceList";
+import UtilityList from "./components/lists/UtilityList";
+import NotificationsArchive from "./components/pages/NotificationsArchive";
+import ActivityLog from "./components/pages/ActivityLog";
 
 // --- SEED DATA: TAGS ---
 const MOCK_TAGS: Tag[] = [
