@@ -13,9 +13,10 @@ interface InventoryListProps {
   availableTags: Tag[];
   onRefresh: () => void;
   onView: (id: string) => void;
+  onCreate: (data: Partial<InventoryItem>) => string;
 }
 
-const InventoryList: React.FC<InventoryListProps> = ({ items, spaces, categories, availableTags, onRefresh, onView }) => {
+const InventoryList: React.FC<InventoryListProps> = ({ items, spaces, categories, availableTags, onRefresh, onView, onCreate }) => {
   const [filter, setFilter] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sortConfig, setSortConfig] = useState<{ key: keyof InventoryItem; direction: 'asc' | 'desc' }>({ key: 'name', direction: 'asc' });
@@ -161,7 +162,11 @@ const InventoryList: React.FC<InventoryListProps> = ({ items, spaces, categories
       <InventoryModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
-        onSave={() => setIsModalOpen(false)} 
+        onSave={(data) => {
+          const id = onCreate(data);
+          setIsModalOpen(false);
+          onView(id);
+        }} 
         initialData={null} 
         availableSpaces={spaces} 
         availableCategories={categories} 

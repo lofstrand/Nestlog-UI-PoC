@@ -11,9 +11,10 @@ interface PropertiesListProps {
   onRefresh: () => void;
   onView: (id: string) => void;
   onDelete: (id: string) => void;
+  onUpsert: (data: Partial<Property>, id?: string) => string;
 }
 
-const PropertiesList: React.FC<PropertiesListProps> = ({ properties, availableTags, onRefresh, onView, onDelete }) => {
+const PropertiesList: React.FC<PropertiesListProps> = ({ properties, availableTags, onRefresh, onView, onDelete, onUpsert }) => {
   const [filter, setFilter] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
@@ -143,7 +144,20 @@ const PropertiesList: React.FC<PropertiesListProps> = ({ properties, availableTa
           </div>
         )}
       </Card>
-      <PropertyModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSave={() => setIsModalOpen(false)} initialData={editingProperty} />
+      <PropertyModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingProperty(null);
+        }}
+        onSave={(data) => {
+          const id = onUpsert(data, editingProperty?.id);
+          setIsModalOpen(false);
+          setEditingProperty(null);
+          onView(id);
+        }}
+        initialData={editingProperty}
+      />
     </div>
   );
 };

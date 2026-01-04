@@ -9,9 +9,10 @@ interface InventoryCategoriesListProps {
   categories: InventoryCategory[];
   onRefresh: () => void;
   onView: (id: string) => void;
+  onCreate: (data: Partial<InventoryCategory>) => string;
 }
 
-const InventoryCategoriesList: React.FC<InventoryCategoriesListProps> = ({ categories, onRefresh, onView }) => {
+const InventoryCategoriesList: React.FC<InventoryCategoriesListProps> = ({ categories, onRefresh, onView, onCreate }) => {
   const [filter, setFilter] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sortConfig, setSortConfig] = useState<{ key: keyof InventoryCategory; direction: 'asc' | 'desc' }>({ key: 'name', direction: 'asc' });
@@ -151,7 +152,11 @@ const InventoryCategoriesList: React.FC<InventoryCategoriesListProps> = ({ categ
       <InventoryCategoryModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
-        onSave={() => setIsModalOpen(false)} 
+        onSave={(data) => {
+          const id = onCreate(data);
+          setIsModalOpen(false);
+          onView(id);
+        }} 
         initialData={null} 
         availableCategories={categories}
       />

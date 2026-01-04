@@ -11,9 +11,10 @@ interface HouseholdsListProps {
   onRefresh: () => void;
   onView: (id: string) => void;
   onDelete: (id: string) => void;
+  onUpsert: (data: Partial<Household>, id?: string) => string;
 }
 
-const HouseholdsList: React.FC<HouseholdsListProps> = ({ households, availableTags, onRefresh, onView, onDelete }) => {
+const HouseholdsList: React.FC<HouseholdsListProps> = ({ households, availableTags, onRefresh, onView, onDelete, onUpsert }) => {
   const [filter, setFilter] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingHousehold, setEditingHousehold] = useState<Household | null>(null);
@@ -142,7 +143,20 @@ const HouseholdsList: React.FC<HouseholdsListProps> = ({ households, availableTa
         )}
       </Card>
 
-      <HouseholdModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSave={() => setIsModalOpen(false)} initialData={editingHousehold} />
+      <HouseholdModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingHousehold(null);
+        }}
+        onSave={(data) => {
+          const id = onUpsert(data, editingHousehold?.id);
+          setIsModalOpen(false);
+          setEditingHousehold(null);
+          onView(id);
+        }}
+        initialData={editingHousehold}
+      />
     </div>
   );
 };

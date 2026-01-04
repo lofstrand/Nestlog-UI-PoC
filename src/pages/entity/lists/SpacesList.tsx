@@ -12,9 +12,10 @@ interface SpacesListProps {
   onRefresh: () => void;
   onView: (id: string) => void;
   onDelete: (id: string) => void;
+  onCreate: (data: Partial<Space>) => string;
 }
 
-const SpacesList: React.FC<SpacesListProps> = ({ spaces, availableTags, availableDocuments, onRefresh, onView, onDelete }) => {
+const SpacesList: React.FC<SpacesListProps> = ({ spaces, availableTags, availableDocuments, onRefresh, onView, onDelete, onCreate }) => {
   const [filter, setFilter] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -114,7 +115,11 @@ const SpacesList: React.FC<SpacesListProps> = ({ spaces, availableTags, availabl
       <SpaceModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
-        onSave={() => setIsModalOpen(false)} 
+        onSave={(data) => {
+          const id = onCreate(data);
+          setIsModalOpen(false);
+          onView(id);
+        }} 
         initialData={null} 
         availableDocuments={availableDocuments} 
       />

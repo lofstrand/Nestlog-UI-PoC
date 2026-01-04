@@ -17,9 +17,10 @@ interface DocumentsListProps {
   onRefresh: () => void;
   onView: (id: string) => void;
   onDelete: (id: string) => void;
+  onCreate: (data: Partial<Document>) => string;
 }
 
-const DocumentsList: React.FC<DocumentsListProps> = ({ documents, spaces, inventory, projects, tasks, contacts, availableTags, onRefresh, onView, onDelete }) => {
+const DocumentsList: React.FC<DocumentsListProps> = ({ documents, spaces, inventory, projects, tasks, contacts, availableTags, onRefresh, onView, onDelete, onCreate }) => {
   const [filter, setFilter] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sortConfig, setSortConfig] = useState<{ key: keyof Document; direction: 'asc' | 'desc' }>({ key: 'title', direction: 'asc' });
@@ -150,7 +151,11 @@ const DocumentsList: React.FC<DocumentsListProps> = ({ documents, spaces, invent
       <DocumentModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
-        onSave={() => setIsModalOpen(false)} 
+        onSave={(data) => {
+          const id = onCreate(data);
+          setIsModalOpen(false);
+          onView(id);
+        }} 
         availableSpaces={spaces} 
         availableInventory={inventory}
         availableProjects={projects}

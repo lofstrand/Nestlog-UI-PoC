@@ -21,7 +21,7 @@ interface UtilityListProps {
   availableSpaces: Space[];
   onView: (id: string) => void;
   onDelete: (id: string) => void;
-  onSave: (data: Partial<UtilityAccount>) => void;
+  onUpsert: (data: Partial<UtilityAccount>, id?: string) => string;
   onQuickAddContact?: (data: Partial<Contact>) => Promise<string>;
 }
 
@@ -31,7 +31,7 @@ const UtilityList: React.FC<UtilityListProps> = ({
   availableSpaces,
   onView,
   onDelete,
-  onSave,
+  onUpsert,
   onQuickAddContact,
 }) => {
   const [filter, setFilter] = useState("");
@@ -183,14 +183,19 @@ const UtilityList: React.FC<UtilityListProps> = ({
       </Card>
       <UtilityAccountModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingAccount(null);
+        }}
         availableContacts={contacts}
         availableSpaces={availableSpaces}
         initialData={editingAccount}
         onQuickAddContact={onQuickAddContact}
         onSave={(data) => {
-          onSave(editingAccount ? { ...editingAccount, ...data } : data);
+          const id = onUpsert(data, editingAccount?.id);
           setIsModalOpen(false);
+          setEditingAccount(null);
+          onView(id);
         }}
       />
     </div>

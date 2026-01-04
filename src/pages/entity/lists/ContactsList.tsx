@@ -23,6 +23,7 @@ interface ContactsListProps {
   onRefresh: () => void;
   onView: (id: string) => void;
   onDelete: (id: string) => void;
+  onUpsert: (data: Partial<Contact>, id?: string) => string;
 }
 
 const CATEGORIES: ContactCategory[] = [
@@ -44,6 +45,7 @@ const ContactsList: React.FC<ContactsListProps> = ({
   onRefresh,
   onView,
   onDelete,
+  onUpsert,
 }) => {
   const [filter, setFilter] = useState("");
   const [activeCategory, setActiveCategory] = useState<ContactCategory | "All">(
@@ -339,8 +341,16 @@ const ContactsList: React.FC<ContactsListProps> = ({
       </Card>
       <ContactModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSave={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingContact(null);
+        }}
+        onSave={(data) => {
+          const id = onUpsert(data, editingContact?.id);
+          setIsModalOpen(false);
+          setEditingContact(null);
+          onView(id);
+        }}
         initialData={editingContact}
         availableTags={tags}
       />

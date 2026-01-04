@@ -14,6 +14,7 @@ interface MaintenanceListProps {
   onRefresh: () => void;
   onView: (id: string) => void;
   onDelete: (id: string) => void;
+  onCreate: (data: Partial<MaintenanceTask>) => string;
 }
 
 const MaintenanceList: React.FC<MaintenanceListProps> = ({ 
@@ -24,7 +25,8 @@ const MaintenanceList: React.FC<MaintenanceListProps> = ({
   availableContacts, 
   onRefresh, 
   onView, 
-  onDelete 
+  onDelete,
+  onCreate
 }) => {
   const [filter, setFilter] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -180,7 +182,11 @@ const MaintenanceList: React.FC<MaintenanceListProps> = ({
       <MaintenanceTaskModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
-        onSave={() => setIsModalOpen(false)} 
+        onSave={(data) => {
+          const id = onCreate(data);
+          setIsModalOpen(false);
+          onView(id);
+        }} 
         initialData={null} 
         availableSpaces={spaces} 
         availableContacts={availableContacts} 

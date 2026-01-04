@@ -6323,7 +6323,7 @@ const App: React.FC = () => {
 
   const handleCreateTask = (data: Partial<MaintenanceTask>) => {
     const nowIso = new Date().toISOString();
-    const id = Math.random().toString(36).substr(2, 9);
+    const id = data.id || Math.random().toString(36).substr(2, 9);
     const propertyId = data.propertyId || activePropertyId || "p1";
 
     const newTask: MaintenanceTask = {
@@ -6390,6 +6390,545 @@ const App: React.FC = () => {
         },
       ];
     });
+  };
+
+  const upsertHousehold = (data: Partial<Household>, id?: string) => {
+    if (id) {
+      handleUpdateEntity("household", id, { ...data, updatedAtUtc: new Date().toISOString() });
+      return id;
+    }
+
+    const nowIso = new Date().toISOString();
+    const newId = Math.random().toString(36).substr(2, 9);
+    const newHousehold: Household = {
+      id: newId,
+      name: data.name || "New household",
+      description: data.description || "",
+      status: data.status || "Active",
+      propertyCount: 0,
+      lastMaintained: nowIso,
+      unitSystem: data.unitSystem || "metric",
+      currencyCode: data.currencyCode || "SEK",
+      createdAtUtc: nowIso,
+      updatedAtUtc: nowIso,
+      notes: data.notes || [],
+      tags: data.tags || [],
+      documentIds: data.documentIds || [],
+    };
+
+    setHouseholds((prev) => [newHousehold, ...prev]);
+    setActiveHouseholdId(newId);
+    setActivePropertyId(null);
+    setActivities((prev) => [
+      {
+        id: createActivityId(),
+        entityType: "household",
+        entityId: newId,
+        action: "created",
+        timestamp: nowIso,
+        userName: "John Doe",
+        details: `Created household: ${newHousehold.name}.`,
+      },
+      ...prev,
+    ]);
+    return newId;
+  };
+
+  const upsertProperty = (data: Partial<Property>, id?: string) => {
+    if (id) {
+      handleUpdateEntity("property", id, { ...data, updatedAtUtc: new Date().toISOString() });
+      return id;
+    }
+
+    const nowIso = new Date().toISOString();
+    const newId = Math.random().toString(36).substr(2, 9);
+    const householdId = data.householdId || activeHouseholdId || undefined;
+
+    const newProperty: Property = {
+      id: newId,
+      householdId,
+      name: data.name || "New property",
+      isArchived: data.isArchived ?? false,
+      isPrimaryResidence: data.isPrimaryResidence ?? false,
+      address: data.address || {
+        line1: "",
+        line2: "",
+        city: "",
+        stateOrRegion: "",
+        postalCode: "",
+        countryCode: "US",
+      },
+      unitSystem: data.unitSystem,
+      currencyCode: data.currencyCode,
+      constructionYear: data.constructionYear ?? null,
+      constructionMonth: data.constructionMonth ?? null,
+      floorArea: data.floorArea ?? null,
+      propertyType: data.propertyType ?? null,
+      occupancyStatus: (data as any).occupancyStatus || "OwnerOccupied",
+      energyRating: (data as any).energyRating ?? null,
+      heatingSystemType: (data as any).heatingSystemType ?? null,
+      roofType: (data as any).roofType ?? null,
+      foundationType: (data as any).foundationType ?? null,
+      imageUrls: (data as any).imageUrls || [],
+      gallery: (data as any).gallery || [],
+      createdAtUtc: nowIso,
+      updatedAtUtc: nowIso,
+      notes: data.notes || [],
+      tags: data.tags || [],
+      documentIds: data.documentIds || [],
+    };
+
+    setProperties((prev) => [newProperty, ...prev]);
+    setActivePropertyId(newId);
+    setActivities((prev) => [
+      {
+        id: createActivityId(),
+        entityType: "property",
+        entityId: newId,
+        action: "created",
+        timestamp: nowIso,
+        userName: "John Doe",
+        details: `Created property: ${newProperty.name}.`,
+      },
+      ...prev,
+    ]);
+    return newId;
+  };
+
+  const upsertSpace = (data: Partial<Space>, id?: string) => {
+    if (id) {
+      handleUpdateEntity("space", id, { ...data, updatedAtUtc: new Date().toISOString() });
+      return id;
+    }
+
+    const nowIso = new Date().toISOString();
+    const newId = Math.random().toString(36).substr(2, 9);
+    const propertyId = data.propertyId || activePropertyId || properties[0]?.id || "p1";
+    const nextSortOrder =
+      Math.max(
+        0,
+        ...spaces.filter((s) => s.propertyId === propertyId).map((s) => s.sortOrder || 0)
+      ) + 1;
+
+    const newSpace: Space = {
+      id: newId,
+      propertyId,
+      name: data.name || "New space",
+      spaceType: data.spaceType || SpaceType.Unknown,
+      level: data.level ?? null,
+      isOutdoor: data.isOutdoor ?? false,
+      sortOrder: nextSortOrder,
+      isArchived: data.isArchived ?? false,
+      dimensions: data.dimensions ?? null,
+      surfaces: (data as any).surfaces || [],
+      gallery: (data as any).gallery || [],
+      imageUrls: (data as any).imageUrls || [],
+      createdAtUtc: nowIso,
+      updatedAtUtc: nowIso,
+      notes: data.notes || [],
+      tags: data.tags || [],
+      documentIds: data.documentIds || [],
+    };
+
+    setSpaces((prev) => [newSpace, ...prev]);
+    setActivities((prev) => [
+      {
+        id: createActivityId(),
+        entityType: "space",
+        entityId: newId,
+        action: "created",
+        timestamp: nowIso,
+        userName: "John Doe",
+        details: `Created space: ${newSpace.name}.`,
+      },
+      ...prev,
+    ]);
+    return newId;
+  };
+
+  const upsertTask = (data: Partial<MaintenanceTask>, id?: string) => {
+    if (id) {
+      handleUpdateEntity("task", id, { ...data, updatedAtUtc: new Date().toISOString() });
+      return id;
+    }
+    const createdId = Math.random().toString(36).substr(2, 9);
+    handleCreateTask({ ...data, id: createdId } as any);
+    return createdId;
+  };
+
+  const upsertProject = (data: Partial<Project>, id?: string) => {
+    if (id) {
+      handleUpdateEntity("project", id, { ...data, updatedAtUtc: new Date().toISOString() });
+      return id;
+    }
+
+    const nowIso = new Date().toISOString();
+    const newId = Math.random().toString(36).substr(2, 9);
+    const propertyId = data.propertyId || activePropertyId || properties[0]?.id || "p1";
+
+    const newProject: Project = {
+      id: newId,
+      propertyId,
+      spaceIds: data.spaceIds || [],
+      assignedContactId: data.assignedContactId ?? null,
+      title: data.title || "New project",
+      description: data.description ?? null,
+      status: data.status || ProjectStatus.Planned,
+      startDate: data.startDate ?? null,
+      endDate: data.endDate ?? null,
+      budget: data.budget ?? null,
+      actualCost: data.actualCost ?? null,
+      gallery: (data as any).gallery || [],
+      createdAtUtc: nowIso,
+      updatedAtUtc: nowIso,
+      tasks: (data as any).tasks || [],
+      expenses: (data as any).expenses || [],
+      notes: data.notes || [],
+      tags: data.tags || ["Projects"],
+      documentIds: data.documentIds || [],
+    };
+
+    setProjects((prev) => [newProject, ...prev]);
+    setActivities((prev) => [
+      {
+        id: createActivityId(),
+        entityType: "project",
+        entityId: newId,
+        action: "created",
+        timestamp: nowIso,
+        userName: "John Doe",
+        details: `Created project: ${newProject.title}.`,
+      },
+      ...prev,
+    ]);
+    return newId;
+  };
+
+  const upsertContact = (data: Partial<Contact>, id?: string) => {
+    if (id) {
+      handleUpdateEntity("contact", id, { ...data, updatedAtUtc: new Date().toISOString() });
+      return id;
+    }
+
+    const nowIso = new Date().toISOString();
+    const newId = Math.random().toString(36).substr(2, 9);
+    const propertyId = data.propertyId || activePropertyId || properties[0]?.id || "p1";
+    const newContact: Contact = {
+      id: newId,
+      propertyId,
+      firstName: data.firstName || "New",
+      surname: data.surname || "Contact",
+      company: data.company ?? null,
+      jobTitle: data.jobTitle ?? null,
+      category: data.category || "Other",
+      email: data.email ?? null,
+      phone: data.phone ?? null,
+      websiteUrl: data.websiteUrl ?? null,
+      isEmergencyContact: data.isEmergencyContact ?? false,
+      rating: data.rating ?? null,
+      hourlyRate: data.hourlyRate ?? null,
+      currency: data.currency ?? null,
+      specialties: data.specialties || [],
+      certificationId: data.certificationId ?? null,
+      businessAddress: data.businessAddress ?? null,
+      createdAtUtc: nowIso,
+      updatedAtUtc: nowIso,
+      notes: data.notes || [],
+      tags: data.tags || [],
+      documentIds: data.documentIds || [],
+    };
+
+    setContacts((prev) => [newContact, ...prev]);
+    setActivities((prev) => [
+      {
+        id: createActivityId(),
+        entityType: "contact",
+        entityId: newId,
+        action: "created",
+        timestamp: nowIso,
+        userName: "John Doe",
+        details: `Created contact: ${newContact.firstName} ${newContact.surname}.`,
+      },
+      ...prev,
+    ]);
+    return newId;
+  };
+
+  const upsertInventoryCategory = (data: Partial<InventoryCategory>, id?: string) => {
+    if (id) {
+      handleUpdateEntity("inventory_category", id, { ...data, updatedAtUtc: new Date().toISOString() });
+      return id;
+    }
+
+    const nowIso = new Date().toISOString();
+    const newId = Math.random().toString(36).substr(2, 9);
+    const propertyId = data.propertyId || activePropertyId || properties[0]?.id || "p1";
+    const newCategory: InventoryCategory = {
+      id: newId,
+      propertyId,
+      parentId: data.parentId ?? null,
+      name: data.name || "New category",
+      iconName: data.iconName ?? null,
+      colorHex: data.colorHex ?? null,
+      canHaveChildren: data.canHaveChildren ?? true,
+      estimatedDepreciationRate: data.estimatedDepreciationRate ?? null,
+      isInsuranceCritical: data.isInsuranceCritical ?? false,
+      sortOrder: data.sortOrder ?? 1,
+      createdAtUtc: nowIso,
+      updatedAtUtc: nowIso,
+      notes: data.notes || [],
+      tags: data.tags || [],
+      documentIds: data.documentIds || [],
+    };
+
+    setInventoryCategories((prev) => [newCategory, ...prev]);
+    setActivities((prev) => [
+      {
+        id: createActivityId(),
+        entityType: "inventory_category",
+        entityId: newId,
+        action: "created",
+        timestamp: nowIso,
+        userName: "John Doe",
+        details: `Created inventory category: ${newCategory.name}.`,
+      },
+      ...prev,
+    ]);
+    return newId;
+  };
+
+  const upsertTag = (data: Partial<Tag>, id?: string) => {
+    if (id) {
+      handleUpdateEntity("tag", id, { ...data, updatedAtUtc: new Date().toISOString() });
+      return id;
+    }
+
+    const nowIso = new Date().toISOString();
+    const newId = Math.random().toString(36).substr(2, 9);
+    const propertyId = data.propertyId || activePropertyId || properties[0]?.id || "p1";
+    const newTag: Tag = {
+      id: newId,
+      propertyId,
+      name: data.name || "New tag",
+      description: data.description ?? null,
+      iconName: data.iconName ?? null,
+      colorHex: data.colorHex ?? null,
+      usageCount: data.usageCount ?? 0,
+      createdAtUtc: nowIso,
+      updatedAtUtc: nowIso,
+      notes: data.notes || [],
+      documentIds: data.documentIds || [],
+    };
+
+    setTags((prev) => [newTag, ...prev]);
+    setActivities((prev) => [
+      {
+        id: createActivityId(),
+        entityType: "tag",
+        entityId: newId,
+        action: "created",
+        timestamp: nowIso,
+        userName: "John Doe",
+        details: `Created tag: ${newTag.name}.`,
+      },
+      ...prev,
+    ]);
+    return newId;
+  };
+
+  const upsertDocument = (data: Partial<Document>, id?: string) => {
+    if (id) {
+      handleUpdateEntity("document", id, { ...data, updatedAtUtc: new Date().toISOString() });
+      return id;
+    }
+
+    const nowIso = new Date().toISOString();
+    const newId = Math.random().toString(36).substr(2, 9);
+    const propertyId = data.propertyId || activePropertyId || properties[0]?.id || "p1";
+    const newDocument: Document = {
+      id: newId,
+      propertyId,
+      spaceId: data.spaceId ?? null,
+      contactId: data.contactId ?? null,
+      projectIds: data.projectIds || [],
+      taskIds: data.taskIds || [],
+      surfaceIds: data.surfaceIds || [],
+      title: data.title || "New document",
+      category: data.category ?? null,
+      expiryDate: data.expiryDate ?? null,
+      physicalLocation: data.physicalLocation ?? null,
+      isPrivate: data.isPrivate ?? false,
+      attachments: data.attachments || [],
+      notes: data.notes || [],
+      tags: data.tags || [],
+      inventoryItems: data.inventoryItems || [],
+      createdAtUtc: nowIso,
+      updatedAtUtc: nowIso,
+    };
+
+    setDocuments((prev) => [newDocument, ...prev]);
+    setActivities((prev) => [
+      {
+        id: createActivityId(),
+        entityType: "document",
+        entityId: newId,
+        action: "created",
+        timestamp: nowIso,
+        userName: "John Doe",
+        details: `Created document: ${newDocument.title}.`,
+      },
+      ...prev,
+    ]);
+    return newId;
+  };
+
+  const upsertInventoryItem = (data: Partial<InventoryItem>, id?: string) => {
+    if (id) {
+      handleUpdateEntity("inventory", id, { ...data, updatedAtUtc: new Date().toISOString() });
+      return id;
+    }
+
+    const nowIso = new Date().toISOString();
+    const newId = Math.random().toString(36).substr(2, 9);
+    const propertyId = data.propertyId || activePropertyId || properties[0]?.id || "p1";
+
+    const newItem: InventoryItem = {
+      id: newId,
+      propertyId,
+      spaceId: data.spaceId ?? null,
+      name: data.name || "New item",
+      brand: data.brand ?? null,
+      modelNumber: data.modelNumber ?? null,
+      serialNumber: data.serialNumber ?? null,
+      category: data.category || "Other",
+      status: data.status || InventoryItemStatus.Good,
+      quantity: data.quantity ?? 1,
+      unit: data.unit || "pcs",
+      store: data.store ?? null,
+      purchaseDate: data.purchaseDate ?? null,
+      purchasePrice: data.purchasePrice ?? null,
+      value: data.value ?? null,
+      powerWattage: data.powerWattage ?? null,
+      energyClass: data.energyClass ?? null,
+      lastAuditDateUtc: data.lastAuditDateUtc ?? null,
+      manufacturerUrl: data.manufacturerUrl ?? null,
+      imageUrl: data.imageUrl ?? null,
+      createdAtUtc: nowIso,
+      updatedAtUtc: nowIso,
+      notes: data.notes || [],
+      tags: data.tags || [],
+      documentIds: data.documentIds || [],
+    };
+
+    setInventory((prev) => [newItem, ...prev]);
+    setActivities((prev) => [
+      {
+        id: createActivityId(),
+        entityType: "inventory",
+        entityId: newId,
+        action: "created",
+        timestamp: nowIso,
+        userName: "John Doe",
+        details: `Created inventory item: ${newItem.name}.`,
+      },
+      ...prev,
+    ]);
+    return newId;
+  };
+
+  const upsertInsurancePolicy = (data: Partial<InsurancePolicy>, id?: string) => {
+    if (id) {
+      handleUpdateEntity("insurance", id, { ...data, updatedAtUtc: new Date().toISOString() });
+      return id;
+    }
+
+    const nowIso = new Date().toISOString();
+    const newId = Math.random().toString(36).substr(2, 9);
+    const propertyId = data.propertyId || activePropertyId || properties[0]?.id || "p1";
+    const providerId = data.providerId || scopedContacts[0]?.id || contacts[0]?.id || "";
+
+    const newPolicy: InsurancePolicy = {
+      id: newId,
+      propertyId,
+      providerId,
+      title: data.title || "New policy",
+      policyNumber: data.policyNumber || `POL-${newId.toUpperCase()}`,
+      type: data.type || "Other",
+      premium: data.premium ?? 0,
+      metric: data.metric,
+      deductible: data.deductible ?? 0,
+      coverageLimit: data.coverageLimit ?? 0,
+      startDate: data.startDate || nowIso.split("T")[0],
+      endDate: data.endDate || nowIso.split("T")[0],
+      renewalDate: data.renewalDate || nowIso.split("T")[0],
+      createdAtUtc: nowIso,
+      updatedAtUtc: nowIso,
+      notes: data.notes || [],
+      documentIds: data.documentIds || [],
+      tags: data.tags || [],
+      claims: data.claims || [],
+    };
+
+    setInsurance((prev) => [newPolicy, ...prev]);
+    setActivities((prev) => [
+      {
+        id: createActivityId(),
+        entityType: "insurance",
+        entityId: newId,
+        action: "created",
+        timestamp: nowIso,
+        userName: "John Doe",
+        details: `Created insurance policy: ${newPolicy.title}.`,
+      },
+      ...prev,
+    ]);
+    return newId;
+  };
+
+  const upsertUtilityAccount = (data: Partial<UtilityAccount>, id?: string) => {
+    if (id) {
+      handleUpdateEntity("utility", id, { ...data, updatedAtUtc: new Date().toISOString() });
+      return id;
+    }
+
+    const nowIso = new Date().toISOString();
+    const newId = Math.random().toString(36).substr(2, 9);
+    const propertyId = data.propertyId || activePropertyId || properties[0]?.id || "p1";
+    const providerId = data.providerId || scopedContacts[0]?.id || contacts[0]?.id || "";
+
+    const newAccount: UtilityAccount = {
+      id: newId,
+      propertyId,
+      providerId,
+      title: data.title || "New utility",
+      type: data.type || "Other",
+      accountNumber: data.accountNumber || `ACC-${newId.toUpperCase()}`,
+      averageMonthlyCost: data.averageMonthlyCost ?? 0,
+      useCalculatedAverage: data.useCalculatedAverage ?? false,
+      lastPaymentDate: data.lastPaymentDate ?? null,
+      spaceId: data.spaceId ?? null,
+      createdAtUtc: nowIso,
+      updatedAtUtc: nowIso,
+      notes: data.notes || [],
+      tags: data.tags || [],
+      documentIds: data.documentIds || [],
+      invoices: data.invoices || [],
+    };
+
+    setUtilities((prev) => [newAccount, ...prev]);
+    setActivities((prev) => [
+      {
+        id: createActivityId(),
+        entityType: "utility",
+        entityId: newId,
+        action: "created",
+        timestamp: nowIso,
+        userName: "John Doe",
+        details: `Created utility account: ${newAccount.title || newAccount.type}.`,
+      },
+      ...prev,
+    ]);
+    return newId;
   };
 
   const handleQuickAddContact = async (
@@ -6671,6 +7210,7 @@ const App: React.FC = () => {
                 households={households}
                 availableTags={tags}
                 onRefresh={() => {}}
+                onUpsert={upsertHousehold}
                 onView={(id) => {
                   setSelectedEntity({ type: "household", id });
                   navigateTo("entity_detail");
@@ -6685,6 +7225,7 @@ const App: React.FC = () => {
                 properties={scopedProperties}
                 availableTags={tags}
                 onRefresh={() => {}}
+                onUpsert={upsertProperty}
                 onView={(id) => {
                   setSelectedEntity({ type: "property", id });
                   navigateTo("entity_detail");
@@ -6700,6 +7241,7 @@ const App: React.FC = () => {
                 availableTags={tags}
                 availableDocuments={scopedDocuments}
                 onRefresh={() => {}}
+                onCreate={upsertSpace}
                 onView={(id) => {
                   setSelectedEntity({ type: "space", id });
                   navigateTo("entity_detail");
@@ -6719,6 +7261,7 @@ const App: React.FC = () => {
                 availableInventory={scopedInventory}
                 availableContacts={scopedContacts}
                 onRefresh={() => {}}
+                onCreate={upsertTask}
                 onView={(id) => {
                   setSelectedEntity({ type: "task", id });
                   navigateTo("entity_detail");
@@ -6733,6 +7276,7 @@ const App: React.FC = () => {
                 availableSpaces={scopedSpaces}
                 availableContacts={scopedContacts}
                 onRefresh={() => {}}
+                onCreate={upsertProject}
                 onView={(id) => {
                   setSelectedEntity({ type: "project", id });
                   navigateTo("entity_detail");
@@ -6756,9 +7300,7 @@ const App: React.FC = () => {
                   setInsurance((i) => i.filter((x) => x.id !== id))
                 }
                 onEdit={() => {}}
-                onSave={(data) =>
-                  handleUpdateEntity("insurance", data.id!, data)
-                }
+                onUpsert={upsertInsurancePolicy}
                 onQuickAddContact={handleQuickAddContact}
               />
             )}
@@ -6774,7 +7316,7 @@ const App: React.FC = () => {
                   setUtilities((prev) => prev.filter((x) => x.id !== id))
                 }
                 onQuickAddContact={handleQuickAddContact}
-                onSave={(data) => handleUpdateEntity("utility", data.id!, data)}
+                onUpsert={upsertUtilityAccount}
                 availableSpaces={scopedSpaces}
               />
             )}
@@ -6790,6 +7332,7 @@ const App: React.FC = () => {
                 contacts={scopedContacts}
                 availableTags={tags}
                 onRefresh={() => {}}
+                onCreate={upsertDocument}
                 onView={(id) => {
                   setSelectedEntity({ type: "document", id });
                   navigateTo("entity_detail");
@@ -6804,6 +7347,7 @@ const App: React.FC = () => {
                 contacts={scopedContacts}
                 tags={tags}
                 onRefresh={() => {}}
+                onUpsert={upsertContact}
                 onView={(id) => {
                   setSelectedEntity({ type: "contact", id });
                   navigateTo("entity_detail");
@@ -6820,6 +7364,7 @@ const App: React.FC = () => {
                 categories={inventoryCategories}
                 availableTags={tags}
                 onRefresh={() => {}}
+                onCreate={upsertInventoryItem}
                 onView={(id) => {
                   setSelectedEntity({ type: "inventory", id });
                   navigateTo("entity_detail");
@@ -6830,6 +7375,7 @@ const App: React.FC = () => {
               <InventoryCategoriesList
                 categories={inventoryCategories}
                 onRefresh={() => {}}
+                onCreate={upsertInventoryCategory}
                 onView={(id) => {
                   setSelectedEntity({ type: "inventory_category", id });
                   navigateTo("entity_detail");
@@ -6841,6 +7387,7 @@ const App: React.FC = () => {
                 tags={tags}
                 usageByName={tagUsageByName}
                 onRefresh={() => {}}
+                onCreate={upsertTag}
                 onView={(id) => {
                   setSelectedEntity({ type: "tag", id });
                   navigateTo("entity_detail");

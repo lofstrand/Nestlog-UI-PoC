@@ -14,9 +14,10 @@ interface ProjectsListProps {
   onRefresh: () => void;
   onView: (id: string) => void;
   onDelete: (id: string) => void;
+  onCreate: (data: Partial<Project>) => string;
 }
 
-const ProjectsList: React.FC<ProjectsListProps> = ({ projects, availableTags, availableSpaces, availableContacts, onRefresh, onView, onDelete }) => {
+const ProjectsList: React.FC<ProjectsListProps> = ({ projects, availableTags, availableSpaces, availableContacts, onRefresh, onView, onDelete, onCreate }) => {
   const [filter, setFilter] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sortConfig, setSortConfig] = useState<{ key: keyof Project; direction: 'asc' | 'desc' }>({ key: 'title', direction: 'asc' });
@@ -178,7 +179,11 @@ const ProjectsList: React.FC<ProjectsListProps> = ({ projects, availableTags, av
       <ProjectModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
-        onSave={() => setIsModalOpen(false)} 
+        onSave={(data) => {
+          const id = onCreate(data);
+          setIsModalOpen(false);
+          onView(id);
+        }} 
         initialData={null} 
         availableSpaces={availableSpaces}
         availableContacts={availableContacts}

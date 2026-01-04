@@ -12,12 +12,12 @@ interface InsuranceListProps {
   onView: (id: string) => void;
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;
-  onSave: (data: Partial<InsurancePolicy>) => void;
+  onUpsert: (data: Partial<InsurancePolicy>, id?: string) => string;
   // Added onQuickAddContact to InsuranceListProps to fix TypeScript error in App.tsx
   onQuickAddContact?: (data: Partial<Contact>) => Promise<string>;
 }
 
-const InsuranceList: React.FC<InsuranceListProps> = ({ policies, contacts, onView, onDelete, onEdit, onSave, onQuickAddContact }) => {
+const InsuranceList: React.FC<InsuranceListProps> = ({ policies, contacts, onView, onDelete, onEdit, onUpsert, onQuickAddContact }) => {
   const [filter, setFilter] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPolicy, setEditingPolicy] = useState<InsurancePolicy | null>(null);
@@ -171,14 +171,19 @@ const InsuranceList: React.FC<InsuranceListProps> = ({ policies, contacts, onVie
       </Card>
       <InsurancePolicyModal 
         isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingPolicy(null);
+        }} 
         availableContacts={contacts}
         initialData={editingPolicy}
         // Fixed: Passed onQuickAddContact to InsurancePolicyModal
         onQuickAddContact={onQuickAddContact}
         onSave={(data) => {
-          onSave(editingPolicy ? { ...editingPolicy, ...data } : data);
+          const id = onUpsert(data, editingPolicy?.id);
           setIsModalOpen(false);
+          setEditingPolicy(null);
+          onView(id);
         }}
       />
     </div>

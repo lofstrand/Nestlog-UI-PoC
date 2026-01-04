@@ -10,9 +10,10 @@ interface TagsListProps {
   usageByName?: Record<string, number>;
   onRefresh: () => void;
   onView: (id: string) => void;
+  onCreate: (data: Partial<Tag>) => string;
 }
 
-const TagsList: React.FC<TagsListProps> = ({ tags, usageByName, onRefresh, onView }) => {
+const TagsList: React.FC<TagsListProps> = ({ tags, usageByName, onRefresh, onView, onCreate }) => {
   const [filter, setFilter] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sortConfig, setSortConfig] = useState<{ key: keyof Tag; direction: 'asc' | 'desc' }>({ key: 'name', direction: 'asc' });
@@ -130,7 +131,16 @@ const TagsList: React.FC<TagsListProps> = ({ tags, usageByName, onRefresh, onVie
           </div>
         )}
       </Card>
-      <TagModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSave={() => setIsModalOpen(false)} initialData={null} />
+      <TagModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={(data) => {
+          const id = onCreate(data);
+          setIsModalOpen(false);
+          onView(id);
+        }}
+        initialData={null}
+      />
     </div>
   );
 };
