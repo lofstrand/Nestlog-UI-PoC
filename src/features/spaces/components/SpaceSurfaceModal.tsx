@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Layers, Box, Tag, Palette, StickyNote, Check, Ruler, Activity, Calendar, Search, Link, FileText, Trash2, Plus, ArrowLeft } from 'lucide-react';
 import { SpaceSurface, SpaceSurfaceType, SpaceSurfaceMaterialType, Document, SurfaceCondition } from "@/types";
-import { SectionHeading, Input, Button } from "@/components/ui";
+import { SectionHeading, Input, Button, Modal } from "@/components/ui";
 
 interface SpaceSurfaceModalProps {
   isOpen: boolean;
@@ -18,6 +18,7 @@ const CONDITION_OPTIONS = Object.values(SurfaceCondition);
 const SpaceSurfaceModal: React.FC<SpaceSurfaceModalProps> = ({ 
   isOpen, onClose, onSave, initialData, availableDocuments, onQuickUploadDoc 
 }) => {
+  const formId = "space-surface-modal-form";
   const [surfaceType, setSurfaceType] = useState<SpaceSurfaceType>(SpaceSurfaceType.Unknown);
   const [materialType, setMaterialType] = useState<SpaceSurfaceMaterialType>(SpaceSurfaceMaterialType.Unknown);
   const [brand, setBrand] = useState('');
@@ -101,31 +102,40 @@ const SpaceSurfaceModal: React.FC<SpaceSurfaceModalProps> = ({
 
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300" onClick={onClose} />
-      <div className="relative bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-        <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between">
-          <h2 className="text-xl font-black text-slate-900 tracking-tight leading-none">
-            {initialData ? 'Edit Surface Registry' : 'New Surface'}
-          </h2>
-          <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full transition-colors text-gray-400">
-            <X size={20} />
-          </button>
-        </div>
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSave({ 
+      surfaceType, materialType, brand, colorName,
+      area: area ? parseFloat(area) : null,
+      areaUnit, condition,
+      installedDateUtc: installedDate ? new Date(installedDate).toISOString() : null,
+      lastMaintainedDateUtc: lastMaintainedDate ? new Date(lastMaintainedDate).toISOString() : null,
+      notes: notes ? [{ id: Math.random().toString(36).substr(2, 9), text: notes, createdAtUtc: new Date().toISOString() }] : [],
+      documentIds: selectedDocumentIds
+    });
+  };
 
-        <form onSubmit={(e) => {
-          e.preventDefault();
-          onSave({ 
-            surfaceType, materialType, brand, colorName,
-            area: area ? parseFloat(area) : null,
-            areaUnit, condition,
-            installedDateUtc: installedDate ? new Date(installedDate).toISOString() : null,
-            lastMaintainedDateUtc: lastMaintainedDate ? new Date(lastMaintainedDate).toISOString() : null,
-            notes: notes ? [{ id: Math.random().toString(36).substr(2, 9), text: notes, createdAtUtc: new Date().toISOString() }] : [],
-            documentIds: selectedDocumentIds
-          });
-        }} className="p-8 space-y-8 max-h-[80vh] overflow-y-auto">
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={initialData ? "Edit Surface Registry" : "New Surface"}
+      icon={Layers}
+      size="md"
+      primaryActionLabel={initialData ? "Update Surface" : "Create Surface"}
+      primaryActionType="submit"
+      formId={formId}
+      footer={
+        <button
+          type="button"
+          onClick={onClose}
+          className="px-6 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 rounded-xl transition-all"
+        >
+          Dismiss
+        </button>
+      }
+    >
+        <form id={formId} onSubmit={handleSubmit} className="space-y-8">
           
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-1.5">
@@ -262,16 +272,8 @@ const SpaceSurfaceModal: React.FC<SpaceSurfaceModalProps> = ({
               rows={3} 
             />
           </div>
-
-          <div className="flex items-center justify-end space-x-3 pt-6 border-t border-slate-100">
-            <button type="button" onClick={onClose} className="px-6 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 rounded-xl transition-all">Dismiss</button>
-            <button type="submit" className="px-8 py-2.5 bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-black shadow-xl active:scale-95 transition-all">
-              {initialData ? 'Update Surface' : 'Create Surface'}
-            </button>
-          </div>
         </form>
-      </div>
-    </div>
+    </Modal>
   );
 };
 

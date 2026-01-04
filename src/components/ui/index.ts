@@ -5,4 +5,4 @@ export * from "./PageHeader";
 export * from "./SectionHeading";
 export * from "./Badge";
 export * from "./Input";
-
+export * from "./Modal";

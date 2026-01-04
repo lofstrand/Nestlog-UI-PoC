@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { X, Layers, Archive, ListFilter, AlignLeft, ArrowUpCircle, TreePine } from 'lucide-react';
+import { Layers, Archive, ListFilter, AlignLeft, ArrowUpCircle, TreePine } from 'lucide-react';
 import { Space, SpaceType, Document } from "@/types";
+import { Modal } from "@/components/ui";
 
 interface SpaceModalProps {
   isOpen: boolean;
@@ -12,6 +13,7 @@ interface SpaceModalProps {
 }
 
 const SpaceModal: React.FC<SpaceModalProps> = ({ isOpen, onClose, onSave, initialData, availableDocuments }) => {
+  const formId = "space-modal-form";
   const [name, setName] = useState('');
   const [spaceType, setSpaceType] = useState<SpaceType>(SpaceType.Unknown);
   const [level, setLevel] = useState<number>(0);
@@ -40,20 +42,48 @@ const SpaceModal: React.FC<SpaceModalProps> = ({ isOpen, onClose, onSave, initia
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm animate-in fade-in duration-300" onClick={onClose} />
-      
-      <div className="relative bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
-        <div className="px-8 py-6 border-b border-gray-100 flex items-center justify-between shrink-0">
-          <h2 className="text-xl font-bold text-gray-900">
-            {initialData ? `Edit ${name}` : 'New Space'}
-          </h2>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400 hover:text-gray-600">
-            <X size={20} />
-          </button>
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-8 space-y-8">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={initialData ? `Edit ${name}` : "New Space"}
+      icon={Layers}
+      size="lg"
+      primaryActionLabel={initialData ? "Update Space" : "Create Space"}
+      primaryActionType="submit"
+      formId={formId}
+      footer={
+        <button
+          onClick={onClose}
+          type="button"
+          className="px-6 py-2.5 text-sm font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 rounded-xl transition-all"
+        >
+          Cancel
+        </button>
+      }
+    >
+        <form
+          id={formId}
+          onSubmit={(e) => {
+            e.preventDefault();
+            onSave({
+              name,
+              spaceType,
+              level,
+              isOutdoor,
+              notes: notes
+                ? [
+                    {
+                      id: Math.random().toString(36).substr(2, 9),
+                      text: notes,
+                      createdAtUtc: new Date().toISOString(),
+                    },
+                  ]
+                : [],
+              isArchived,
+            });
+          }}
+          className="space-y-8"
+        >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div className="space-y-1.5">
@@ -153,28 +183,8 @@ const SpaceModal: React.FC<SpaceModalProps> = ({ isOpen, onClose, onSave, initia
               </button>
             </div>
           </div>
-        </div>
-
-        <div className="px-8 py-6 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end space-x-3 shrink-0">
-          <button onClick={onClose} className="px-6 py-2.5 text-sm font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 rounded-xl transition-all">
-            Cancel
-          </button>
-          <button 
-            onClick={() => onSave({ 
-              name, 
-              spaceType, 
-              level, 
-              isOutdoor, 
-              notes: notes ? [{ id: Math.random().toString(36).substr(2, 9), text: notes, createdAtUtc: new Date().toISOString() }] : [], 
-              isArchived
-            })}
-            className="px-8 py-2.5 bg-slate-900 text-white text-sm font-black uppercase tracking-widest rounded-xl hover:bg-black shadow-lg transition-all active:scale-95"
-          >
-            {initialData ? 'Update Space' : 'Create Space'}
-          </button>
-        </div>
-      </div>
-    </div>
+        </form>
+    </Modal>
   );
 };
 

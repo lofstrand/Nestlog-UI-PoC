@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { X, Building2, MapPin, Calendar, Star, Info, Archive, Maximize } from 'lucide-react';
+import { Building2, MapPin, Calendar, Star, Info, Archive, Maximize } from 'lucide-react';
 import { Property, Address } from "@/types";
+import { Modal } from "@/components/ui";
 
 interface PropertyModalProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ interface PropertyModalProps {
 const PROPERTY_TYPES = ['Single Family', 'Condo', 'Townhouse', 'Apartment', 'Cabin', 'Land', 'Other'];
 
 const PropertyModal: React.FC<PropertyModalProps> = ({ isOpen, onClose, onSave, initialData }) => {
+  const formId = "property-modal-form";
   const [name, setName] = useState('');
   const [isPrimary, setIsPrimary] = useState(false);
   const [isArchived, setIsArchived] = useState(false);
@@ -59,36 +61,43 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ isOpen, onClose, onSave, 
 
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm animate-in fade-in duration-300" onClick={onClose} />
-      
-      <div className="relative bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
-        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
-          <h2 className="text-xl font-bold text-gray-900 flex items-center">
-            {initialData ? 'Edit Property' : 'New Property'}
-            {isPrimary && <Star size={18} className="ml-2 text-amber-500 fill-amber-500" />}
-          </h2>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400">
-            <X size={20} />
-          </button>
-        </div>
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSave({ 
+      name, 
+      isPrimaryResidence: isPrimary, 
+      isArchived, 
+      address,
+      unitSystem: unitSystem || undefined,
+      currencyCode: currencyCode || undefined,
+      propertyType,
+      floorArea: floorArea ? parseInt(floorArea) : null,
+      constructionYear: constructionYear ? parseInt(constructionYear) : null,
+      constructionMonth: constructionMonth ? parseInt(constructionMonth) : null
+    });
+  };
 
-        <form onSubmit={(e) => {
-          e.preventDefault();
-          onSave({ 
-            name, 
-            isPrimaryResidence: isPrimary, 
-            isArchived, 
-            address,
-            unitSystem: unitSystem || undefined,
-            currencyCode: currencyCode || undefined,
-            propertyType,
-            floorArea: floorArea ? parseInt(floorArea) : null,
-            constructionYear: constructionYear ? parseInt(constructionYear) : null,
-            constructionMonth: constructionMonth ? parseInt(constructionMonth) : null
-          });
-        }} className="flex-1 overflow-y-auto p-6 space-y-8">
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={initialData ? "Edit Property" : "New Property"}
+      icon={Building2}
+      size="lg"
+      primaryActionLabel={initialData ? "Update Property" : "Create Property"}
+      primaryActionType="submit"
+      formId={formId}
+      footer={
+        <button
+          onClick={onClose}
+          className="px-6 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-100 rounded-xl transition-all"
+          type="button"
+        >
+          Cancel
+        </button>
+      }
+    >
+        <form id={formId} onSubmit={handleSubmit} className="space-y-8">
           
           <section className="space-y-4">
             <div className="flex items-center space-x-2 mb-4">
@@ -252,31 +261,7 @@ const PropertyModal: React.FC<PropertyModalProps> = ({ isOpen, onClose, onSave, 
             </div>
           </section>
         </form>
-
-        <div className="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end space-x-3 shrink-0">
-          <button onClick={onClose} className="px-6 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-100 rounded-xl transition-all">
-            Cancel
-          </button>
-          <button 
-            onClick={() => onSave({ 
-              name, 
-              isPrimaryResidence: isPrimary, 
-              isArchived, 
-              address,
-              unitSystem: unitSystem || undefined,
-              currencyCode: currencyCode || undefined,
-              propertyType,
-              floorArea: floorArea ? parseInt(floorArea) : null,
-              constructionYear: constructionYear ? parseInt(constructionYear) : null,
-              constructionMonth: constructionMonth ? parseInt(constructionMonth) : null
-            })}
-            className="px-8 py-2 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-black shadow-lg transition-all active:scale-95"
-          >
-            {initialData ? 'Update Property' : 'Create Property'}
-          </button>
-        </div>
-      </div>
-    </div>
+    </Modal>
   );
 };
 

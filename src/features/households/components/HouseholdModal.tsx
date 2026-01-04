@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { X, Home, AlignLeft, Archive, Info } from 'lucide-react';
+import { Home, AlignLeft, Archive, Info } from 'lucide-react';
 import { Household } from "@/types";
+import { Modal } from "@/components/ui";
 
 interface HouseholdModalProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface HouseholdModalProps {
 }
 
 const HouseholdModal: React.FC<HouseholdModalProps> = ({ isOpen, onClose, onSave, initialData }) => {
+  const formId = "household-modal-form";
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [isArchived, setIsArchived] = useState(false);
@@ -36,35 +38,39 @@ const HouseholdModal: React.FC<HouseholdModalProps> = ({ isOpen, onClose, onSave
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div 
-        className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm animate-in fade-in duration-300"
-        onClick={onClose}
-      />
-      
-      <div className="relative bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900">
-            {initialData ? 'Edit Household' : 'New Household'}
-          </h2>
-          <button 
-            onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400 hover:text-gray-600"
-          >
-            <X size={20} />
-          </button>
-        </div>
-
-        <form onSubmit={(e) => {
-          e.preventDefault();
-          onSave({
-            name,
-            description,
-            status: isArchived ? 'Inactive' : 'Active',
-            unitSystem,
-            currencyCode,
-          });
-        }} className="p-6 space-y-6">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={initialData ? "Edit Household" : "New Household"}
+      icon={Home}
+      size="md"
+      primaryActionLabel={initialData ? "Update Household" : "Create Household"}
+      primaryActionType="submit"
+      formId={formId}
+      footer={
+        <button
+          type="button"
+          onClick={onClose}
+          className="px-6 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-100 rounded-xl transition-all active:scale-95"
+        >
+          Cancel
+        </button>
+      }
+    >
+        <form
+          id={formId}
+          onSubmit={(e) => {
+            e.preventDefault();
+            onSave({
+              name,
+              description,
+              status: isArchived ? "Inactive" : "Active",
+              unitSystem,
+              currencyCode,
+            });
+          }}
+          className="space-y-6"
+        >
           
           <div className="space-y-4">
             <div className="space-y-1.5">
@@ -156,25 +162,8 @@ const HouseholdModal: React.FC<HouseholdModalProps> = ({ isOpen, onClose, onSave
               </button>
             </div>
           </div>
-
-          <div className="flex items-center justify-end space-x-3 pt-2">
-            <button 
-              type="button"
-              onClick={onClose}
-              className="px-6 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-100 rounded-xl transition-all active:scale-95"
-            >
-              Cancel
-            </button>
-            <button 
-              type="submit"
-              className="px-8 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-black shadow-lg hover:shadow-gray-200 transition-all active:scale-95"
-            >
-              {initialData ? 'Update Household' : 'Create Household'}
-            </button>
-          </div>
         </form>
-      </div>
-    </div>
+    </Modal>
   );
 };
 

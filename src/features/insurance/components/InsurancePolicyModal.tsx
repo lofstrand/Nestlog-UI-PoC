@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, ShieldCheck, Hash, User, DollarSign, Calendar, Plus, Type } from 'lucide-react';
 import { InsurancePolicy, Contact, InsurancePolicyType } from "@/types";
-import { Input, SectionHeading } from "@/components/ui";
+import { Input, Modal, SectionHeading } from "@/components/ui";
 
 interface InsurancePolicyModalProps {
   isOpen: boolean;
@@ -20,6 +20,7 @@ const POLICY_TYPES: InsurancePolicyType[] = [
 ];
 
 const InsurancePolicyModal: React.FC<InsurancePolicyModalProps> = ({ isOpen, onClose, onSave, initialData, availableContacts, onQuickAddContact }) => {
+  const formId = "insurance-policy-modal-form";
   const [title, setTitle] = useState('');
   const [policyNumber, setPolicyNumber] = useState('');
   const [providerId, setProviderId] = useState('');
@@ -104,19 +105,26 @@ const InsurancePolicyModal: React.FC<InsurancePolicyModalProps> = ({ isOpen, onC
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm animate-in fade-in duration-300" onClick={onClose} />
-      <div className="relative bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
-        <div className="px-8 py-6 border-b border-gray-100 flex items-center justify-between shrink-0">
-          <h2 className="text-xl font-black text-gray-900 tracking-tight leading-none">
-            {initialData ? 'Edit Policy' : 'Add New Policy'}
-          </h2>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400">
-            <X size={20} />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 space-y-8">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={initialData ? "Edit Policy" : "Add New Policy"}
+      icon={ShieldCheck}
+      size="md"
+      primaryActionLabel={initialData ? "Update Policy" : "Save Policy"}
+      primaryActionType="submit"
+      formId={formId}
+      footer={
+        <button
+          onClick={onClose}
+          type="button"
+          className="px-6 py-2.5 text-sm font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 rounded-xl transition-all"
+        >
+          Dismiss
+        </button>
+      }
+    >
+        <form id={formId} onSubmit={handleSubmit} className="space-y-8">
           <div className="space-y-6">
             <SectionHeading label="Policy Identity" icon={ShieldCheck} />
             <Input label="Descriptive Title" icon={Type} value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="e.g. Stockholm Penthouse Primary" />
@@ -204,15 +212,7 @@ const InsurancePolicyModal: React.FC<InsurancePolicyModalProps> = ({ isOpen, onC
             </div>
           </div>
         </form>
-
-        <div className="px-8 py-6 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end space-x-3 shrink-0">
-          <button onClick={onClose} type="button" className="px-6 py-2.5 text-sm font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 rounded-xl transition-all">Dismiss</button>
-          <button onClick={handleSubmit} type="button" className="px-8 py-2.5 bg-slate-900 text-white text-sm font-black uppercase tracking-widest rounded-xl hover:bg-black shadow-xl shadow-slate-200 transition-all active:scale-95">
-            {initialData ? 'Update Policy' : 'Save Policy'}
-          </button>
-        </div>
-      </div>
-    </div>
+    </Modal>
   );
 };
 

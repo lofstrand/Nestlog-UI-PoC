@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import {
-  X,
   User,
   Briefcase,
   Mail,
@@ -16,7 +15,7 @@ import {
   ShieldAlert,
 } from "lucide-react";
 import { Contact, Tag, ContactCategory } from "@/types";
-import { Input, SectionHeading } from "@/components/ui";
+import { Input, Modal, SectionHeading } from "@/components/ui";
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -46,6 +45,7 @@ const ContactModal: React.FC<ContactModalProps> = ({
   initialData,
   availableTags,
 }) => {
+  const formId = "contact-modal-form";
   const [firstName, setFirstName] = useState("");
   const [surname, setSurname] = useState("");
   const [company, setCompany] = useState("");
@@ -133,39 +133,27 @@ const ContactModal: React.FC<ContactModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div
-        className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm animate-in fade-in duration-300"
-        onClick={onClose}
-      />
-
-      <div className="relative bg-white w-full max-w-2xl rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[95vh]">
-        <div className="px-8 py-6 border-b border-gray-100 flex items-center justify-between shrink-0">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-xl">
-              <User size={24} />
-            </div>
-            <div>
-              <h2 className="text-xl font-black text-gray-900 tracking-tight leading-none">
-                {initialData ? "Edit Contact" : "Add New Contact"}
-              </h2>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">
-                Household Registry
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400"
-          >
-            <X size={20} />
-          </button>
-        </div>
-
-        <form
-          onSubmit={handleSubmit}
-          className="flex-1 overflow-y-auto p-8 space-y-10"
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={initialData ? "Edit Contact" : "Add New Contact"}
+      subtitle="Household Registry"
+      icon={User}
+      size="lg"
+      primaryActionLabel={initialData ? "Update Contact" : "Save Contact"}
+      primaryActionType="submit"
+      formId={formId}
+      footer={
+        <button
+          type="button"
+          onClick={onClose}
+          className="px-6 py-2.5 text-sm font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 rounded-xl transition-all"
         >
+          Cancel
+        </button>
+      }
+    >
+      <form id={formId} onSubmit={handleSubmit} className="space-y-10">
           <div className="space-y-6">
             <SectionHeading label="Core Identity" icon={User} />
             <div className="grid grid-cols-2 gap-6">
@@ -386,25 +374,8 @@ const ContactModal: React.FC<ContactModalProps> = ({
               className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold text-slate-900 leading-relaxed focus:outline-none focus:ring-4 focus:ring-slate-900/5 transition-all resize-none shadow-inner"
             />
           </div>
-
-          <div className="flex items-center justify-end space-x-3 pt-8 border-t border-slate-100">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-6 py-2.5 text-sm font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 rounded-xl transition-all"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-8 py-2.5 bg-slate-900 text-white text-sm font-black uppercase tracking-widest rounded-xl hover:bg-black shadow-xl shadow-slate-200 transition-all active:scale-95"
-            >
-              {initialData ? "Update Contact" : "Save Contact"}
-            </button>
-          </div>
         </form>
-      </div>
-    </div>
+    </Modal>
   );
 };
 

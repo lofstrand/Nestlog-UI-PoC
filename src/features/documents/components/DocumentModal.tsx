@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { X, FileText, Layout, Calendar, Plus, Link, Trash2, Paperclip, HardDrive, User, FolderOpen, Wrench, Shield, Check, MapPin, Box, Layers, Search } from 'lucide-react';
+import { FileText, Layout, Calendar, Plus, Link, Trash2, Paperclip, HardDrive, User, FolderOpen, Wrench, Shield, Check, MapPin, Box, Layers, Search } from 'lucide-react';
 import { Document, Space, InventoryItem, Note, DocumentAttachment, Project, MaintenanceTask, Contact } from "@/types";
-import { Input, SectionHeading, Button } from "@/components/ui";
+import { Input, Modal, SectionHeading } from "@/components/ui";
 import DocumentPreview from "@/features/documents/components/DocumentPreview";
 import { ocrImageToText } from "@/utils/ocr";
 
@@ -28,6 +28,7 @@ const CATEGORY_OPTIONS = [
 const DocumentModal: React.FC<DocumentModalProps> = ({ 
   isOpen, onClose, onSave, initialData, availableSpaces, availableInventory, availableProjects, availableTasks, availableContacts 
 }) => {
+  const formId = "document-modal-form";
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const [title, setTitle] = useState('');
@@ -256,27 +257,27 @@ const DocumentModal: React.FC<DocumentModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm animate-in fade-in duration-300" onClick={onClose} />
-      <div className="relative bg-white w-full max-w-3xl rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[95vh]">
-        <div className="px-10 py-8 border-b border-gray-100 flex items-center justify-between shrink-0">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-slate-200">
-               <FileText size={24} />
-            </div>
-            <div>
-              <h2 className="text-2xl font-black text-gray-900 tracking-tight leading-none">
-                {initialData ? 'Edit Document' : 'Add New Document'}
-              </h2>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Household Records Vault</p>
-            </div>
-          </div>
-          <button onClick={onClose} className="p-3 hover:bg-gray-100 rounded-full transition-colors text-gray-400">
-            <X size={24} />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-10 space-y-12 text-slate-900">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={initialData ? "Edit Document" : "Add New Document"}
+      subtitle="Household Records Vault"
+      icon={FileText}
+      size="xl"
+      primaryActionLabel={initialData ? "Update Document" : "Save Document"}
+      primaryActionType="submit"
+      formId={formId}
+      footer={
+        <button
+          onClick={onClose}
+          className="px-8 py-3 text-sm font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 rounded-2xl transition-all"
+          type="button"
+        >
+          Dismiss
+        </button>
+      }
+    >
+        <form id={formId} onSubmit={handleSubmit} className="space-y-12 text-slate-900">
           <section className="space-y-6">
             <SectionHeading label="Basic Information" icon={FileText} />
             <Input autoFocus label="Document Name" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Dishwasher User Manual" required />
@@ -542,15 +543,7 @@ const DocumentModal: React.FC<DocumentModalProps> = ({
             </div>
           </section>
         </form>
-
-        <div className="px-10 py-8 border-t border-gray-100 bg-gray-50 flex items-center justify-end space-x-4 shrink-0">
-          <button onClick={onClose} className="px-8 py-3 text-sm font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 rounded-2xl transition-all">Dismiss</button>
-          <Button onClick={handleSubmit} className="px-10 py-3 text-[11px] font-black uppercase tracking-widest rounded-2xl shadow-2xl active:scale-95 transition-all">
-            {initialData ? 'Update Document' : 'Save Document'}
-          </Button>
-        </div>
-      </div>
-    </div>
+    </Modal>
   );
 };
 

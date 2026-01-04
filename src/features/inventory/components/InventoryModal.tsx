@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { X, Box, MapPin, DollarSign, TrendingUp, Hash, ShoppingCart, Activity, Layers, Zap } from 'lucide-react';
+import { Box, MapPin, DollarSign, TrendingUp, Hash, ShoppingCart, Activity, Layers, Zap } from 'lucide-react';
 import { InventoryItem, Space, InventoryCategory, InventoryItemStatus } from "@/types";
-import { Input, SectionHeading } from "@/components/ui";
+import { Input, Modal, SectionHeading } from "@/components/ui";
 import { usePreferences } from "@/contexts/PreferencesContext";
 
 interface InventoryModalProps {
@@ -18,6 +18,7 @@ const STATUS_OPTIONS = Object.values(InventoryItemStatus);
 const ENERGY_CLASSES = ['A', 'B', 'C', 'D', 'E', 'F', 'G'] as const;
 
 const InventoryModal: React.FC<InventoryModalProps> = ({ isOpen, onClose, onSave, initialData, availableSpaces, availableCategories }) => {
+  const formId = "inventory-modal-form";
   const { currencyCode } = usePreferences();
   const [name, setName] = useState('');
   const [brand, setBrand] = useState('');
@@ -100,20 +101,26 @@ const InventoryModal: React.FC<InventoryModalProps> = ({ isOpen, onClose, onSave
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm animate-in fade-in duration-300" onClick={onClose} />
-      
-      <div className="relative bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[95vh]">
-        <div className="px-8 py-6 border-b border-gray-100 flex items-center justify-between shrink-0">
-          <h2 className="text-xl font-black text-gray-900 tracking-tight leading-none">
-            {initialData ? 'Edit inventory item' : 'New inventory item'}
-          </h2>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400">
-            <X size={20} />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 space-y-8">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={initialData ? "Edit inventory item" : "New inventory item"}
+      icon={Box}
+      size="lg"
+      primaryActionLabel={initialData ? "Update item" : "Create item"}
+      primaryActionType="submit"
+      formId={formId}
+      footer={
+        <button
+          onClick={onClose}
+          type="button"
+          className="px-6 py-2.5 text-sm font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 rounded-xl transition-all"
+        >
+          Dismiss
+        </button>
+      }
+    >
+        <form id={formId} onSubmit={handleSubmit} className="space-y-8">
           <div className="space-y-6">
             <SectionHeading label="Asset Overview" icon={Box} />
             <Input 
@@ -214,15 +221,7 @@ const InventoryModal: React.FC<InventoryModalProps> = ({ isOpen, onClose, onSave
             </div>
           </div>
         </form>
-
-        <div className="px-8 py-6 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end space-x-3 shrink-0">
-          <button onClick={onClose} className="px-6 py-2.5 text-sm font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 rounded-xl transition-all">Dismiss</button>
-          <button onClick={handleSubmit} className="px-8 py-2.5 bg-slate-900 text-white text-sm font-black uppercase tracking-widest rounded-xl hover:bg-black shadow-xl shadow-slate-200 transition-all active:scale-95">
-            {initialData ? 'Update item' : 'Create item'}
-          </button>
-        </div>
-      </div>
-    </div>
+    </Modal>
   );
 };
 

@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { X, Wrench, Calendar, Clock, AlertTriangle, Tag, MessageSquare, Plus, Trash2, Info, Layout, DollarSign, User, Repeat, Check, Box, CheckCircle } from 'lucide-react';
+import { Wrench, Calendar, Clock, AlertTriangle, Tag, MessageSquare, Plus, Trash2, Info, Layout, DollarSign, User, Repeat, Check, Box, CheckCircle } from 'lucide-react';
 import { MaintenanceTask, MaintenanceTaskPriority, MaintenanceTaskStatus, Space, Contact, MaintenanceRecurrenceFrequency, InventoryItem } from "@/types";
-import { Input, SectionHeading } from "@/components/ui";
+import { Input, Modal, SectionHeading } from "@/components/ui";
 
 interface MaintenanceTaskModalProps {
   isOpen: boolean;
@@ -19,6 +19,7 @@ const STATUS_OPTIONS = Object.values(MaintenanceTaskStatus);
 const RECURRENCE_OPTIONS = Object.values(MaintenanceRecurrenceFrequency);
 
 const MaintenanceTaskModal: React.FC<MaintenanceTaskModalProps> = ({ isOpen, onClose, onSave, initialData, availableSpaces, availableContacts, availableInventory }) => {
+  const formId = "maintenance-task-modal-form";
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [spaceIds, setSpaceIds] = useState<string[]>([]);
@@ -105,20 +106,26 @@ const MaintenanceTaskModal: React.FC<MaintenanceTaskModalProps> = ({ isOpen, onC
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm animate-in fade-in duration-300" onClick={onClose} />
-      
-      <div className="relative bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[95vh]">
-        <div className="px-8 py-6 border-b border-gray-100 flex items-center justify-between shrink-0">
-          <h2 className="text-xl font-black text-gray-900 tracking-tight leading-none">
-            {initialData ? 'Edit Task' : 'Add New Task'}
-          </h2>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400">
-            <X size={20} />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 space-y-8">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={initialData ? "Edit Task" : "Add New Task"}
+      icon={Wrench}
+      size="lg"
+      primaryActionLabel={initialData ? "Update Task" : "Save Task"}
+      primaryActionType="submit"
+      formId={formId}
+      footer={
+        <button
+          onClick={onClose}
+          type="button"
+          className="px-6 py-2.5 text-sm font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 rounded-xl transition-all"
+        >
+          Dismiss
+        </button>
+      }
+    >
+        <form id={formId} onSubmit={handleSubmit} className="space-y-8">
           <div className="space-y-6">
             <SectionHeading label="Core Logistics" icon={Wrench} />
             <Input 
@@ -245,20 +252,7 @@ const MaintenanceTaskModal: React.FC<MaintenanceTaskModalProps> = ({ isOpen, onC
              <Input label="Actual Total Cost" icon={CheckCircle} type="number" step="0.01" value={actualCost} onChange={(e) => setActualCost(e.target.value)} />
           </div>
         </form>
-
-        <div className="px-8 py-6 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end space-x-3 shrink-0">
-          <button onClick={onClose} className="px-6 py-2.5 text-sm font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 rounded-xl transition-all">
-            Dismiss
-          </button>
-          <button 
-            onClick={handleSubmit}
-            className="px-8 py-2.5 bg-slate-900 text-white text-sm font-black uppercase tracking-widest rounded-xl hover:bg-black shadow-xl shadow-slate-200 transition-all active:scale-95"
-          >
-            {initialData ? 'Update Task' : 'Save Task'}
-          </button>
-        </div>
-      </div>
-    </div>
+    </Modal>
   );
 };
 

@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import { X, Camera, Film, Link, Type, AlignLeft, Send } from 'lucide-react';
-import { Input, SectionHeading } from "@/components/ui";
+import { Camera, Film, Link, Type, AlignLeft } from 'lucide-react';
+import { Input, Modal } from "@/components/ui";
 
 interface GalleryModalProps {
   isOpen: boolean;
@@ -10,6 +10,7 @@ interface GalleryModalProps {
 }
 
 const GalleryModal: React.FC<GalleryModalProps> = ({ isOpen, onClose, onSave }) => {
+  const formId = "gallery-modal-form";
   const [type, setType] = useState<'image' | 'video'>('image');
   const [url, setUrl] = useState('');
   const [title, setTitle] = useState('');
@@ -28,26 +29,27 @@ const GalleryModal: React.FC<GalleryModalProps> = ({ isOpen, onClose, onSave }) 
   };
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-300" onClick={onClose} />
-      
-      <div className="relative bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-        <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-             <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-white">
-                <Camera size={20} />
-             </div>
-             <div>
-                <h2 className="text-xl font-black text-slate-900 tracking-tight leading-none">Register Media</h2>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Append to Gallery</p>
-             </div>
-          </div>
-          <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-400">
-            <X size={20} />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="p-8 space-y-6">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Register Media"
+      subtitle="Append to Gallery"
+      icon={Camera}
+      size="sm"
+      primaryActionLabel="Save to Gallery"
+      primaryActionType="submit"
+      formId={formId}
+      footer={
+        <button
+          type="button"
+          onClick={onClose}
+          className="px-6 py-2.5 text-sm font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 rounded-xl transition-all"
+        >
+          Cancel
+        </button>
+      }
+    >
+        <form id={formId} onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
             <div className="flex bg-slate-100 p-1 rounded-xl">
                <button 
@@ -99,25 +101,8 @@ const GalleryModal: React.FC<GalleryModalProps> = ({ isOpen, onClose, onSave }) 
                />
             </div>
           </div>
-
-          <div className="flex items-center justify-end space-x-3 pt-2">
-            <button 
-              type="button" 
-              onClick={onClose}
-              className="px-6 py-2.5 text-sm font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 rounded-xl transition-all"
-            >
-              Cancel
-            </button>
-            <button 
-              type="submit"
-              className="px-8 py-2.5 bg-slate-900 text-white text-sm font-black uppercase tracking-widest rounded-xl hover:bg-black shadow-xl transition-all active:scale-95"
-            >
-              Save to Gallery
-            </button>
-          </div>
         </form>
-      </div>
-    </div>
+    </Modal>
   );
 };
 

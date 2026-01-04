@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Zap, Hash, User, DollarSign, Calendar, Layout, Info, Plus, Type, Calculator, Settings2 } from 'lucide-react';
 import { UtilityAccount, Contact, Space } from "@/types";
-import { Input, SectionHeading } from "@/components/ui";
+import { Input, Modal, SectionHeading } from "@/components/ui";
 
 interface UtilityAccountModalProps {
   isOpen: boolean;
@@ -21,6 +21,7 @@ const UTILITY_TYPES = [
 ] as const;
 
 const UtilityAccountModal: React.FC<UtilityAccountModalProps> = ({ isOpen, onClose, onSave, initialData, availableContacts, availableSpaces, onQuickAddContact }) => {
+  const formId = "utility-account-modal-form";
   const [title, setTitle] = useState('');
   const [type, setType] = useState<UtilityAccount['type']>('Electricity');
   const [providerId, setProviderId] = useState('');
@@ -97,19 +98,26 @@ const UtilityAccountModal: React.FC<UtilityAccountModalProps> = ({ isOpen, onClo
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm animate-in fade-in duration-300" onClick={onClose} />
-      <div className="relative bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
-        <div className="px-8 py-6 border-b border-gray-100 flex items-center justify-between shrink-0">
-          <h2 className="text-xl font-black text-gray-900 tracking-tight leading-none">
-            {initialData ? 'Edit Utility' : 'Add New Utility'}
-          </h2>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400">
-            <X size={20} />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 space-y-8">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={initialData ? "Edit Utility" : "Add New Utility"}
+      icon={Zap}
+      size="md"
+      primaryActionLabel={initialData ? "Update Utility" : "Save Utility"}
+      primaryActionType="submit"
+      formId={formId}
+      footer={
+        <button
+          onClick={onClose}
+          type="button"
+          className="px-6 py-2.5 text-sm font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 rounded-xl transition-all"
+        >
+          Dismiss
+        </button>
+      }
+    >
+        <form id={formId} onSubmit={handleSubmit} className="space-y-8">
           <div className="space-y-6">
             <SectionHeading label="Service Definition" icon={Zap} />
             <Input label="Descriptive Title" icon={Type} value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="e.g. Primary Residence Power" />
@@ -240,15 +248,7 @@ const UtilityAccountModal: React.FC<UtilityAccountModalProps> = ({ isOpen, onClo
             </div>
           </div>
         </form>
-
-        <div className="px-8 py-6 border-t border-gray-100 bg-gray-50/50 flex items-center justify-end space-x-3 shrink-0">
-          <button onClick={onClose} type="button" className="px-6 py-2.5 text-sm font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 rounded-xl transition-all">Dismiss</button>
-          <button onClick={handleSubmit} type="button" className="px-8 py-2.5 bg-slate-900 text-white text-sm font-black uppercase tracking-widest rounded-xl hover:bg-black shadow-xl shadow-slate-200 transition-all active:scale-95">
-            {initialData ? 'Update Utility' : 'Save Utility'}
-          </button>
-        </div>
-      </div>
-    </div>
+    </Modal>
   );
 };
 
