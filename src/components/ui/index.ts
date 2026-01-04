@@ -6,3 +6,8 @@ export * from "./SectionHeading";
 export * from "./Badge";
 export * from "./Input";
 export * from "./Modal";
+export * from "./DataTable";
+export * from "./SortHeader";
+export * from "./FilterChips";
+export * from "./RowActionsMenu";
+export * from "./Pagination";

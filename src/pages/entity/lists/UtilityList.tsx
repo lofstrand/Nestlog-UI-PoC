@@ -1,19 +1,9 @@
-import React, { useState, useMemo } from "react";
-import {
-  Search,
-  Plus,
-  Eye,
-  Zap,
-  Droplets,
-  Flame,
-  Wind,
-  Globe,
-  DollarSign,
-} from "lucide-react";
-import { UtilityAccount, Contact, Space } from "../../../types";
-import { Button, Card, PageHeader } from "@/components/ui";
+import React, { useMemo, useState } from "react";
+import { Droplets, Flame, Globe, Plus, Search, Wind, Zap } from "lucide-react";
+import type { Contact, Space, UtilityAccount } from "../../../types";
 import UtilityAccountModal from "@/features/utilities/components/UtilityAccountModal";
 import { usePreferences } from "@/contexts/PreferencesContext";
+import { Button, Card, DataTable, PageHeader, RowActionsMenu } from "@/components/ui";
 
 interface UtilityListProps {
   accounts: UtilityAccount[];
@@ -30,15 +20,12 @@ const UtilityList: React.FC<UtilityListProps> = ({
   contacts,
   availableSpaces,
   onView,
-  onDelete,
   onUpsert,
   onQuickAddContact,
 }) => {
   const [filter, setFilter] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingAccount, setEditingAccount] = useState<UtilityAccount | null>(
-    null
-  );
+  const [editingAccount, setEditingAccount] = useState<UtilityAccount | null>(null);
   const { formatCurrency } = usePreferences();
 
   const filtered = useMemo(
@@ -100,87 +87,72 @@ const UtilityList: React.FC<UtilityListProps> = ({
             />
           </div>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="bg-slate-50/50 border-b border-slate-100">
-                <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                  Service Identity / Provider
-                </th>
-                <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                  Avg. Burn
-                </th>
-                <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                  Account Details
-                </th>
-                <th className="px-8 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {filtered.map((a) => {
+
+        <DataTable<UtilityAccount>
+          rows={filtered}
+          getRowKey={(row) => row.id}
+          columns={[
+            {
+              id: "identity",
+              header: "Service Identity / Provider",
+              cell: (a) => {
                 const provider = contacts.find((c) => c.id === a.providerId);
                 return (
-                  <tr
-                    key={a.id}
-                    className="hover:bg-slate-50/50 transition-colors group/row"
-                  >
-                    <td className="px-8 py-6">
-                      <div className="flex items-center space-x-4">
-                        <div className="w-10 h-10 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center shrink-0 shadow-sm">
-                          {getUtilityIcon(a.type)}
-                        </div>
-                        <div>
-                          <span
-                            className="font-black text-slate-900 text-lg block leading-tight cursor-pointer hover:text-slate-600 transition-colors"
-                            onClick={() => onView(a.id)}
-                          >
-                            {a.title || a.type}
-                          </span>
-                          <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-1">
-                            {a.type} •{" "}
-                            {provider
-                              ? `${provider.company || provider.firstName}`
-                              : "Unlinked Provider"}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-8 py-6">
-                      <div className="flex items-center space-x-1.5 text-[#5a6b5d] font-black text-sm">
-                        <span>
-                          {formatCurrency(a.averageMonthlyCost, {
-                            maximumFractionDigits: 0,
-                          })}
-                          /mo
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-8 py-6">
-                      <p className="text-sm font-bold text-slate-800 tracking-tighter">
-                        ID: {a.accountNumber}
+                  <div className="flex items-center space-x-4">
+                    <div className="w-10 h-10 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center shrink-0 shadow-sm">
+                      {getUtilityIcon(a.type)}
+                    </div>
+                    <div>
+                      <span
+                        className="font-black text-slate-900 text-lg block leading-tight cursor-pointer hover:text-slate-600 transition-colors"
+                        onClick={() => onView(a.id)}
+                      >
+                        {a.title || a.type}
+                      </span>
+                      <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-1">
+                        {a.type} ·{" "}
+                        {provider
+                          ? `${provider.company || provider.firstName}`
+                          : "Unlinked Provider"}
                       </p>
-                    </td>
-                    <td className="px-8 py-6 text-right">
-                      <div className="flex items-center justify-end">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          icon={Eye}
-                          onClick={() => onView(a.id)}
-                        >
-                          View
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
+                    </div>
+                  </div>
                 );
-              })}
-            </tbody>
-          </table>
-        </div>
+              },
+            },
+            {
+              id: "burn",
+              header: "Avg. Burn",
+              cell: (a) => (
+                <div className="flex items-center space-x-1.5 text-[#5a6b5d] font-black text-sm">
+                  <span>
+                    {formatCurrency(a.averageMonthlyCost, {
+                      maximumFractionDigits: 0,
+                    })}
+                    /mo
+                  </span>
+                </div>
+              ),
+            },
+            {
+              id: "account",
+              header: "Account Details",
+              cell: (a) => (
+                <p className="text-sm font-bold text-slate-800 tracking-tighter">
+                  ID: {a.accountNumber}
+                </p>
+              ),
+            },
+            {
+              id: "actions",
+              header: "Actions",
+              align: "right",
+              cell: (a) => <RowActionsMenu onView={() => onView(a.id)} />,
+            },
+          ]}
+        />
       </Card>
+
       <UtilityAccountModal
         isOpen={isModalOpen}
         onClose={() => {
@@ -203,3 +175,4 @@ const UtilityList: React.FC<UtilityListProps> = ({
 };
 
 export default UtilityList;
+
