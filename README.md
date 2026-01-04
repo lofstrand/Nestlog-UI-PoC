@@ -2,6 +2,12 @@
 
 Vite + React proof-of-concept UI.
 
+## Docs
+
+- [Project structure](docs/project-structure.md)
+- [Keyboard shortcut policy](docs/keyboard-shortcut-policy.md)
+- [Power user & behavior settings](docs/power-user-and-behavior-settings.md)
+
 ## Run Locally
 
 **Prerequisites:** Node.js
